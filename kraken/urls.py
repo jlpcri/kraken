@@ -4,9 +4,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'kraken.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+
+    url(r'^kraken/$', 'kraken.apps.core.views.landing', name='landing'),
+    #url(r'^kraken/', include('kraken.apps.projects.urls')),
+    #url(r'^kraken/', include('kraken.apps.help.urls')),
+    url(r'^kraken/', include('kraken.apps.users.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
 )
