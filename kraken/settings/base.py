@@ -8,6 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
+import socket
 import ldap
 from django_auth_ldap.config import LDAPSearch
 
@@ -49,11 +50,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'a1t4gbw4=+l8mvtj70wga@+d7b$6q&0lq)ty&yej2o^h!i_8e@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -121,8 +122,7 @@ USE_TZ = True
 
 STATIC_ROOT = ''
 
-#STATIC_URL = '/static/'
-STATIC_URL = 'http://apps.qaci01.wic.west.com/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
