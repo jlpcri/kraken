@@ -25,7 +25,7 @@ class VersionBatch(models.Model):
     identifier = models.CharField(max_length=200)
     schema_version = models.ForeignKey(SchemaVersion)
     last_opened = models.CharField(max_length=200)
-    contents = models.FileField(upload_to='')
+    #contents = models.FileField(upload_to='')
 
 
 class SchemaColumn(models.Model):
