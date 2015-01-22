@@ -104,8 +104,8 @@
                 <div class="collapse navbar-collapse" id="main-navbar">
                     <ul class="nav navbar-nav">
                         <li><a href="{% url 'home' %}"><i class="fa fa-home"></i> Home </a></li>
-                        <li><a href="#"><i class="fa fa-bar-chart-o"></i> Projects</a> </li>
-                        <li><a href="#"><i class="fa fa-thumbs-o-up"></i> Help</a> </li>
+                        <li><a href="#"><i class="fa fa-bar-chart-o"></i> Clients</a> </li>
+                        <li><a href="{% url 'help_guide' %}"><i class="fa fa-thumbs-o-up"></i> Help</a> </li>
 
                     </ul>
 
@@ -173,7 +173,7 @@
                     <p>v 0.1 | Powered by Quality Engineering & Innovation |
                         <i class="fa fa-bell" style="color: lightseagreen;"></i><a href="http://jira.west.com/browse/krak"> Report</a> |
                         <i class="fa fa-envelope text-primary" style="color: lightseagreen;"></i><a href="mailto:gpallapa@west.com; sliu@west.com?subject=CEEQ Feedback"> Contact </a>|
-                        <a href="#"><i class="fa fa-question"></i> FAQ</a></p>
+                        <a href="{% url 'help_faq' %}"><i class="fa fa-question"></i> FAQ</a></p>
                 </div>
             </div>
 
