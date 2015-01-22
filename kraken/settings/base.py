@@ -14,6 +14,24 @@ from django_auth_ldap.config import LDAPSearch
 
 LOGIN_URL = '/kraken/'
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'a1t4gbw4=+l8mvtj70wga@+d7b$6q&0lq)ty&yej2o^h!i_8e@'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+TEMPLATE_DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
@@ -36,27 +54,6 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'last_name': 'sn',
     'email': 'mail'
 }
-
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'a1t4gbw4=+l8mvtj70wga@+d7b$6q&0lq)ty&yej2o^h!i_8e@'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-TEMPLATE_DEBUG = False
-
-ALLOWED_HOSTS = ['*']
-
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -66,6 +63,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_user_agents',
     'kraken.apps.clients',
     'kraken.apps.core',
     'kraken.apps.help',
@@ -80,6 +78,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 )
 
 ROOT_URLCONF = 'kraken.urls'
@@ -95,6 +94,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+   0: 'default',
+   15: 'primary',
+   35: 'danger',
 }
 
 # Internationalization
