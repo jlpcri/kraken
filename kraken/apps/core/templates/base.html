@@ -97,14 +97,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% url 'home' %}">Kraken</a>
+                <a class="navbar-brand" href="{% url 'home' %}"><i class="fa fa-home"></i> Kraken</a>
             </div>
 
             {% if user.is_authenticated %}
                 <div class="collapse navbar-collapse" id="main-navbar">
                     <ul class="nav navbar-nav">
-                        <li><a href="{% url 'home' %}"><i class="fa fa-home"></i> Home </a></li>
-                        <li><a href="#"><i class="fa fa-bar-chart-o"></i> Clients</a> </li>
+                        <li><a href="{% url 'clients' %}"><i class="fa fa-link"></i> Clients</a> </li>
+                        <li><a href="{% url 'schemas' %}"><i class="fa fa-bar-chart-o"></i> Shemas</a> </li>
                         <li><a href="{% url 'help_guide' %}"><i class="fa fa-thumbs-o-up"></i> Help</a> </li>
 
                     </ul>

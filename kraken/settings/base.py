@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'kraken.apps.clients',
     'kraken.apps.core',
     'kraken.apps.help',
+    'kraken.apps.schemas',
     'kraken.apps.users'
 )
 
