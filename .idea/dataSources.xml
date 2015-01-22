@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="3963038007">
+  <component name="DataSourceManagerImpl" format="xml" hash="4123706049">
     <data-source source="LOCAL" name="Django default" uuid="716ae8b2-7f43-408c-ad51-c4c1b89db123">
-      <driver-ref>sqlite.xerial</driver-ref>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/kraken/db.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\ewhitcom\Development\workspaces\pycharm\kraken\kraken\db.sqlite3</jdbc-url>
       <libraries>
         <library>
           <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/sqlite-jdbc-3.7.2.jar</url>
