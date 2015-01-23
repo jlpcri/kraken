@@ -69,11 +69,11 @@ def user_management(request):
 
         current_user_id = request.user.id
 
-        context = RequestContext(request, {
+        context = {
             'users': users,
             'sort': sort,
             'current_user_id': current_user_id
-        })
+        }
 
         return render(request, 'user_management.html', context)
 
