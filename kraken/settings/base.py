@@ -66,7 +66,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'kraken.apps.clients',
     'kraken.apps.core',
     'kraken.apps.help',
     'kraken.apps.schemas',

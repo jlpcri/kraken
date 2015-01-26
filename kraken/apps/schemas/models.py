@@ -1,6 +1,6 @@
 from django.db import models
 import time
-from kraken.apps.clients.models import ClientSchema
+from kraken.apps.core.models import ClientSchema
 
 
 class SchemaVersion(models.Model):
