@@ -1,7 +1,9 @@
 {% extends 'core/base.html' %}
 {% block title %}User Management{% endblock %}
+{% block headscript %}
 
-{% block body %}
+{% endblock %}
+{% block content %}
         <div class="container"><br>
         <table class="table table-hover table-condensed">
             <thead>
@@ -92,10 +94,8 @@
             </div>
         </div>
     </div>
-
 {% endblock %}
-
-{% block footer %}
+{% block endscript %}
     <script type="text/javascript">
         function deleteModal (username, user_id) {
             $('#deleteTitle').text('Delete user: \"' + username + '\" ?');
@@ -107,5 +107,9 @@
             }
             $('#confirmModal').modal('show');
         }
+
+        $(function () {
+
+        });
     </script>
 {% endblock %}
