@@ -31,7 +31,7 @@ def schema_versions(request):
     return HttpResponseNotFound
 
 
-def batch_files_saved(request):
+def batch_files(request):
     """
     :param request:
     :return: JSON-encoded list of saved batch files
