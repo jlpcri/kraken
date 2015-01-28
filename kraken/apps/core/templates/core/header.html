@@ -6,16 +6,17 @@
         {% if user.is_authenticated %}
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="#"><i class="fa fa-link fa-fw"></i>&nbsp;Clients</a></li>
+                    <li><a href="#" class="dropdown-toggle" data-toggle="popover" title="Client List" data-toggle="popover" tabindex="0" data-trigger="focus" title="Popover title" data-content="Here's some amazing content.">
+                        <i class="fa fa-link fa-fw"></i>&nbsp;Clients</a></li>
                     <li><a href="{% url 'help:help_guide' %}"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp;Help</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             {% if user.first_name %}
-                                <i class="fa fa-user fa-fw"></i>&nbsp;Welcome,{{ user.first_name }}&nbsp;<i class="fa fa-caret-down fa-fw"></i>
+                                <i class="fa fa-user fa-fw"></i>&nbsp;Welcome,&nbsp;{{ user.first_name }}&nbsp;<i class="fa fa-caret-down fa-fw"></i>
                             {% else %}
-                                <i class="fa fa-user fa-fw"></i>&nbsp;Welcome,{{ user.username }}&nbsp;<i class="fa fa-caret-down fa-fw"></i>
+                                <i class="fa fa-user fa-fw"></i>&nbsp;Welcome,&nbsp;{{ user.username }}&nbsp;<i class="fa fa-caret-down fa-fw"></i>
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu navbar-dropdown-menu">
