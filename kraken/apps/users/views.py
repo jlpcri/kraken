@@ -1,46 +1,12 @@
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
 
 
 def user_is_superuser(user):
     return user.is_superuser
-
-
-def sign_in(request):
-    if request.method == "POST":
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user:
-            if user.is_active:
-                login(request, user)
-
-                if request.GET.get('next'):
-                    return redirect(request.GET['next'])
-                else:
-                    return redirect('home')
-            else:
-                messages.error(request, 'This account is inactive.')
-                return redirect('landing')
-        else:
-            messages.error(request, 'Invalid username or password.')
-            return redirect('landing')
-    else:
-        return redirect('landing')
-
-
-@login_required
-def sign_out(request):
-    logout(request)
-    return redirect('landing')
-
-
-@login_required
-def home(request):
-    return render(request, 'home.html')
 
 
 @user_passes_test(user_is_superuser)
@@ -75,7 +41,7 @@ def user_management(request):
             'current_user_id': current_user_id
         }
 
-        return render(request, 'user_management.html', context)
+        return render(request, 'users/user_management.html', context)
 
     return HttpResponseNotFound()
 
@@ -94,9 +60,9 @@ def user_update(request, user_id):
 
         user.save()
 
-        return redirect('user_management')
+        return redirect('users:user_management')
     else:
-        return redirect('user_management')
+        return redirect('users:user_management')
 
 
 @user_passes_test(user_is_superuser)
@@ -106,7 +72,7 @@ def user_delete(request, user_id):
     if user == request.user:
         logout(request)
         user.delete()
-        return redirect('landing')
+        return redirect('core:landing')
     else:
         user.delete()
-        return redirect('user_management')
+        return redirect('users:user_management')

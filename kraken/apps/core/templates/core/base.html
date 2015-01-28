@@ -1,0 +1,150 @@
+{% load admin_urls %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kraken&nbsp;-&nbsp;{% block title %}{% endblock %}</title>
+
+    <link href="{% static 'common/font-awesome/4.0.3/css/font-awesome.min.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'common/bootswatch/3.0.0/cerulean/bootstrap.min.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'kraken/jqueryui/css/jquery-ui-1.9.2.custom.min.css' %}"
+          rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0px;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        #wrapper {
+            padding-top: 50px;
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            margin: 0 auto -30px; /* same as the footer */
+        }
+
+        #content {
+            margin-top: 20px;
+        }
+
+        .push {
+            height: 30px; /* same as the footer */
+        }
+
+        #footer {
+            width: 100%;
+            height: 30px;
+        }
+
+        #footer p {
+            line-height: 30px;
+            margin: 0 30px 0 30px;
+        }
+
+        .navbar-dropdown-menu {
+            width: 100%;
+        }
+
+        .r-rect {
+            text-align: center;
+            background-color: #F0F0F0;
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 340px;
+            margin: auto;
+            border-radius: 9px;
+            -moz-border-radius: 9px;
+            -webkit-border-radius: 9px;
+            border: solid black 2px;
+            padding: 3px;
+        }
+
+        .bar {
+            margin: 0 auto;
+            border-left: solid black 2px;
+            width: 0;
+            height: 15px;
+        }
+
+        .left-col {
+            display: inline-block;
+            margin-right: 42px;
+            vertical-align: top
+        }
+
+        .right-col {
+            display: inline-block;
+            margin-left: 42px;
+            vertical-align: top
+        }
+
+        #landing-well {
+            background-color: #F2F2FF;
+        }
+
+        .gentle {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+
+    {% block headscript %} {% endblock %}
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+{% include 'core/header.html' %}
+<div id="wrapper">
+    {% if messages %}
+        <div class="container">
+            {% for message in messages %}
+                <div class="alert alert-dismissable alert-{{ message.tags }}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {{ message | safe }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="push"></div>
+</div>
+{% include 'core/footer.html' %}
+
+<script src="{% static 'common/jquery/1.10.2/jquery.min.js' %}"></script>
+<script src="{% static 'common/bootstrap/3.0.3/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'kraken/jqueryui/js/jquery-ui-1.10.4.js' %}"></script>
+<script src="{% static 'common/placeholders/3.0.0/placeholders.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready( function () {
+        $('[data-toggle="popover"]').popover({
+            placement : 'bottom'
+        });
+    });
+</script>
+
+{% block endscript %}{% endblock %}
+
+</body>
+</html>
