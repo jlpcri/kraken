@@ -7,7 +7,7 @@ from kraken.apps.schemas.views import schemas
 class TestSchemaViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.url = reverse('schemas')
+        self.url = reverse('schemas:schemas')
 
     def test_schemas_url_resolve_to_view(self):
         found = resolve(self.url)

@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.core.urlresolvers import reverse, resolve
 
 from django.contrib.auth.models import User
-from kraken.apps.users.views import sign_in, sign_out
+from kraken.apps.core.views import sign_in, sign_out
 
 
 class TestUsersAuthenticationSignIn(TestCase):
@@ -26,36 +26,36 @@ class TestUsersAuthenticationSignIn(TestCase):
         }
 
     def test_user_sing_in_resolve_to_view(self):
-        found = resolve(reverse('sign_in'))
+        found = resolve(reverse('core:sign_in'))
         self.assertEqual(found.func, sign_in)
 
     def test_user_sign_in_successfully_redirect(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_correct
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('home'))
+        self.assertRedirects(response, reverse('core:home'))
 
     def test_user_sign_in_unsuccessfully_with_incorrect_username_redirect(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_incorrect_username
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('landing'))
+        self.assertRedirects(response, reverse('core:landing'))
 
     def test_user_sign_in_unsuccessfully_with_incorrect_password_redirect(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_incorrect_password
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('landing'))
+        self.assertRedirects(response, reverse('core:landing'))
 
     def test_user_sign_in_successfully(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_correct,
             follow=True
         )
@@ -65,7 +65,7 @@ class TestUsersAuthenticationSignIn(TestCase):
 
     def test_user_sign_in_unsuccessfully_with_incorrect_username(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_incorrect_username,
             follow=True
         )
@@ -76,7 +76,7 @@ class TestUsersAuthenticationSignIn(TestCase):
 
     def test_user_sign_in_unsuccessfully_with_incorrect_password(self):
         response = self.client.post(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_incorrect_password,
             follow=True
         )
@@ -87,7 +87,7 @@ class TestUsersAuthenticationSignIn(TestCase):
 
     def test_user_sign_in_unsuccessfully_without_post_method(self):
         response = self.client.get(
-            reverse('sign_in'),
+            reverse('core:sign_in'),
             self.user_account_correct
         )
         self.assertEqual(response.status_code, 302)
@@ -111,19 +111,19 @@ class TestUsersAuthenticationSignOut(TestCase):
         )
 
     def test_user_sign_out_resolve_to_view(self):
-        found = resolve(reverse('sign_out'))
+        found = resolve(reverse('core:sign_out'))
         self.assertEqual(found.func, sign_out)
 
     def test_user_sign_out_redirect(self):
         response = self.client.post(
-            reverse('sign_out')
+            reverse('core:sign_out')
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('landing'))
+        self.assertRedirects(response, reverse('core:landing'))
 
     def test_user_sign_out_successfully(self):
         response = self.client.post(
-            reverse('sign_out'),
+            reverse('core:sign_out'),
             follow=True
         )
         self.assertEqual(response.status_code, 200)
