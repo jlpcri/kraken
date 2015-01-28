@@ -96,7 +96,7 @@ DATABASES = {
     }
 }
 
-from django.contrib.messages import constants as messages
+#from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
    0: 'default',
    15: 'primary',
@@ -153,9 +153,3 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
-
-from django.contrib.messages import constants as messages
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger'
-}
