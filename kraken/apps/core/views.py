@@ -1,5 +1,5 @@
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
 from kraken.apps.core.models import Client, ClientSchema
@@ -24,16 +24,20 @@ def clients_list(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def client_schemas_list(request, client_name):
+def client_schemas_list(request):
     """
     :param request:
     :param client_name: matching client name
     :return: JSON list of schema names for matching client, ordered alphabetically
     """
-    client = get_object_or_404(Client, name=client_name)
-    schemas = ClientSchema.objects.filter(client=client).order_by('name')
-    data = {}
+    if request.method == 'GET':
+        client_name = request.GET.get('client_name', '')
+        client = get_object_or_404(Client, name=client_name)
+        schemas = ClientSchema.objects.filter(client=client).order_by('name')
+        data = {}
 
-    data['client_schema'] = [schema.name for schema in schemas]
+        data['client_schema'] = [schema.name for schema in schemas]
 
-    return HttpResponse(json.dumps(data), content_type='application/json')
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    return HttpResponseNotFound
