@@ -1,4 +1,4 @@
-from base import *
+from kraken.settings.base import *
 import socket
 
 DEBUG = True

@@ -96,6 +96,13 @@ DATABASES = {
     }
 }
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+   0: 'default',
+   15: 'primary',
+   35: 'danger',
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

@@ -6,8 +6,8 @@ def help_guide(request):
         'base_url': 'http://' + request.get_host()
     }
 
-    return render(request, 'guide.html', context)
+    return render(request, 'help/guide.html', context)
 
 
 def help_faq(request):
-    return render(request, 'faq.html')
+    return render(request, 'help/faq.html')
