@@ -1,32 +1,34 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
 {% block title %}User Management{% endblock %}
+{% block headscript %}
 
-{% block body %}
+{% endblock %}
+{% block content %}
         <div class="container"><br>
         <table class="table table-hover table-condensed">
             <thead>
                 <tr>
                     <th class="col-xs-2">
                         {% if sort == 'username' %}
-                            <a href="{% url 'user_management' %}?sort=-username">
+                            <a href="{% url 'users:user_management' %}?sort=-username">
                             <strong>Username</strong></a>&nbsp;<i class="fa fa-sort-asc"></i>
                         {% elif sort == '-username' %}
-                            <a href="{% url 'user_management' %}?sort=username">
+                            <a href="{% url 'users:user_management' %}?sort=username">
                             <strong>Username</strong></a>&nbsp;<i class="fa fa-sort-desc"></i>
                         {% else %}
-                            <a href="{% url 'user_management' %}?sort=username">
+                            <a href="{% url 'users:user_management' %}?sort=username">
                             <strong>Username</strong></a>&nbsp;<i class="fa fa-sort"></i>
                         {% endif %}
                     </th>
                     <th class="col-xs-2">
                         {% if sort == 'last_login' %}
-                            <a href="{% url 'user_management' %}?sort=-last_login">
+                            <a href="{% url 'users:user_management' %}?sort=-last_login">
                             <strong>Last Login</strong></a>&nbsp;<i class="fa fa-sort-asc"></i>
                         {% elif sort == '-last_login' %}
-                            <a href="{% url 'user_management' %}?sort=last_login">
+                            <a href="{% url 'users:user_management' %}?sort=last_login">
                             <strong>Last Login</strong></a>&nbsp;<i class="fa fa-sort-desc"></i>
                         {% else %}
-                            <a href="{% url 'user_management' %}?sort=last_login">
+                            <a href="{% url 'users:user_management' %}?sort=last_login">
                             <strong>Last Login</strong></a>&nbsp;<i class="fa fa-sort"></i>
                         {% endif %}
                     </th>
@@ -38,7 +40,7 @@
                 </tr>
             </thead>
             {% for user in users %}
-                <form method="post" action="{% url 'user_update' user.id %}">
+                <form method="post" action="{% url 'users:user_update' user.id %}">
                     <tr>
                         <td>{{ user.username }}</td>
                         <td>{{ user.last_login }}</td>
@@ -92,10 +94,8 @@
             </div>
         </div>
     </div>
-
 {% endblock %}
-
-{% block footer %}
+{% block endscript %}
     <script type="text/javascript">
         function deleteModal (username, user_id) {
             $('#deleteTitle').text('Delete user: \"' + username + '\" ?');
@@ -107,5 +107,9 @@
             }
             $('#confirmModal').modal('show');
         }
+
+        $(function () {
+
+        });
     </script>
 {% endblock %}
