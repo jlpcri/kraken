@@ -1,6 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+import json
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render, redirect, get_object_or_404
+
+from kraken.apps.core.models import Client, ClientSchema
 from kraken.apps.core import messages
 
 
@@ -40,3 +44,35 @@ def sign_in(request):
 def sign_out(request):
     logout(request)
     return redirect('core:landing')
+
+
+def clients_list(request):
+    """
+    :param request:
+    :return: JSON list of client names as string, ordered alphabetically
+    """
+    clients = Client.objects.all().order_by('name')
+    data = {}
+
+    data['client_name'] = [client.name for client in clients]
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def client_schemas_list(request):
+    """
+    :param request:
+    :param client_name: matching client name
+    :return: JSON list of schema names for matching client, ordered alphabetically
+    """
+    if request.method == 'GET':
+        client_name = request.GET.get('client_name', '')
+        client = get_object_or_404(Client, name=client_name)
+        schemas = ClientSchema.objects.filter(client=client).order_by('name')
+        data = {}
+
+        data['client_schema'] = [schema.name for schema in schemas]
+
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    return HttpResponseNotFound
