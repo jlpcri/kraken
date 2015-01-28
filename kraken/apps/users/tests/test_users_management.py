@@ -8,7 +8,7 @@ from kraken.apps.users.views import user_management
 class TestUsersManagement(TestCase):
     def setUp(self):
         self.client = Client()
-        self.url = reverse('user_management')
+        self.url = reverse('users:user_management')
         self.user_account_superuser = {
             'username': 'superUserName',
             'password': 'superUserPassword'
@@ -28,7 +28,7 @@ class TestUsersManagement(TestCase):
         )
 
     def test_user_management_resolve_to_view(self):
-        found = resolve(reverse('user_management'))
+        found = resolve(reverse('users:user_management'))
         self.assertEqual(found.func, user_management)
 
     def test_user_management_successful_with_superuser(self):
@@ -45,4 +45,4 @@ class TestUsersManagement(TestCase):
             password=self.user_account_normaluser['password']
         )
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, reverse('landing'))
+        self.assertContains(response, reverse('core:landing'))

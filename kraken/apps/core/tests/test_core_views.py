@@ -7,7 +7,7 @@ from kraken.apps.core.views import landing
 class TestCoreView(TestCase):
     def setUp(self):
         self.client = Client()
-        self.url = reverse('landing')
+        self.url = reverse('core:landing')
 
     def test_landing_url_resolve_to_view(self):
         found = resolve(self.url)

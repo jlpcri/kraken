@@ -7,8 +7,8 @@ from kraken.apps.help.views import help_guide, help_faq
 class TestHelpViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.url_guide = reverse('help_guide')
-        self.url_faq = reverse('help_faq')
+        self.url_guide = reverse('help:help_guide')
+        self.url_faq = reverse('help:help_faq')
 
     def test_guide_url_resolve_to_view(self):
         found = resolve(self.url_guide)

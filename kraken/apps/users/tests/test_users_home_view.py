@@ -1,13 +1,13 @@
 from django.test import Client, TestCase
 from django.core.urlresolvers import reverse, resolve
 
-from kraken.apps.users.views import home
+from kraken.apps.core.views import home
 
 
 class TestHomeView(TestCase):
     def setUp(self):
         self.client = Client()
-        self.url = reverse('home')
+        self.url = reverse('core:home')
 
     def test_home_url_resolve_to_view(self):
         found = resolve(self.url)
