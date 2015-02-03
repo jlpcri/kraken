@@ -46,6 +46,10 @@ def sign_out(request):
     return redirect('core:landing')
 
 
+def client_new(request):
+    pass
+
+
 def clients_list(request):
     """
     :param request:
@@ -59,20 +63,3 @@ def clients_list(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def client_schemas_list(request):
-    """
-    :param request:
-    :param client_name: matching client name
-    :return: JSON list of schema names for matching client, ordered alphabetically
-    """
-    if request.method == 'GET':
-        client_name = request.GET.get('client_name', '')
-        client = get_object_or_404(Client, name=client_name)
-        schemas = ClientSchema.objects.filter(client=client).order_by('name')
-        data = {}
-
-        data['client_schema'] = [schema.name for schema in schemas]
-
-        return HttpResponse(json.dumps(data), content_type='application/json')
-
-    return HttpResponseNotFound
