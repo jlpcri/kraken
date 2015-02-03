@@ -27,8 +27,12 @@ def version_batch_location(instance, filename):
 class VersionBatch(models.Model):
     identifier = models.CharField(max_length=200)
     schema_version = models.ForeignKey(SchemaVersion)
-    last_opened = models.CharField(max_length=200)
+    last_opened = models.DateTimeField('last opened', auto_now=True)
     contents = models.FileField(upload_to=version_batch_location)
+
+    @property
+    def batch_file_path(self):
+        return ''
 
 
 class SchemaColumn(models.Model):
