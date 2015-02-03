@@ -4,8 +4,115 @@
 
 {% endblock %}
 {% block content %}
-    <div class="container" >
-        <h4>Schemas is coming...</h4>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-10">
+                <h3>Client Name</h3>
+            </div>
+            <div class="col-xs-2">
+                <a href="#" class="btn btn-default btn-primary" style="width: 100%;">Save</a>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <textarea class="form-control" rows="5" id="textAreaDisplay"
+                          style="font-family: 'courier new', monospace"></textarea>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label" for="inputSchemaName">Schema Name</label>
+                    <input type="text" class="form-control" id="inputSchemaName" placeholder="Schema Name">
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label class="control-label col-xs-12">Delimiter</label>
+
+                    <table class="col-xs-12">
+                        <tr>
+                            <td class="col-xs-4" style="line-height: 38px;">
+                                <label>
+                                    <input type="radio" name="radioDelimiter" id="radioPipe" value="pipe" checked="">
+                                    Pipe
+                                </label>
+                            </td>
+                            <td class="col-xs-4" style="line-height: 38px;">
+                                <label>
+                                    <input type="radio" name="radioDelimiter" id="radioComma" value="comma">
+                                    Comma
+                                </label>
+                            </td>
+                            <td class="col-xs-4" style="line-height: 38px;">
+                                <label>
+                                    <input type="radio" name="radioDelimiter" id="radioFixed" value="fixed">
+                                    Fixed
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="form-group">
+                    <label class="control-label" for="inputVersion">Version</label>
+                    <input type="text" class="form-control" id="inputVersion" placeholder="1.0">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-xs-5">
+                            Field Name
+                        </th>
+                        <th class="col-xs-2">
+                            Length
+                        </th>
+                        <th class="col-xs-2">
+                            Type
+                        </th>
+                        <th class="col-xs-2 text-center">
+                            Constraints
+                        </th>
+                        <th class="col-xs-1">
+                            <button class="btn btn-success btn-xs" style="width: 100%;"><i class="fa fa-plus"></i>&nbsp;Field
+                            </button>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" id="inputFieldName" placeholder="Field Name">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="inputFieldLength" placeholder="10">
+                        </td>
+                        <td>
+                            <select class="form-control" id="selectFieldType">
+                                <option>Number</option>
+                                <option>String</option>
+                            </select>
+                        </td>
+                        <td class="text-center" style="line-height: 38px;">
+                            <a href="#"><i class="fa fa-edit fa-lg"></i></a>
+                        </td>
+                        <td class="text-center" style="line-height: 38px;">
+                            <a href="#"><i class="fa fa-trash-o fa-lg"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block endscript %}
