@@ -4,14 +4,75 @@
 
 {% endblock %}
 {% block content %}
-    <div class="container" >
-        <h1>Welcome to Kraken!</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Welcome to Kraken!</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <button id="buttonCreateClient" class="btn btn-success" style="width: 100%;">
+                    <i class="fa fa-plus"></i>&nbsp;Client
+                </button>
+            </div>
+            <div class="col-xs-3">
+                <button id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">
+                    <i class="fa fa-plus"></i>&nbsp;Schema
+                </button>
+            </div>
+            <div class="col-xs-3">
+                <button id="buttonCreateVersion" class="btn btn-success" style="width: 100%;">
+                    <i class="fa fa-plus"></i>&nbsp;Version
+                </button>
+            </div>
+            <div class="col-xs-3">
+                <button id="buttonCreateFile" class="btn btn-success" style="width: 100%;">
+                    <i class="fa fa-plus"></i>&nbsp;File
+                </button>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
         $(function () {
-
+            $("#buttonCreateClient").click(function (eventObj) {
+                $.post("{% url 'core:create_client' %}", { client_name: "CVS" })
+                        .done(function (data) {
+                            alert(data);
+                        })
+                        .fail(function (data) {
+                            alert(data);
+                        });
+            });
+{#            $("#buttonCreateSchema").click(function (eventObj) {#}
+{#                $.post("ajax/test.html", { schema_name: "John"  })#}
+{#                        .done(function (data) {#}
+{#                            alert(data);#}
+{#                        })#}
+{#                        .fail(function (data) {#}
+{#                            alert(data);#}
+{#                        });#}
+{#            });#}
+{#            $("#buttonCreateVersion").click(function (eventObj) {#}
+{#                $.post("ajax/test.html", { name: "John", time: "2pm" })#}
+{#                        .done(function (data) {#}
+{#                            alert(data);#}
+{#                        })#}
+{#                        .fail(function (data) {#}
+{#                            alert(data);#}
+{#                        });#}
+{#            });#}
+{#            $("#buttonCreateFile").click(function (eventObj) {#}
+{#                $.post("ajax/test.html", { name: "John", time: "2pm" })#}
+{#                        .done(function (data) {#}
+{#                            alert(data);#}
+{#                        })#}
+{#                        .fail(function (data) {#}
+{#                            alert(data);#}
+{#                        });#}
+{#            });#}
         });
     </script>
 {% endblock %}
