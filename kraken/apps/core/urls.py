@@ -12,4 +12,5 @@ urlpatterns = patterns('',
 
     url(r'^clients/$', views.clients_list, name='clients_list'),
     url(r'^clients/client_schemas/$', views.client_schemas_list, name='client_schemas_list'),
+    url(r'^clients/create/$', views.create_client, name='create_client'),
 )
