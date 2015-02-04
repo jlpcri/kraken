@@ -18,9 +18,9 @@
                 </button>
             </div>
             <div class="col-xs-3">
-                <button id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">
+                <a href="{% url 'schemas:create_schema' '1' %}" id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">
                     <i class="fa fa-plus"></i>&nbsp;Schema
-                </button>
+                </a>
             </div>
             <div class="col-xs-3">
                 <button id="buttonCreateVersion" class="btn btn-success" style="width: 100%;">
@@ -64,7 +64,7 @@
                         });
             });
 {#            $("#buttonCreateSchema").click(function (eventObj) {#}
-{#                $.post("ajax/test.html", { schema_name: "John"  })#}
+{#                $.post("{% url 'schemas:create_schema' %}", { client_id: "1" })#}
 {#                        .done(function (data) {#}
 {#                            alert(data);#}
 {#                        })#}
@@ -72,24 +72,24 @@
 {#                            alert(data);#}
 {#                        });#}
 {#            });#}
-{#            $("#buttonCreateVersion").click(function (eventObj) {#}
-{#                $.post("ajax/test.html", { name: "John", time: "2pm" })#}
-{#                        .done(function (data) {#}
-{#                            alert(data);#}
-{#                        })#}
-{#                        .fail(function (data) {#}
-{#                            alert(data);#}
-{#                        });#}
-{#            });#}
-{#            $("#buttonCreateFile").click(function (eventObj) {#}
-{#                $.post("ajax/test.html", { name: "John", time: "2pm" })#}
-{#                        .done(function (data) {#}
-{#                            alert(data);#}
-{#                        })#}
-{#                        .fail(function (data) {#}
-{#                            alert(data);#}
-{#                        });#}
-{#            });#}
+            $("#buttonCreateVersion").click(function (eventObj) {
+                $.post("{% url 'schemas:create_version' %}", { version: "1.0" })
+                        .done(function (data) {
+                            alert(data);
+                        })
+                        .fail(function (data) {
+                            alert(data);
+                        });
+            });
+            $("#buttonCreateFile").click(function (eventObj) {
+                $.post("{% url 'schemas:create_file' %}", { file_name: "File Name" })
+                        .done(function (data) {
+                            alert(data);
+                        })
+                        .fail(function (data) {
+                            alert(data);
+                        });
+            });
         });
     </script>
 {% endblock %}
