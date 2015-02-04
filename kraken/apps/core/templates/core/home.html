@@ -12,8 +12,9 @@
         </div>
         <div class="row">
             <div class="col-xs-3">
-                <button id="buttonCreateClient" class="btn btn-success" style="width: 100%;">
-                    <i class="fa fa-plus"></i>&nbsp;Client
+                <button id="button_create_client" type="button" class="btn btn-success content-header-button"
+                            data-toggle="modal" style="width: 100%;"
+                            data-target="#modal_create_client"><i class="fa fa-plus fa-fw"></i>&nbsp;Client
                 </button>
             </div>
             <div class="col-xs-3">
@@ -32,10 +33,26 @@
                 </button>
             </div>
         </div>
+
+        <div id="cliens_list">
+            <br><br>
+            {% for client in clients %}
+                {{ client.name }} <br>
+            {% endfor %}
+        </div>
+
     </div>
+
+
+
+    {% include 'core/modal_client.html' %}
+
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
+
+        {% include 'core/core.js' %}
+
         $(function () {
             $("#buttonCreateClient").click(function (eventObj) {
                 $.post("{% url 'core:create_client' %}", { client_name: "CVS" })
