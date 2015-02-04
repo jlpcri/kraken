@@ -1,0 +1,36 @@
+<!--Create Client modal -->
+<div id="modal_create_client" class="modal fade">
+    <div class="modal-dialog">
+        <form method="post" action="" id="modal_create_client_form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Create Client</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="modal_edit_client_input_name">
+                                Client Name
+                                <span class="text-red">*</span>
+                            </label>
+                            {{ form.name }}
+
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="col-lg-12">
+                        <p id="modal_create_client_error" style="color: red"></p>
+                    </div>
+                    {% csrf_token %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
