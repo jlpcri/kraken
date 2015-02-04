@@ -7,6 +7,7 @@ from kraken.apps.core.models import Client
 class ClientForm(ModelForm):
     class Meta:
         model = Client
+        exclude = []
 
     def __init__(self, *args, **kwargs):
         super(ClientForm, self).__init__(*args, **kwargs)
