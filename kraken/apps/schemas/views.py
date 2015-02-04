@@ -1,9 +1,45 @@
 import json
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core.models import Client, ClientSchema
 from kraken.apps.schemas.models import SchemaVersion, VersionBatch, SchemaColumn
+
+
+@login_required
+@csrf_exempt
+def create_file(request):
+    if request.method == "POST":
+        file_name = request.POST.get('file_name')
+        print file_name
+    return HttpResponseNotFound()
+
+
+@login_required
+def create_schema(request, client_id):
+    if request.method == "GET":
+        print client_id
+        return render(request, "schemas/schemas.html", {})
+    return HttpResponseNotFound()
+
+
+@login_required
+@csrf_exempt
+def create_version(request):
+    if request.method == "POST":
+        version_name = request.POST.get('version')
+        print version_name
+    return HttpResponseNotFound()
+
+
+@login_required
+def save_schema(request):
+    if request.method == "POST":
+        pass
+    return HttpResponseNotFound()
+
 
 
 def schemas(request):
@@ -76,4 +112,4 @@ def batch_files(request):
 
         return HttpResponse(json.dumps(data), content_type='application/json')
 
-    return HttpResponseNotFound
+    return HttpResponseNotFound()
