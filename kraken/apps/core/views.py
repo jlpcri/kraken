@@ -8,6 +8,15 @@ from kraken.apps.core.models import Client, ClientSchema
 from kraken.apps.core import messages
 
 
+# @login_required
+def create_client(request):
+    print 'hello'
+    if request.method == "POST":
+        client_name = request.GET.get('client_name', '')
+        print client_name
+    return HttpResponseNotFound
+
+
 @login_required
 def home(request):
     return render(request, 'core/home.html')
