@@ -3,16 +3,17 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core.models import Client, ClientSchema
 from kraken.apps.core import messages
 
 
-# @login_required
+@login_required
+@csrf_exempt
 def create_client(request):
-    print 'hello'
     if request.method == "POST":
-        client_name = request.GET.get('client_name', '')
+        client_name = request.POST.get('client_name')
         print client_name
     return HttpResponseNotFound
 
