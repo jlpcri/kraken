@@ -11,33 +11,6 @@ from kraken.apps.core.forms import ClientForm
 
 
 @login_required
-@csrf_exempt
-def create_client(request):
-    if request.method == "POST":
-        form = ClientForm(request.POST)
-        try:
-            if form.is_valid():
-                client = form.save()
-                messages.success(request, 'Client \"{0}\" has been created.'.format(client.name))
-                return HttpResponse(json.dumps({'success': True}))
-            else:
-                context = {
-                    'success': False,
-                }
-                if form['name'].errors:
-                    context['error'] = form['name'].errors
-        except Exception as e:
-            context = {
-                'success': False,
-                'error': e.message
-            }
-
-        return HttpResponse(json.dumps(context))
-    else:
-        redirect('core:home')
-
-
-@login_required
 def home(request):
     clients = Client.objects.all()
     context = {
@@ -91,5 +64,33 @@ def clients_list(request):
     data['client_name'] = [client.name for client in clients]
 
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@login_required
+@csrf_exempt
+def create_client(request):
+    if request.method == "POST":
+        form = ClientForm(request.POST)
+        try:
+            if form.is_valid():
+                client = form.save()
+                messages.success(request, 'Client \"{0}\" has been created.'.format(client.name))
+                return HttpResponse(json.dumps({'success': True}))
+            else:
+                context = {
+                    'success': False,
+                }
+                if form['name'].errors:
+                    context['error'] = form['name'].errors
+        except Exception as e:
+            context = {
+                'success': False,
+                'error': e.message
+            }
+
+        return HttpResponse(json.dumps(context))
+    else:
+        redirect('core:home')
+
 
 
