@@ -19,6 +19,9 @@ class SchemaVersion(models.Model):
     current = models.BooleanField(default=True)
     delimiter = models.TextField(choices=DELIMITER_TYPE_CHOICES, default=FIXED)
 
+    class Meta:
+        unique_together = (("identifier", "client_schema"), )
+
 
 def version_batch_location(instance, filename):
     return "{0}_{1}".format(str(time.time()).replace('.', ''), filename)
