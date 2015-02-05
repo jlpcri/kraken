@@ -1,10 +1,12 @@
 import json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
+from kraken.apps.core import messages
 from kraken.apps.core.models import Client, ClientSchema
+from kraken.apps.core.forms import ClientSchemaForm
 from kraken.apps.schemas.models import SchemaVersion, VersionBatch, SchemaColumn
 
 
@@ -20,8 +22,23 @@ def create_file(request):
 @login_required
 def create_schema(request, client_id):
     if request.method == "GET":
+        client = get_object_or_404(Client, pk=client_id)
+        client_schemas = ClientSchema.objects.filter(client=client)
+        context = {
+            'client': client,
+            'state': 'create',
+            'schema_form': ClientSchemaForm(),
+            'client_schemas': client_schemas
+        }
+        return render(request, "schemas/schemas.html", context)
+    return HttpResponseNotFound()
+
+
+@login_required
+def edit_schema(request, client_id):
+    if request.method == "GET":
         print client_id
-        return render(request, "schemas/schemas.html", {})
+        return render(request, "schemas/schemas.html", {'state': 'edit'})
     return HttpResponseNotFound()
 
 
@@ -37,7 +54,22 @@ def create_version(request):
 @login_required
 def save_schema(request):
     if request.method == "POST":
-        pass
+        schema_form = ClientSchemaForm(request.POST)
+        try:
+            if schema_form.is_valid():
+                schema = schema_form.save()
+                messages.success(request, 'Schema \"{0}\" has been created.'.format(schema.name))
+                return redirect('core:home')
+            else:
+                if schema_form['name'].errors:
+                    errors_message = schema_form['name'].errors
+                else:
+                    errors_message = 'No Client Foreign key provided.'
+                messages.danger(request, errors_message)
+                return redirect('schemas:create_schema', 1)
+        except Exception as e:
+            messages.danger(request, e.message)
+            return redirect('core:home')
     return HttpResponseNotFound()
 
 
