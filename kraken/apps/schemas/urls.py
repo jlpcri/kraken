@@ -4,7 +4,7 @@ from kraken.apps.schemas import views
 
 urlpatterns = patterns('kraken.apps.schemas.views',
                        url(r'^schemas/$', 'schemas', name='schemas'),
-                       url(r'^schemas/versions/$', 'schema_versions', name='schema_versions'),
+                       url(r'^schemas/versions/$', 'schema_version_list', name='schema_version_list'),
                        url(r'^schemas/batch_files/$', 'batch_files', name='batch_files'),
 
                        url(r'^clients/(?P<client_id>\d+)/schemas/create/$', 'create_schema', name='create_schema'),
