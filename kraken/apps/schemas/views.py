@@ -57,12 +57,12 @@ def create_version(request):
 def save_schema(request, client_id):
     if request.method == "POST":
         schema_form = ClientSchemaForm(request.POST)
-        version_form = SchemaVersionForm(request.POST)
-        #print version_form
         try:
             if schema_form.is_valid():
                 schema = schema_form.save()
-                #messages.success(request, 'Schema \"{0}\" has been created.'.format(schema.name))
+                version_form = SchemaVersionForm(request.POST)
+                version_form.fields['client_schema'] = schema.id
+                print version_form
                 # Next step create version of schema
                 try:
                     if version_form.is_valid():
@@ -74,7 +74,7 @@ def save_schema(request, client_id):
                         if version_form['identifier'].errors:
                             errors_message = version_form['identifier'].errors
                         else:
-                            errors_message = 'Version Name field is not a valid value'
+                            errors_message = 'Version Nameeeee field is not a valid value'
                         messages.danger(request, errors_message)
                         return redirect('schemas:create_schema', client_id)
                 except Exception as e:
