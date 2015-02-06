@@ -7,7 +7,7 @@ from kraken.apps.schemas.models import SchemaVersion
 class SchemaVersionForm(ModelForm):
     class Meta:
         model = SchemaVersion
-        exclude = ['current']
+        exclude = ['client_schema', 'current']
 
     def __init__(self, *args, **kwargs):
         super(SchemaVersionForm, self).__init__(*args, **kwargs)
