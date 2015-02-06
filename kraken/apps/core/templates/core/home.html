@@ -7,38 +7,45 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1>Welcome to Kraken!</h1>
+                <h3>Client Navigator</h3>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-3">
-                <button id="button_create_client" type="button" class="btn btn-success content-header-button"
-                            data-toggle="modal" style="width: 100%;"
-                            data-target="#modal_create_client"><i class="fa fa-plus fa-fw"></i>&nbsp;Client
-                </button>
-            </div>
-            <div class="col-xs-3">
-                <a href="{% url 'schemas:create_schema' '1' %}" id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">
-                    <i class="fa fa-plus"></i>&nbsp;Schema
-                </a>
-            </div>
-            <div class="col-xs-3">
-                <button id="buttonCreateVersion" class="btn btn-success" style="width: 100%;">
-                    <i class="fa fa-plus"></i>&nbsp;Version
-                </button>
-            </div>
-            <div class="col-xs-3">
-                <button id="buttonCreateFile" class="btn btn-success" style="width: 100%;">
-                    <i class="fa fa-plus"></i>&nbsp;File
-                </button>
-            </div>
-        </div>
+        <br>
+{#        <div class="row">#}
+{#            <div class="col-xs-3">#}
+{#                <button id="button_create_client" type="button" class="btn btn-success content-header-button"#}
+{#                            data-toggle="modal" style="width: 100%;"#}
+{#                            data-target="#modal_create_client"><i class="fa fa-plus fa-fw"></i>&nbsp;Client#}
+{#                </button>#}
+{#            </div>#}
+{#            <div class="col-xs-3">#}
+{#                <a href="{% url 'schemas:create_schema' '1' %}" id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">#}
+{#                    <i class="fa fa-plus"></i>&nbsp;Schema#}
+{#                </a>#}
+{#            </div>#}
+{#            <div class="col-xs-3">#}
+{#                <button id="buttonCreateVersion" class="btn btn-success" style="width: 100%;">#}
+{#                    <i class="fa fa-plus"></i>&nbsp;Version#}
+{#                </button>#}
+{#            </div>#}
+{#            <div class="col-xs-3">#}
+{#                <button id="buttonCreateFile" class="btn btn-success" style="width: 100%;">#}
+{#                    <i class="fa fa-plus"></i>&nbsp;File#}
+{#                </button>#}
+{#            </div>#}
+{#        </div>#}
 
-        <div id="cliens_list">
-            <br><br>
-            {% for client in clients %}
-                {{ client.name }} <br>
-            {% endfor %}
+{#        <div id="cliens_list">#}
+{#            <br><br>#}
+{#            {% for client in clients %}#}
+{#                {{ client.name }} <br>#}
+{#            {% endfor %}#}
+{#        </div>#}
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="columns"></div>
+            </div>
         </div>
 
     </div>
@@ -54,41 +61,137 @@
         {% include 'core/core.js' %}
 
         $(function () {
-            $("#buttonCreateClient").click(function (eventObj) {
-                $.post("{% url 'core:create_client' %}", { client_name: "CVS" })
-                        .done(function (data) {
-                            alert(data);
-                        })
-                        .fail(function (data) {
-                            alert(data);
-                        });
-            });
-{#            $("#buttonCreateSchema").click(function (eventObj) {#}
-{#                $.post("{% url 'schemas:create_schema' %}", { client_id: "1" })#}
-{#                        .done(function (data) {#}
-{#                            alert(data);#}
-{#                        })#}
-{#                        .fail(function (data) {#}
-{#                            alert(data);#}
-{#                        });#}
-{#            });#}
-            $("#buttonCreateVersion").click(function (eventObj) {
-                $.post("{% url 'schemas:create_version' %}", { version: "1.0" })
-                        .done(function (data) {
-                            alert(data);
-                        })
-                        .fail(function (data) {
-                            alert(data);
-                        });
-            });
-            $("#buttonCreateFile").click(function (eventObj) {
-                $.post("{% url 'schemas:create_file' %}", { file_name: "File Name" })
-                        .done(function (data) {
-                            alert(data);
-                        })
-                        .fail(function (data) {
-                            alert(data);
-                        });
+            $("#columns").hColumns({
+                nodeSource: function(node_id, callback) {
+                    // callback is a function that receive two parameter
+                    // callback(error, array of nodes);
+
+                    // if inital load
+                    if(node_id === null) {
+                        return callback(null, [
+                            { id: 0, label: "New Client", type: "create_client" },
+                            {% for client in clients %}
+                                { id: {{ client.id }}, label: "{{ client.name }}", type: "folder" },
+                            {% endfor %}
+                        ]);
+                    }
+
+                    {% for client in clients %}
+                    if(node_id === {{ client.id }}) {
+                        console.log("{% url 'schemas:create_schema' client.id %}");
+                        return callback(null, [
+                            { id: 1, label: "New Schema", type: "create", url: "{% url 'schemas:create_schema' client.id %}" },
+                            {% for schema in client.schemas %}
+                                { id: {{ schema.id }}, label: "{{ schema.name }}", type: "folder" },
+                            {% endfor %}
+                        ]);
+                    }
+                    {% endfor %}
+
+{#                    if(node_id === 2) {#}
+{#                        return callback(null, [#}
+{#                            { id: 13, label: "New Schema", type: "create" },#}
+{#                            { id: 14, label: "Schema CCC", type: "folder" },#}
+{#                            { id: 15, label: "Schema DDD", type: "folder" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 11) {#}
+{#                        return callback(null, [#}
+{#                            { id: 21, label: "New Version", type: "create" },#}
+{#                            { id: 22, label: "1.0", type: "folder" },#}
+{#                            { id: 23, label: "2.0", type: "folder" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 12) {#}
+{#                        return callback(null, [#}
+{#                            { id: 24, label: "New Version", type: "create" },#}
+{#                            { id: 25, label: "1.0", type: "folder" },#}
+{#                            { id: 26, label: "2.0", type: "folder" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 14) {#}
+{#                        return callback(null, [#}
+{#                            { id: 27, label: "New Version", type: "create" },#}
+{#                            { id: 28, label: "1.0", type: "folder" },#}
+{#                            { id: 29, label: "2.0", type: "folder" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 15) {#}
+{#                        return callback(null, [#}
+{#                            { id: 30, label: "New Version", type: "create" },#}
+{#                            { id: 31, label: "1.0", type: "folder" },#}
+{#                            { id: 32, label: "2.0", type: "folder" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 22) {#}
+{#                        return callback(null, [#}
+{#                            { id: 50, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 51, label: "File AAA", type: "file" },#}
+{#                            { id: 52, label: "File BBB", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 23) {#}
+{#                        return callback(null, [#}
+{#                            { id: 53, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 54, label: "File CCC", type: "file" },#}
+{#                            { id: 55, label: "File DDD", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 25) {#}
+{#                        return callback(null, [#}
+{#                            { id: 56, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 57, label: "File EEE", type: "file" },#}
+{#                            { id: 58, label: "File FFF", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 26) {#}
+{#                        return callback(null, [#}
+{#                            { id: 59, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 60, label: "File GGG", type: "file" },#}
+{#                            { id: 61, label: "File HHH", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 28) {#}
+{#                        return callback(null, [#}
+{#                            { id: 62, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 63, label: "File III", type: "file" },#}
+{#                            { id: 64, label: "File JJJ", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 29) {#}
+{#                        return callback(null, [#}
+{#                            { id: 65, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 66, label: "File KKK", type: "file" },#}
+{#                            { id: 67, label: "File LLL", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 31) {#}
+{#                        return callback(null, [#}
+{#                            { id: 68, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 69, label: "File MMM", type: "file" },#}
+{#                            { id: 70, label: "File NNN", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+{##}
+{#                    if(node_id === 32) {#}
+{#                        return callback(null, [#}
+{#                            { id: 71, label: "Edit Schema", type: "edit" },#}
+{#                            { id: 72, label: "File OOO", type: "file" },#}
+{#                            { id: 73, label: "File PPP", type: "file" }#}
+{#                        ]);#}
+{#                    }#}
+                }
             });
         });
     </script>
