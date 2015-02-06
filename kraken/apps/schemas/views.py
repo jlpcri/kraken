@@ -61,12 +61,13 @@ def save_schema(request, client_id):
             if schema_form.is_valid():
                 schema = schema_form.save()
                 version_form = SchemaVersionForm(request.POST)
-                version_form.fields['client_schema'] = schema.id
-                print version_form
+                #print version_form
                 # Next step create version of schema
                 try:
                     if version_form.is_valid():
-                        version = version_form.save()
+                        version = version_form.save(commit=False)
+                        version.client_schema = schema
+                        version.save()
                         messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
                         return redirect('core:home')
                     else:
