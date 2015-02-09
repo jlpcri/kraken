@@ -63,6 +63,7 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
             'schema': schema,
             'version': version,
             'state': 'edit',
+            'file_form': VersionFileForm
         }
         return render(request, "schemas/file_editor.html", context)
     return HttpResponseNotFound()
@@ -88,9 +89,28 @@ def edit_version(request, client_id, schema_id, version_id):
     return HttpResponseNotFound()
 
 
+@login_required
 def save_file(request, client_id, schema_id, version_id):
     if request.method == "POST":
-        pass
+        file_form = VersionFileForm(request.POST)
+        try:
+            if file_form.is_valid():
+                file = file_form.save(commit=False)
+                file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
+                file.save()
+                messages.success(request, 'File \"{0}\" has been created'.format(file.name))
+                return redirect('core:home')
+            else:
+                if file_form['name'].errors:
+                    errors_message = file_form['name'].errors
+                else:
+                    errors_message = 'Something went wrong'
+                messages.danger(request, errors_message)
+                return redirect('schemas:create_file', client_id, schema_id, version_id)
+        except Exception as e:
+            messages.danger(request, e.message)
+            return redirect('core:home')
+
     return HttpResponseNotFound()
 
 @login_required

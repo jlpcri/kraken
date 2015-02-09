@@ -39,6 +39,9 @@ class SchemaVersion(models.Model):
     class Meta:
         unique_together = (("identifier", "client_schema"), )
 
+    def files(self):
+        return VersionFile.objects.filter(schema_version=self)
+
 
 class VersionFile(models.Model):
     name = models.CharField(max_length=200)
