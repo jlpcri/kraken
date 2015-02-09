@@ -40,6 +40,14 @@ class SchemaVersion(models.Model):
         unique_together = (("identifier", "client_schema"), )
 
 
+class VersionFile(models.Model):
+    name = models.CharField(max_length=200)
+    schema_version = models.ForeignKey(SchemaVersion)
+
+    class Meta:
+        unique_together = (("name", "schema_version"), )
+
+
 def version_batch_location(instance, filename):
     return "{0}_{1}".format(str(time.time()).replace('.', ''), filename)
 

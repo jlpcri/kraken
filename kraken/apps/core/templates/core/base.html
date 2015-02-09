@@ -61,12 +61,27 @@
         .navbar {
             background-image: linear-gradient(red,red 60%,red);
             background-repeat: no-repeat;
-            border-bottom: 1px solid firebrick;
+            border-bottom: 1px solid #f00000;
         }
 
         .navbar-default {
             background-color: red;
-            border-color: firebrick;
+            border-color: #f00000;
+        }
+
+        .navbar-default .navbar-nav>.open>a,
+        .navbar-default .navbar-nav>.open>a:hover,
+        .navbar-default .navbar-nav>.open>a:focus {
+            background-color: #d00000;
+        }
+
+        .navbar-default .navbar-nav>li>a:hover,
+        .navbar-default .navbar-nav>li>a:focus {
+            background-color: #d00000;
+        }
+
+        .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
+            background-color: #d00000;
         }
 
         .btn-primary {

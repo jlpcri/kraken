@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, TextInput
 
-from kraken.apps.core.models import Client, ClientSchema, SchemaVersion
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile
 
 
 class ClientForm(ModelForm):
@@ -57,3 +57,19 @@ class SchemaVersionForm(ModelForm):
             widget=forms.RadioSelect,
             choices=SchemaVersion.DELIMITER_TYPE_CHOICES
         )
+
+
+class VersionFileForm(ModelForm):
+    class Meta:
+        model = VersionFile
+
+    def __init__(self, *args, **kwargs):
+        super(VersionFileForm, self).__init__(*args, **kwargs)
+        self.fields['name'] = forms.CharField(error_messages={
+            'required': 'File Name field is required',
+            'invalid': 'File Name field is not a valid value'
+        })
+        self.fields['name'].widget = TextInput(attrs={
+            'placeholder': 'File Name',
+            'class': 'form-control'
+        })

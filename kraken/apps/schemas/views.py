@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
 from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn
-from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm
+from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
 @login_required
@@ -20,7 +20,8 @@ def create_file(request, client_id, schema_id, version_id):
             'client': client,
             'schema': schema,
             'version': version,
-            'state': 'create'
+            'state': 'create',
+            'file_form': VersionFileForm
         }
         return render(request, "schemas/file_editor.html", context)
     return HttpResponseNotFound()

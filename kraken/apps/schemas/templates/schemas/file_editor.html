@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-    <form action="{% url 'schemas:save_file' client.id %}" method="POST">
+    <form action="{% url 'schemas:save_file' client.id schema.id version.id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="client_id" value="{{ client.id }}">
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
@@ -21,46 +21,30 @@
                 </button>
             </div>
         </div>
-        <hr>
+        <br>
 
-{#        <div class="row">#}
-{#            <div class="col-xs-12">#}
-{#                <textarea class="form-control" rows="5" id="textAreaDisplay"#}
-{#                          style="font-family: 'courier new', monospace"></textarea>#}
-{#            </div>#}
-{#        </div>#}
-{#        <br>#}
+        <div class="row">
+            <div class="col-xs-12">
+                <textarea class="form-control" rows="5" id="textAreaDisplay"
+                          style="font-family: 'courier new', monospace"></textarea>
+            </div>
+        </div>
+        <br>
 
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
-                    <label class="control-label" for="inputFileName">Schema Name</label>
-                    {{ schema_form.name }}
-                    <input id="id_client" name="client" value="{{ client.id }}" hidden>
+                    <label class="control-label" for="inputFileName">File Name</label>
+                    {{ file_form.name }}
                 </div>
             </div>
             <div class="col-xs-4">
-                <div class="form-group">
-                    <label class="control-label col-xs-12">Delimiter</label>
-
-                    <table class="col-xs-12">
-                        <tr>
-                            {% for choice in version_form.delimiter %}
-                            <td class="col-xs-4" style="line-height: 38px;">
-
-                                {{ choice.tag }} &nbsp;<strong>{{ choice.choice_label }}</strong>
-                            </td>
-                            {% endfor %}
-
-                        </tr>
-                    </table>
-                </div>
+                <label class="control-label">Schema Name</label><br>
+                <div style="line-height: 38px;">{{ schema.name }}</div>
             </div>
             <div class="col-xs-2">
-                <div class="form-group">
-                    <label class="control-label" for="inputVersion">Version</label>
-                    {{ version_form.identifier }}
-                </div>
+                <label class="control-label">Version</label><br>
+                <div style="line-height: 38px;">{{ version.identifier }}</div>
             </div>
         </div>
         <div class="row">
