@@ -5,18 +5,24 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
-from kraken.apps.core.models import Client, ClientSchema
-from kraken.apps.core.forms import ClientSchemaForm
-from kraken.apps.schemas.forms import SchemaVersionForm
-from kraken.apps.schemas.models import SchemaVersion, VersionBatch, SchemaColumn
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn
+from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm
 
 
 @login_required
 @csrf_exempt
-def create_file(request):
-    if request.method == "POST":
-        file_name = request.POST.get('file_name')
-        print file_name
+def create_file(request, client_id, schema_id, version_id):
+    if request.method == "GET":
+        client = get_object_or_404(Client, pk=client_id)
+        schema = get_object_or_404(ClientSchema, pk=schema_id)
+        version = get_object_or_404(SchemaVersion, pk=version_id)
+        context = {
+            'client': client,
+            'schema': schema,
+            'version': version,
+            'state': 'create'
+        }
+        return render(request, "schemas/file_editor.html", context)
     return HttpResponseNotFound()
 
 
@@ -32,26 +38,59 @@ def create_schema(request, client_id):
             'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED}),
             'client_schemas': client_schemas
         }
-        return render(request, "schemas/schemas.html", context)
-    return HttpResponseNotFound()
-
-
-@login_required
-def edit_schema(request, client_id):
-    if request.method == "GET":
-        print client_id
-        return render(request, "schemas/schemas.html", {'state': 'edit'})
+        return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
 
 
 @login_required
 @csrf_exempt
-def create_version(request):
+def create_version(request, client_id, schema_id):
     if request.method == "POST":
         version_name = request.POST.get('version')
         print version_name
     return HttpResponseNotFound()
 
+
+@login_required
+def edit_file(request, client_id, schema_id, version_id, file_id):
+    if request.method == "GET":
+        client = get_object_or_404(Client, pk=client_id)
+        schema = get_object_or_404(ClientSchema, pk=schema_id)
+        version = get_object_or_404(SchemaVersion, pk=version_id)
+        context = {
+            'client': client,
+            'schema': schema,
+            'version': version,
+            'state': 'edit',
+        }
+        return render(request, "schemas/file_editor.html", context)
+    return HttpResponseNotFound()
+
+
+@login_required
+def edit_version(request, client_id, schema_id, version_id):
+    if request.method == "GET":
+        client = get_object_or_404(Client, pk=client_id)
+        schema = get_object_or_404(ClientSchema, pk=schema_id)
+        version = get_object_or_404(SchemaVersion, pk=version_id)
+        client_schemas = ClientSchema.objects.filter(client=client)
+        context = {
+            'client': client,
+            'schema': schema,
+            'version': version,
+            'state': 'edit',
+            'schema_form': ClientSchemaForm(),
+            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED}),
+            'client_schemas': client_schemas
+        }
+        return render(request, "schemas/schema_editor.html", context)
+    return HttpResponseNotFound()
+
+
+def save_file(request, client_id, schema_id, version_id):
+    if request.method == "POST":
+        pass
+    return HttpResponseNotFound()
 
 @login_required
 def save_schema(request, client_id):
@@ -75,7 +114,7 @@ def save_schema(request, client_id):
                         if version_form['identifier'].errors:
                             errors_message = version_form['identifier'].errors
                         else:
-                            errors_message = 'Version Nameeeee field is not a valid value'
+                            errors_message = 'Version Name field is not a valid value'
                         messages.danger(request, errors_message)
                         return redirect('schemas:create_schema', client_id)
                 except Exception as e:
@@ -94,10 +133,6 @@ def save_schema(request, client_id):
     return HttpResponseNotFound()
 
 
-def schemas(request):
-    return render(request, 'schemas/schemas.html')
-
-
 def client_schemas_list(request, client_id):
     """
     :param request:
@@ -113,8 +148,6 @@ def client_schemas_list(request, client_id):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def schema_version_new(request):
-    pass
 
 
 def schema_version_list(request, schema_id):
@@ -125,10 +158,6 @@ def schema_version_list(request, schema_id):
     data['schema_versions'] = [version.identifier for version in schema_versions]
 
     return HttpResponse(json.dumps(data), content_type='application/json')
-
-
-def schema_version_edit(request, schema_id):
-    pass
 
 
 
