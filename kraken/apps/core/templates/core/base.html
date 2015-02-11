@@ -26,6 +26,7 @@
         h1, h2, h3, h4, h5, h6 {
             margin: 0px;
             color: #333333;
+            line-height: 38px;
         }
 
         html, body {
@@ -59,7 +60,8 @@
         }
 
         .navbar {
-            background-image: linear-gradient(#EF0000, #cc0000 60%, #C50000);
+            background-color: #cc0000;
+            background-image: linear-gradient(#EF0000,#cc0000 60%,#C50000);
             background-repeat: no-repeat;
             border-bottom: 1px solid #bb0000;
         }
@@ -85,15 +87,14 @@
         }
 
         .btn-primary {
-            background-color: #666666;
-            background-image: linear-gradient(#666666,#666666 60%,#666666);
+            background-image: linear-gradient(#bcbcbc,#999999 60%,#888888);
             background-repeat: no-repeat;
-            border-bottom: 1px solid #333333;
-            border-color: #666666;
+            border-color: #999999;
+            border-bottom: 1px solid #777777;
         }
 
         .btn-primary:hover {
-            border-color: black;
+            border-color: #666666;
         }
 
         .popover {
@@ -198,6 +199,7 @@
 <script src="{% static 'common/bootstrap/3.0.3/dist/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'kraken/jqueryui/js/jquery-ui-1.10.4.js' %}"></script>
 <script src="{% static 'common/placeholders/3.0.0/placeholders.min.js' %}"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
 <script src="{% static 'common/jquery-hcolumns/js/jquery.hcolumns.custom.js' %}"></script>
 
 <script type="text/javascript">

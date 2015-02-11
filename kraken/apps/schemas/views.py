@@ -31,13 +31,11 @@ def create_file(request, client_id, schema_id, version_id):
 def create_schema(request, client_id):
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
-        client_schemas = ClientSchema.objects.filter(client=client)
         context = {
             'client': client,
             'state': 'create',
             'schema_form': ClientSchemaForm(),
-            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED}),
-            'client_schemas': client_schemas
+            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED})
         }
         return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
@@ -117,40 +115,62 @@ def save_file(request, client_id, schema_id, version_id):
 def save_schema(request, client_id):
     if request.method == "POST":
         schema_form = ClientSchemaForm(request.POST)
-        try:
-            if schema_form.is_valid():
-                schema = schema_form.save()
-                version_form = SchemaVersionForm(request.POST)
-                #print version_form
-                # Next step create version of schema
-                try:
-                    if version_form.is_valid():
-                        version = version_form.save(commit=False)
-                        version.client_schema = schema
-                        version.save()
-                        messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
-                        return redirect('core:home')
-                    else:
-                        schema.delete()
+        version_form = SchemaVersionForm(request.POST)
+        client = get_object_or_404(Client, pk=client_id)
+        for r in request.POST:
+            print r
+
+        state = request.POST.get('state')
+        if state == "create":
+            try:
+                if schema_form.is_valid() and version_form.is_valid():
+                    schema = schema_form.save()
+                    version = version_form.save(commit=False)
+                    version.client_schema = schema
+                    version.save()
+                    messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
+                    return redirect('core:home')
+                else:
+                    errors_message = "Something went wrong"
+                    if not schema_form.is_valid():
+                        if schema_form['name'].errors:
+                            errors_message = schema_form['name'].errors
+                        else:
+                            errors_message = 'Schema Name field is not a valid value'
+                    elif not version_form.is_valid():
                         if version_form['identifier'].errors:
                             errors_message = version_form['identifier'].errors
                         else:
                             errors_message = 'Version Name field is not a valid value'
-                        messages.danger(request, errors_message)
-                        return redirect('schemas:create_schema', client_id)
-                except Exception as e:
-                    messages.danger(request, e.message)
-                    return redirect('core:home')
-            else:
-                if schema_form['name'].errors:
-                    errors_message = schema_form['name'].errors
-                else:
-                    errors_message = 'Client Name field is not a valid value'
-                messages.danger(request, errors_message)
-                return redirect('schemas:create_schema', client_id)
-        except Exception as e:
-            messages.danger(request, e.message)
-            return redirect('core:home')
+                    messages.danger(request, errors_message)
+                    context = {
+                        'client': client,
+                        'state': 'create',
+                        'schema_form': schema_form,
+                        'version_form': version_form
+                    }
+                    return render(request, "schemas/schema_editor.html", context)
+            except Exception as e:
+                messages.danger(request, e.message)
+                context = {
+                    'client': client,
+                    'state': 'create',
+                    'schema_form': schema_form,
+                    'version_form': version_form
+                }
+                return render(request, "schemas/schema_editor.html", context)
+        elif state == "edit":
+            try:
+                pass
+            except Exception as e:
+                messages.danger(request, e.message)
+                context = {
+                    'client': client,
+                    'state': 'edit',
+                    'schema_form': schema_form,
+                    'version_form': version_form
+                }
+                return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
 
 
