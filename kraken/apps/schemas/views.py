@@ -117,8 +117,8 @@ def save_schema(request, client_id):
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
         client = get_object_or_404(Client, pk=client_id)
-        for r in request.POST:
-            print r
+        # for r in request.POST:
+        #     print r
 
         state = request.POST.get('state')
         if state == "create":
