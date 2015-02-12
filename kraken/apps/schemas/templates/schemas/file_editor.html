@@ -1,7 +1,19 @@
 {% extends 'core/base.html' %}
 {% block title %}File Editor{% endblock %}
 {% block headscript %}
+    <style>
+        .table-responsive {
+            min-height: .01%;
+            overflow-x: auto;
+        }
 
+        #tableData {
+            max-width: 100%;
+        }
+        #tableData td {
+            min-width: 180px;
+        }
+    </style>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -67,7 +79,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-md-6">
                 <table id="" class="table">
                     <thead>
                         <tr>
@@ -201,14 +213,17 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-xs-6" style="overflow: auto;">
-{#                <div class="span12" style="overflow: auto;">#}
+            <div class="col-md-6">
+                <div class="table-responsive">
                 <table id="tableData" class="table">
                     <thead>
                         <tr>
                             <th>Record 1</th>
                             <th>Record 2</th>
                             <th>Record 3</th>
+                            <th>Record 4</th>
+                            <th>Record 5</th>
+                            <th>Record 6</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -216,8 +231,6 @@
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
-                        </tr>
-                        <tr>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
@@ -226,70 +239,39 @@
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
-                        </tr>
-                        <tr>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                         </tr>
                         <tr>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                         </tr>
                     </tbody>
                 </table>
-{#                    </div>#}
+                </div>
             </div>
         </div>
-{#        <div class="row">#}
-{#            <div class="col-xs-12">#}
-{#                <table class="table">#}
-{#                    <thead>#}
-{#                    <tr>#}
-{#                        <th class="col-xs-5">#}
-{#                            Field Name#}
-{#                        </th>#}
-{#                        <th class="col-xs-2">#}
-{#                            Length#}
-{#                        </th>#}
-{#                        <th class="col-xs-2">#}
-{#                            Type#}
-{#                        </th>#}
-{#                        <th class="col-xs-2 text-center">#}
-{#                            Constraints#}
-{#                        </th>#}
-{#                        <th class="col-xs-1">#}
-{#                            <button class="btn btn-success btn-xs" style="width: 100%;"><i class="fa fa-plus"></i>&nbsp;Field#}
-{#                            </button>#}
-{#                        </th>#}
-{#                    </tr>#}
-{#                    </thead>#}
-{#                    <tbody>#}
-{#                    <tr>#}
-{#                        <td>#}
-{#                            <input type="text" class="form-control" id="inputFieldName" placeholder="Field Name">#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            <input type="text" class="form-control" id="inputFieldLength" placeholder="10">#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            <select class="form-control" id="selectFieldType">#}
-{#                                <option>Number</option>#}
-{#                                <option>String</option>#}
-{#                            </select>#}
-{#                        </td>#}
-{#                        <td class="text-center" style="line-height: 38px;">#}
-{#                            <a href="#"><i class="fa fa-edit fa-lg"></i></a>#}
-{#                        </td>#}
-{#                        <td class="text-center" style="line-height: 38px;">#}
-{#                            <a href="#"><i class="fa fa-trash-o fa-lg"></i></a>#}
-{#                        </td>#}
-{#                    </tr>#}
-{#                    </tbody>#}
-{#                </table>#}
-{#            </div>#}
-{#        </div>#}
     </form>
 
     </div>
