@@ -9,6 +9,7 @@ urlpatterns = patterns('kraken.apps.schemas.views',
                        url(r'^clients/(?P<client_id>\d+)/schemas/(?P<schema_id>\d+)/versions/(?P<version_id>\d+)/edit/$', 'edit_version', name='edit_version'),
                        url(r'^clients/(?P<client_id>\d+)/schemas/(?P<schema_id>\d+)/versions/(?P<version_id>\d+)/files/create/$', 'create_file', name='create_file'),
                        url(r'^clients/(?P<client_id>\d+)/schemas/(?P<schema_id>\d+)/versions/(?P<version_id>\d+)/files/save/$', 'save_file', name='save_file'),
+                       url(r'^clients/(?P<client_id>\d+)/schemas/(?P<schema_id>\d+)/versions/(?P<version_id>\d+)/files/(?P<file_id>\d+)/download/$', 'download_file', name='download_file'),
                        url(r'^clients/(?P<client_id>\d+)/schemas/(?P<schema_id>\d+)/versions/(?P<version_id>\d+)/files/(?P<file_id>\d+)/edit/$', 'edit_file', name='edit_file'),
 
                        url(r'^client/(?P<client_id>\d+)/schemas/$', views.client_schemas_list, name='client_schemas_list'),
