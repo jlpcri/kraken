@@ -29,9 +29,9 @@ $('#buttonGenerate').click(function(){
 
         var contents_body = '';
 
-        for (i = 1; i < field_number + 1; i++){
+        for (i = 0; i < field_number; i++){
             var contents_body_row = '<tr>';
-            for (var j = 1; j < Number(record_number) + 1; j++){
+            for (var j = 0; j < Number(record_number); j++){
                 contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
             }
             contents_body_row += '</tr>';
@@ -53,11 +53,34 @@ $('#buttonGenerate').click(function(){
 
 
 $('#validation_schema_to_input').click(function(){
-    if (!$('#textareaViewer').val()) {
+    var field_number = 5;
+
+    var input = $('#textareaViewer').val();
+    if (! input) {
         alert('No input from Input');
-    }
-    else {
-        alert($('#textareaViewer').val());
+    } else if (! $('#record11').length > 0){
+        alert('You need generate record first.');
+    } else {
+        var delimiter = '{{version.delimiter}}';
+        var rows = input.split('\n');
+
+        if (delimiter == 'Pipe') {
+            for (var i = 0; i < rows.length; i++) {
+                var columns = rows[i].split('|');
+                for (var j = 0; j < field_number; j++) {
+                    $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                }
+            }
+        } else if (delimiter == 'Fixed') {
+            $('#record11').val(input) ;
+        } else if (delimiter == 'Comma') {
+            for (var i = 0; i < rows.length; i++) {
+                var columns = rows[i].split(',');
+                for (var j = 0; j < field_number; j++) {
+                    $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                }
+            }
+        }
     }
 });
 
