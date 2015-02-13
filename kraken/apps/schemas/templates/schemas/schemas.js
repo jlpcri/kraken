@@ -50,3 +50,26 @@ $('#buttonGenerate').click(function(){
         $('#add_records').html(add_records_contents);
     }
 });
+
+
+$('#validation_schema_to_input').click(function(){
+    if (!$('#textareaViewer').val()) {
+        alert('No input from Input');
+    }
+    else {
+        alert($('#textareaViewer').val());
+    }
+});
+
+
+$('#validation_input_to_schema').click(function(){
+    if ($('#record11').length > 0){
+        if (!$('#record11').val()){
+            alert('No input from Schema');
+        } else {
+            alert($('#record11').val());
+        }
+    } else {
+        alert('You need generate record first.');
+    }
+});

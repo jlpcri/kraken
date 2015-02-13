@@ -37,7 +37,7 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <textarea class="form-control" rows="5" id="textareaViewer"
+                <textarea class="form-control" rows="5" id="textareaViewer" name="textareaViewer"
                           style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;"></textarea>
             </div>
         </div>
@@ -56,12 +56,12 @@
             </div>
             <div class="col-xs-2">
                 <label class="control-label">Version</label><br>
-                <div style="line-height: 38px;">{{ version.identifier }}</div>
+                <div style="line-height: 38px;">{{ version.identifier }} - {{ version.delimiter }}</div>
             </div>
             <div class="col-xs-2">
                 <label class="control-label">Validation</label><br>
-                <button type="submit" name="validation_input_to_schema" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%;" title="Check Input based on Schema">Input</button>
-                <button type="submit" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%" title="Check Schema based on Input">Schema</button>
+                <button type="button" name="validation_schema_to_input" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%;" title="Check Input based on Schema">Input</button>
+                <button type="button" name="validation_input_to_schema" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%" title="Check Schema based on Input">Schema</button>
             </div>
         </div>
 
