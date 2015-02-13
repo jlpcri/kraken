@@ -32,7 +32,7 @@ class SchemaVersion(models.Model):
     )
 
     identifier = models.CharField(max_length=50)
-    client_schema = models.ForeignKey(ClientSchema)
+    client_schema = models.ForeignKey(ClientSchema, related_name='schema')
     current = models.BooleanField(default=True)
     delimiter = models.TextField(choices=DELIMITER_TYPE_CHOICES, default=FIXED)
 
