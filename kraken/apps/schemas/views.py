@@ -123,6 +123,10 @@ def save_file(request, client_id, schema_id, version_id):
 
 @login_required
 def save_schema(request, client_id):
+    """
+    Handles POST requests for saving schemas either created or edited
+    returns success or error message
+    """
     if request.method == "POST":
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
@@ -130,7 +134,7 @@ def save_schema(request, client_id):
         for r in request.POST:
             print r + " = " + request.POST.get(r)
         row_order = request.POST.get('row_order', None)
-        if row_order:
+        if type(row_order) is str:
             row_order = row_order.strip().split(' ')
         print row_order
         inputFieldNames = {k:v for k,v in request.POST.iteritems() if k.startswith('inputFieldName')}
@@ -139,6 +143,7 @@ def save_schema(request, client_id):
         print inputFieldNames
         print inputFieldLengths
         print selectFieldTypes
+        print inputFieldNames.keys()
 
         state = request.POST.get('state')
         if state == "create":
