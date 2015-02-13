@@ -9,8 +9,7 @@
             {% csrf_token %}
             <input type="hidden" name="client_id" value="{{ client.id }}">
             <input type="hidden" name="state" value="{{ state }}">
-            <input type="hidden" name="row_order" value="0">
-            <input type="hidden" name="row_count" value="0">
+            <input type="hidden" name="row_order" value="">
 
             <div class="row">
                 <div class="col-xs-10">
@@ -123,9 +122,11 @@
         }
 
         $("button[name='save_schema']").on('click', function () {
-{#            event.preventDefault();#}
-{#            var rowCount = $('#tableFields tbody tr').length;#}
-{#            alert(rowCount);#}
+            var s = "";
+            $("#tableFields tbody tr").each(function() {
+                s = s + this.id + " ";
+            });
+            $('input[name="row_order"]').val(s);
             unsavedChanges = false;
         });
 

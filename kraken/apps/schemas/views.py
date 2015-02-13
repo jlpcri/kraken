@@ -127,8 +127,18 @@ def save_schema(request, client_id):
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
         client = get_object_or_404(Client, pk=client_id)
-        # for r in request.POST:
-        #     print r
+        for r in request.POST:
+            print r + " = " + request.POST.get(r)
+        row_order = request.POST.get('row_order', None)
+        if row_order:
+            row_order = row_order.strip().split(' ')
+        print row_order
+        inputFieldNames = {k:v for k,v in request.POST.iteritems() if k.startswith('inputFieldName')}
+        inputFieldLengths = {k:v for k,v in request.POST.iteritems() if k.startswith('inputFieldLength')}
+        selectFieldTypes = {k:v for k,v in request.POST.iteritems() if k.startswith('selectFieldType')}
+        print inputFieldNames
+        print inputFieldLengths
+        print selectFieldTypes
 
         state = request.POST.get('state')
         if state == "create":
