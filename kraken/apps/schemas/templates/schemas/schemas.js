@@ -64,15 +64,15 @@ $('#validation_schema_to_input').click(function(){
         var delimiter = '{{version.delimiter}}';
         var rows = input.split('\n');
 
-        if (delimiter == 'Pipe') {
+        if (delimiter == 'Fixed') {
+            $('#record00').val(input) ;
+        } else if (delimiter == 'Pipe') {
             for (var i = 0; i < rows.length; i++) {
                 var columns = rows[i].split('|');
                 for (var j = 0; j < field_number; j++) {
                     $('#record{0}{1}'.format(j, i)).val(columns[j]);
                 }
             }
-        } else if (delimiter == 'Fixed') {
-            $('#record11').val(input) ;
         } else if (delimiter == 'Comma') {
             for (var i = 0; i < rows.length; i++) {
                 var columns = rows[i].split(',');
@@ -86,11 +86,57 @@ $('#validation_schema_to_input').click(function(){
 
 
 $('#validation_input_to_schema').click(function(){
-    if ($('#record11').length > 0){
-        if (!$('#record11').val()){
+    if ($('#record00').length > 0){
+        if (!$('#record00').val()){
             alert('No input from Schema');
         } else {
-            alert($('#record11').val());
+            var field_number = 5;
+            var delimiter = '{{version.delimiter}}';
+
+            // calculate record number
+            var found = true, record_number = 0;
+            while (found) {
+                if (! $('#record0{0}'.format(record_number)).val()) {
+                    found = false;
+                } else {
+                    record_number++;
+                }
+            }
+
+            if (delimiter == 'Fixed'){
+                alert('Fixxxed!');
+            } else if (delimiter == 'Pipe') {
+                var schema_string = '';
+
+                for (var i = 0; i < record_number; i++) {
+                    for (var j = 0; j < field_number; j++) {
+                        schema_string += $('#record{0}{1}'.format(j, i)).val();
+                        if (j < field_number - 1) {
+                            schema_string += '|'
+                        }
+                    }
+
+                    schema_string += '\n';
+                }
+
+                $('#textareaViewer').val(schema_string);
+
+            } else if (delimiter == 'Comma'){
+                var schema_string = '';
+
+                for (var i = 0; i < record_number; i++) {
+                    for (var j = 0; j < field_number; j++) {
+                        schema_string += $('#record{0}{1}'.format(j, i)).val();
+                        if (j < field_number - 1) {
+                            schema_string += ',';
+                        }
+                    }
+
+                    schema_string += '\n';
+                }
+
+                $('#textareaViewer').val(schema_string);
+            }
         }
     } else {
         alert('You need generate record first.');
