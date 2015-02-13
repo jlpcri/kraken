@@ -119,12 +119,6 @@ def save_file(request, client_id, schema_id, version_id):
             except Exception as e:
                 messages.danger(request, e.message)
                 return redirect('core:home')
-        elif 'validation_input_to_schema' in request.POST:
-            messages.success(request, 'Validation check Input based on Schema')
-        elif 'validation_schema_to_input' in request.POST:
-            messages.success(request, 'Validation check Schema based on Input')
-
-        return redirect('schemas:create_file', client_id, schema_id, version_id)
 
     return HttpResponseNotFound()
 
