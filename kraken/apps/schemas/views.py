@@ -131,19 +131,15 @@ def save_schema(request, client_id):
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
         client = get_object_or_404(Client, pk=client_id)
-        for r in request.POST:
-            print r + " = " + request.POST.get(r)
-        row_order = request.POST.get('row_order', None)
-        if type(row_order) is str:
+        row_order = request.POST.get('row_order', '').strip()
+        fields = []
+        if row_order:
             row_order = row_order.strip().split(' ')
-        print row_order
-        inputFieldNames = {k:v for k,v in request.POST.iteritems() if k.startswith('inputFieldName')}
-        inputFieldLengths = {k:v for k,v in request.POST.iteritems() if k.startswith('inputFieldLength')}
-        selectFieldTypes = {k:v for k,v in request.POST.iteritems() if k.startswith('selectFieldType')}
-        print inputFieldNames
-        print inputFieldLengths
-        print selectFieldTypes
-        print inputFieldNames.keys()
+            for r in row_order:
+                fields.append({'field_name': request.POST.get('inputFieldName_' + r),
+                               'field_length': request.POST.get('inputFieldLength_' + r),
+                               'field_type': request.POST.get('selectFieldType_' + r)
+                               })
 
         state = request.POST.get('state')
         if state == "create":
@@ -172,7 +168,8 @@ def save_schema(request, client_id):
                         'client': client,
                         'state': 'create',
                         'schema_form': schema_form,
-                        'version_form': version_form
+                        'version_form': version_form,
+                        'fields': fields
                     }
                     return render(request, "schemas/schema_editor.html", context)
             except Exception as e:
@@ -181,7 +178,8 @@ def save_schema(request, client_id):
                     'client': client,
                     'state': 'create',
                     'schema_form': schema_form,
-                    'version_form': version_form
+                    'version_form': version_form,
+                    'fields': fields
                 }
                 return render(request, "schemas/schema_editor.html", context)
         elif state == "edit":
