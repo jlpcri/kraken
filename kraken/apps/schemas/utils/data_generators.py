@@ -21,8 +21,9 @@ def number(constraint_length, constraint_type, count, **kwargs):
     Throws KeyError if min/max and digit_min/digit_max are combined
     Throws ValueError if kwargs and constraint length are mutually exclusive
     """
-    if ('min' or 'max') and ('digit_min' or 'digit_max') in kwargs.keys():
-        raise KeyError("min/max may not be combined with digit_min/digit_max")
+    if any([k in kwargs.keys() for k in ['min', 'max']]):
+        if any([k in kwargs.keys() for k in ['digit_min', 'digit_max']]):
+            raise KeyError("min/max may not be combined with digit_min/digit_max")
     if 'min' in kwargs.keys():
         if len(str(kwargs['min'])) > constraint_length:
             raise ValueError('min {0} is out of range for constraint_length {1}'.format())
@@ -30,14 +31,14 @@ def number(constraint_length, constraint_type, count, **kwargs):
         if kwargs['digit_min'] > constraint_length:
             raise ValueError('digit_min {0} is larger than constraint_length {1}')
 
-    int_max = (10 ** (constraint_length + 1)) - 1
+    int_max = (10 ** (constraint_length)) - 1
     if 'digit_max' in kwargs.keys() and kwargs['digit_max'] < constraint_length:
-        int_max = (10 ** (kwargs['digit_max'] + 1)) - 1
+        int_max = (10 ** (kwargs['digit_max'])) - 1
     elif 'max' in kwargs.keys():
         int_max = min(kwargs['max'], int_max)
 
     int_min = 0
-    if 'digit_min' in kwargs.keys() and digit_min >= 2:
+    if 'digit_min' in kwargs.keys() and kwargs['digit_min'] >= 2:
         int_min = 10 ** (kwargs['digit_min'] - 1)
     elif 'min' in kwargs.keys():
         int_min = kwargs['min']
