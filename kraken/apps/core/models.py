@@ -65,15 +65,17 @@ class VersionBatch(models.Model):
     def batch_file_path(self):
         return ''
 
-
-class SchemaColumn(models.Model):
-    # field type options
+class BatchField(models.Model):
+    NUMBER = 'Number'
+    RANDOM_TEXT = 'Random text'
     USER_DEFINED_LIST = 'User defined list'
     FIRST_NAME = 'First name'
     LAST_NAME = 'Last name'
     ADDRESS = 'Address'
     ZIP_CODE = 'Zip code'
-    FIELD_TYPE_CHOICES = (
+    GENERATOR_CHOICES = (
+        (RANDOM_TEXT, 'Random text'),
+        (NUMBER, 'Number'),
         (USER_DEFINED_LIST, 'User defined list'),
         (FIRST_NAME, 'First name'),
         (LAST_NAME, 'Last name'),
@@ -81,11 +83,25 @@ class SchemaColumn(models.Model):
         (ZIP_CODE, 'Zip code')
     )
 
+    parent = models.ForeignKey('VersionBatch')
+    column = models.ForeignKey('SchemaColumn')
+    generator = models.TextField(choices=GENERATOR_CHOICES, default=RANDOM_TEXT)
+    payload = models.TextField()  # JSON objects defining options for chosen generator
+
+
+
+class SchemaColumn(models.Model):
+    # field type options
+    TEXT = 'Text'
+    NUMBER = 'Number'
+    FIELD_TYPE_CHOICES = (
+        (TEXT, 'Text'),
+        (NUMBER, 'Number')
+    )
+
     position = models.IntegerField()
     schema_version = models.ForeignKey(SchemaVersion)
     name = models.CharField(max_length=200)
-    field_type = models.TextField(choices=FIELD_TYPE_CHOICES, default=USER_DEFINED_LIST)
+    field_type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
-    payload = models.TextField()
-
