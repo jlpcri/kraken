@@ -44,7 +44,7 @@
         <br>
 
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-5">
                 <div class="form-group">
                     <label class="control-label" for="inputFileName">File Name</label>
                     {{ file_form.name }}
@@ -54,14 +54,18 @@
                 <label class="control-label">Schema Name</label><br>
                 <div style="line-height: 38px;">{{ schema.name }}</div>
             </div>
-            <div class="col-xs-2">
+            <div class="col-xs-1">
                 <label class="control-label">Version</label><br>
-                <div style="line-height: 38px;">{{ version.identifier }} - {{ version.delimiter }}</div>
+                <div style="line-height: 38px;">{{ version.identifier }}</div>
             </div>
             <div class="col-xs-2">
-                <label class="control-label">Validation</label><br>
-                <button type="button" name="validation_schema_to_input" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%;" title="Check Input based on Schema">Input</button>
-                <button type="button" name="validation_input_to_schema" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%" title="Check Schema based on Input">Schema</button>
+                <label class="control-label">Delimiter</label><br>
+                <div style="line-height: 38px;">{{ version.delimiter }}</div>
+            </div>
+            <div class="col-xs-2">
+                <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;Validation</label><br>
+                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%;" title="Generate Schema based on Input">Input</button>
+                <button type="button" name="validation_input_to_schema" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%" title="Benerate Input based on Schema">Schema</button>
             </div>
         </div>
 

@@ -52,7 +52,7 @@ $('#buttonGenerate').click(function(){
 });
 
 
-$('#validation_schema_to_input').click(function(){
+$('#validation_input_to_schema').click(function(){
     var field_number = 5;
 
     var input = $('#textareaViewer').val();
@@ -67,17 +67,40 @@ $('#validation_schema_to_input').click(function(){
         if (delimiter == 'Fixed') {
             $('#record00').val(input) ;
         } else if (delimiter == 'Pipe') {
+            var error_found = false;
             for (var i = 0; i < rows.length; i++) {
                 var columns = rows[i].split('|');
-                for (var j = 0; j < field_number; j++) {
-                    $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                if (columns.length > field_number) {
+                    error_found = true;
+                    alert('Row ' + Number(i+1) + ' exceed field number.');
                 }
             }
+
+            if (! error_found) {
+                for (var i = 0; i < rows.length; i++) {
+                    var columns = rows[i].split('|');
+                    for (var j = 0; j < field_number; j++) {
+                        $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                    }
+                }
+            }
+
         } else if (delimiter == 'Comma') {
+            var error_found = false;
             for (var i = 0; i < rows.length; i++) {
                 var columns = rows[i].split(',');
-                for (var j = 0; j < field_number; j++) {
-                    $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                if (columns.length > field_number) {
+                    error_found = true;
+                    alert('Row ' + Number(i+1) + ' exceed field number.');
+                }
+            }
+
+            if (! error_found) {
+                for (var i = 0; i < rows.length; i++) {
+                    var columns = rows[i].split(',');
+                    for (var j = 0; j < field_number; j++) {
+                        $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                    }
                 }
             }
         }
@@ -85,7 +108,7 @@ $('#validation_schema_to_input').click(function(){
 });
 
 
-$('#validation_input_to_schema').click(function(){
+$('#validation_schema_to_input').click(function(){
     if ($('#record00').length > 0){
         if (!$('#record00').val()){
             alert('No input from Schema');
