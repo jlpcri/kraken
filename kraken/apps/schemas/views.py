@@ -137,9 +137,10 @@ def save_schema(request, client_id):
         if row_order:
             row_order = row_order.strip().split(' ')
             for r in row_order:
-                fields.append({'field_name': request.POST.get('inputFieldName_' + r),
-                               'field_length': request.POST.get('inputFieldLength_' + r),
-                               'field_type': request.POST.get('selectFieldType_' + r)
+                fields.append({'name': request.POST.get('inputFieldName_' + r),
+                               'length': request.POST.get('inputFieldLength_' + r),
+                               'type': request.POST.get('selectFieldType_' + r),
+                               'unique': request.POST.get('checkFieldUnique_' + r)
                                })
 
         state = request.POST.get('state')
@@ -149,6 +150,7 @@ def save_schema(request, client_id):
                     schema = schema_form.save()
                     version = version_form.save(commit=False)
                     version.client_schema = schema
+                    fields = version.saveFields(fields)
                     version.save()
                     messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
                     return redirect('core:home')

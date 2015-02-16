@@ -42,6 +42,18 @@ class SchemaVersion(models.Model):
     def files(self):
         return VersionFile.objects.filter(schema_version=self)
 
+    def saveFields(self, fields=[]):
+        print fields
+        for i, f in enumerate(fields):
+            print i
+            print f
+            column = SchemaColumn(schema_version=self)
+            column.position = i
+            column.name = f.name
+            column.length = f.length
+            column.field_type = SchemaColumn.NUMBER
+            column.unique = False
+
 
 class VersionFile(models.Model):
     name = models.CharField(max_length=200)

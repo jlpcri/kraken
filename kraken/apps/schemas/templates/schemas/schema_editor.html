@@ -77,7 +77,10 @@
                             <th class="col-xs-2">
                                 Type
                             </th>
-                            <th class="col-xs-2">
+                            <th class="col-xs-1 text-center">
+                                Unique
+                            </th>
+                            <th class="col-xs-1">
 
                             </th>
                             <th class="col-xs-1">
@@ -133,12 +136,13 @@
         function populateFields() {
             {% for f in fields %}
                 counter++;
-                $('<tr id="' + counter + '">' +
+                $('table#tableFields').append($(
+                    '<tr id="' + counter + '">' +
                     '<td>' +
-                    '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name" value="{{ f.field_name }}">' +
+                    '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name" value="{{ f.name }}">' +
                     '</td>' +
                     '<td>' +
-                    '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="10" value="{{ f.field_length }}">' +
+                    '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="10" value="{{ f.length }}">' +
                     '</td>' +
                     '<td>' +
                     '<select onchange="formChangeHandler();" class="form-control" name="selectFieldType_' + counter + '">' +
@@ -147,12 +151,16 @@
                     '</select>' +
                     '</td>' +
                     '<td class="text-center" style="line-height: 38px;">' +
+                    '<input type="checkbox" name="checkFieldUnique_' + counter + '">' +
+                    '</td>' +
+                    '<td class="text-center" style="line-height: 38px;">' +
                     '<i class="fa fa-arrows fa-lg" style="cursor: move;"></i>' +
                     '</td>' +
                     '<td class="text-center" style="line-height: 38px;">' +
                     '<a href="#" onclick="deleteRow(this);"><i class="fa fa-trash-o fa-lg"></i></a>' +
                     '</td>' +
-                    '</tr>');
+                    '</tr>'
+                ));
             {% endfor %}
         }
 
@@ -187,6 +195,9 @@
                             '<option>Number</option>' +
                             '<option>String</option>' +
                             '</select>' +
+                            '</td>' +
+                            '<td class="text-center" style="line-height: 38px;">' +
+                            '<input type="checkbox" name="checkFieldUnique_' + counter + '">' +
                             '</td>' +
                             '<td class="text-center" style="line-height: 38px;">' +
                             '<i class="fa fa-arrows fa-lg" style="cursor: move;"></i>' +
