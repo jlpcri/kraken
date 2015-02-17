@@ -29,7 +29,8 @@ class ClientSchemaForm(ModelForm):
         exclude = []
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                # 'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                'unique_together': "Schema Name is not unique",
             }
         }
 
@@ -51,15 +52,16 @@ class SchemaVersionForm(ModelForm):
         exclude = ['client_schema', 'current']
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                # 'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                'unique_together': "Version is not unique",
             }
         }
 
     def __init__(self, *args, **kwargs):
         super(SchemaVersionForm, self).__init__(*args, **kwargs)
         self.fields['identifier'] = forms.CharField(error_messages={
-            'required': 'Version Name field is required',
-            'invalid': 'Version Name field is not a valid value'
+            'required': 'Version is required',
+            'invalid': 'Version is not a valid value'
         })
         self.fields['identifier'].widget = TextInput(attrs={
             'placeholder': '1.0',

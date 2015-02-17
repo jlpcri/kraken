@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container">
         {% if state == 'edit' %}
-        <form id="formSchema" action="{% url 'schemas:edit_schema' client.id %}" method="POST">
+        <form id="formSchema" action="{% url 'schemas:edit_version' client.id schema.id version.id %}" method="POST">
         {% else %}
         <form id="formSchema" action="{% url 'schemas:create_schema' client.id %}" method="POST">
         {% endif %}
