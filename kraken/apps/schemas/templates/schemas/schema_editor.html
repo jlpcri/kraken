@@ -5,7 +5,11 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <form id="formSchema" action="{% url 'schemas:save_schema' client.id %}" method="POST">
+        {% if state == 'edit' %}
+        <form id="formSchema" action="{% url 'schemas:edit_schema' client.id %}" method="POST">
+        {% else %}
+        <form id="formSchema" action="{% url 'schemas:create_schema' client.id %}" method="POST">
+        {% endif %}
             {% csrf_token %}
             <input type="hidden" name="client_id" value="{{ client.id }}">
             <input type="hidden" name="state" value="{{ state }}">
@@ -36,6 +40,7 @@
                     <div class="form-group">
                         <label class="control-label" for="inputSchemaName">Schema Name</label>
                         {{ schema_form.name }}
+                        <input id="id_client" name="client" value="{{ client.id }}" hidden>
                     </div>
                 </div>
                 <div class="col-xs-4">

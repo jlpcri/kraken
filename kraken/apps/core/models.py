@@ -56,6 +56,10 @@ class SchemaVersion(models.Model):
             column.save()
         return self.getFields()
 
+    def validateFields(self, fields=[]):
+        for i, f in enumerate(fields):
+            pass
+
 
 class VersionFile(models.Model):
     name = models.CharField(max_length=200)
@@ -103,7 +107,6 @@ class BatchField(models.Model):
     payload = models.TextField()  # JSON objects defining options for chosen generator
 
 
-
 class SchemaColumn(models.Model):
     # field type options
     TEXT = 'Text'
@@ -115,7 +118,10 @@ class SchemaColumn(models.Model):
 
     position = models.IntegerField()
     schema_version = models.ForeignKey(SchemaVersion)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, blank=False)
     field_type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = (("name", "schema_version"), )
