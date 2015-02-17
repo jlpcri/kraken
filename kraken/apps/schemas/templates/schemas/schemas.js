@@ -16,13 +16,19 @@ String.prototype.format = function(){
 // get number of fields
 var field_number = Number('{{field_number}}');
 
+
+
 $('#buttonGenerate').click(function(){
+    // initialize errMsg
+    $('#errMsg').html('');
     var record_number = $('#inputRecordNumber').val();
+
     if (! $.isNumeric(record_number)) {
-        alert('Input \'' + record_number + '\' is not a Number');
+        showErrMsg('Input \'' + record_number + '\' is not a Number');
+        //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
     }
     else if (field_number == 0){
-        alert('No schema field is added, Cannot generate records');
+        showErrMsg('No schema field is added, Cannot generate records');
     }
     else {
         var contents_head = '<tr>';
@@ -57,12 +63,15 @@ $('#buttonGenerate').click(function(){
 
 
 $('#validation_input_to_schema').click(function(){
+    // initialize errMsg
+    $('#errMsg').html('');
 
     var input = $('#textareaViewer').val();
+
     if (! input) {
-        alert('No input from Input');
+        showErrMsg('No input from Input');
     } else if (! $('#record11').length > 0){
-        alert('You need generate record first.');
+        showErrMsg('You need generate record first.');
     } else {
         var delimiter = '{{version.delimiter}}';
         var rows = input.split('\n');
@@ -79,9 +88,12 @@ $('#validation_input_to_schema').click(function(){
 
 
 $('#validation_schema_to_input').click(function(){
+    // initialize errMsg
+    $('#errMsg').html('');
+
     if ($('#record00').length > 0){
         if (!$('#record00').val()){
-            alert('No input from Schema');
+            showErrMsg('No input from Schema');
         } else {
             //var field_number = 5;
             var delimiter = '{{version.delimiter}}';
@@ -106,7 +118,7 @@ $('#validation_schema_to_input').click(function(){
             }
         }
     } else {
-        alert('You need generate record first.');
+        showErrMsg('You need generate record first.');
     }
 });
 
@@ -118,7 +130,7 @@ function parse_input_fixed(rows) {
     for (var i = 0; i < rows.length; i++) {
         if (rows[i].length > total_length) {
             field_length_error_found = true;
-            alert('Row ' + Number(i + 1) + ' exceed total length of fields.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceed total length of fields.');
             break;
         }
     }
@@ -134,7 +146,7 @@ function parse_input_fixed(rows) {
                 field = rows[i].substr(position, length);
                 if (field && type == 'Number' && isNaN(field)) {
                     field_type_error_found = true;
-                    alert('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
+                    showErrMsg('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
                     break;
                 }
                 position += Number(length);
@@ -170,7 +182,7 @@ function parse_input(rows, delimiter) {
         var columns = rows[i].split(delimiter);
         if (columns.length > field_number) {
             field_number_error_found = true;
-            alert('Row ' + Number(i+1) + ' exceed field number.');
+            showErrMsg('Row ' + Number(i+1) + ' exceed field number.');
             break;
         }
     }
@@ -185,13 +197,13 @@ function parse_input(rows, delimiter) {
                 // check length
                 if ( columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    alert('Length of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                    showErrMsg('Length of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    alert('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                    showErrMsg('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
                     break;
                 }
             }
@@ -222,14 +234,14 @@ function parse_schema(record_number, delimiter) {
             // check length
             if ( $('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
-                alert('Length of Column '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                showErrMsg('Length of Record '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
                 break;
             }
 
             // check type
             if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())){
                 field_type_error_found = true;
-                alert('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                showErrMsg('Contents of Record '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
                 break;
             }
         }
@@ -254,4 +266,13 @@ function parse_schema(record_number, delimiter) {
     }
 
     $('#textareaViewer').val(schema_string);
+}
+
+function showErrMsg(message) {
+    $('#errMsg').css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'blue'
+    });
+    $('#errMsg').html('Error: ' + message);
 }
