@@ -56,6 +56,8 @@ def create_schema(request, client_id):
                                'type': request.POST.get('selectFieldType_' + r),
                                'unique': request.POST.get('checkFieldUnique_' + r)
                                })
+        for f in fields:
+            print f
 
         try:
             if schema_form.is_valid() and version_form.is_valid():

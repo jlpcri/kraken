@@ -51,8 +51,14 @@ class SchemaVersion(models.Model):
             column.position = i+1
             column.name = f.get('name')
             column.length = f.get('length')
-            column.field_type = SchemaColumn.NUMBER
-            column.unique = False
+            if f.get('type') == 'Number':
+                column.type = SchemaColumn.NUMBER
+            elif f.get('type') == 'Text':
+                column.type = SchemaColumn.TEXT
+            if f.get('unique'):
+                column.unique = True
+            else:
+                column.unique = False
             column.save()
         return self.getFields()
 
@@ -119,7 +125,7 @@ class SchemaColumn(models.Model):
     position = models.IntegerField()
     schema_version = models.ForeignKey(SchemaVersion)
     name = models.CharField(max_length=200, blank=False)
-    field_type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
+    type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
 
