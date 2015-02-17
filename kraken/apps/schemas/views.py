@@ -89,8 +89,8 @@ def edit_version(request, client_id, schema_id, version_id):
             'schema': schema,
             'version': version,
             'state': 'edit',
-            'schema_form': ClientSchemaForm(),
-            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED}),
+            'schema_form': ClientSchemaForm(instance=schema),
+            'version_form': SchemaVersionForm(instance=version),
             'client_schemas': client_schemas,
             'fields': version.getFields()
         }
