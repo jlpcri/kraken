@@ -65,7 +65,7 @@ $('#validation_input_to_schema').click(function(){
         var rows = input.split('\n');
 
         if (delimiter == 'Fixed') {
-            $('#record00').val(input) ;
+            parse_input(rows, '');
         } else if (delimiter == 'Pipe') {
             parse_input(rows, '|');
 
@@ -95,25 +95,12 @@ $('#validation_schema_to_input').click(function(){
             }
 
             if (delimiter == 'Fixed'){
-                alert('Fixxxed!');
+                parse_schema(record_number,'');
             } else if (delimiter == 'Pipe') {
                 parse_schema(record_number, '|');
 
             } else if (delimiter == 'Comma'){
-                var schema_string = '';
-
-                for (var i = 0; i < record_number; i++) {
-                    for (var j = 0; j < field_number; j++) {
-                        schema_string += $('#record{0}{1}'.format(j, i)).val();
-                        if (j < field_number - 1) {
-                            schema_string += ',';
-                        }
-                    }
-
-                    schema_string += '\n';
-                }
-
-                $('#textareaViewer').val(schema_string);
+                parse_schema(record_number, ',');
             }
         }
     } else {
@@ -147,11 +134,13 @@ function parse_input(rows, delimiter) {
                 if ( columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
                     alert('Length of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                    break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
                     alert('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                    break;
                 }
             }
         }
@@ -182,12 +171,14 @@ function parse_schema(record_number, delimiter) {
             if ( $('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
                 alert('Length of Column '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                break;
             }
 
             // check type
             if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())){
                 field_type_error_found = true;
                 alert('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                break;
             }
         }
     }
