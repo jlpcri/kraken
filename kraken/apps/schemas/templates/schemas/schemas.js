@@ -236,7 +236,12 @@ function parse_schema(record_number, delimiter) {
     if (!field_length_error_found && !field_type_error_found) {
         for (var i = 0; i < record_number; i++) {
             for (var j = 0; j < field_number; j++) {
-                schema_string += $('#record{0}{1}'.format(j, i)).val();
+                var length = $('#field_length_' + j).val(),
+                    content = $('#record{0}{1}'.format(j, i)).val();
+                while ( content.length < length) {
+                    content += ' ';
+                }
+                schema_string += content;
                 if ($('#record{0}{1}'.format(j, i)).val() && j < field_number - 1) {
                     schema_string += delimiter;
                 }
