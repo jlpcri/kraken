@@ -75,7 +75,7 @@ def create_schema(request, client_id):
                         errors_message = 'Schema Name field is not a valid value'
                 elif not version_form.is_valid():
                     if version_form['identifier'].errors:
-                        errors_message = version_form['identifier'].
+                        errors_message = version_form['identifier'].errors
                     else:
                         errors_message = 'Version Name field is not a valid value'
                 messages.danger(request, errors_message)
