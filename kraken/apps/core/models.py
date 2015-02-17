@@ -42,6 +42,14 @@ class SchemaVersion(models.Model):
     def files(self):
         return VersionFile.objects.filter(schema_version=self)
 
+    def schema_fields_total_length(self):
+        fields = SchemaColumn.objects.filter(schema_version=self).order_by('position')
+        total_length = 0
+        for field in fields:
+            total_length += field.length
+
+        return total_length
+
 
 class VersionFile(models.Model):
     name = models.CharField(max_length=200)
