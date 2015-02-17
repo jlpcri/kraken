@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
-from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn, BatchField
 from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
@@ -16,12 +16,16 @@ def create_file(request, client_id, schema_id, version_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
+        fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
         context = {
             'client': client,
             'schema': schema,
             'version': version,
+            'fields': fields,
+            'field_number': len(fields),
+            'field_types': [item[1] for item in BatchField.GENERATOR_CHOICES],
             'state': 'create',
-            'file_form': VersionFileForm
+            'file_form': VersionFileForm,
         }
         return render(request, "schemas/file_editor.html", context)
     return HttpResponseNotFound()
