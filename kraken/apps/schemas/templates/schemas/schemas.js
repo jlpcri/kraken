@@ -21,6 +21,9 @@ $('#buttonGenerate').click(function(){
     if (! $.isNumeric(record_number)) {
         alert('Input \'' + record_number + '\' is not a Number');
     }
+    else if (field_number == 0){
+        alert('No schema fields is added, Cannot generate records');
+    }
     else {
         var contents_head = '<tr>';
         for (var i = 1; i < Number(record_number) + 1; i++) {
