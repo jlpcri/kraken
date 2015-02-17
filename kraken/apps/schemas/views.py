@@ -29,6 +29,10 @@ def create_file(request, client_id, schema_id, version_id):
 
 @login_required
 def create_schema(request, client_id):
+    """
+    Handles GET requests to display schema editor for inputting new schema
+    returns 200 or 404
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         context = {
@@ -79,11 +83,14 @@ def download_file(request, client_id, schema_id, version_id, file_id):
 
 @login_required
 def edit_version(request, client_id, schema_id, version_id):
+    """
+    Handles GET requests to display an already created schema version for editing
+    returns 200 or 404
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        client_schemas = ClientSchema.objects.filter(client=client)
         context = {
             'client': client,
             'schema': schema,
@@ -91,7 +98,6 @@ def edit_version(request, client_id, schema_id, version_id):
             'state': 'edit',
             'schema_form': ClientSchemaForm(instance=schema),
             'version_form': SchemaVersionForm(instance=version),
-            'client_schemas': client_schemas,
             'fields': version.getFields()
         }
         return render(request, "schemas/schema_editor.html", context)
