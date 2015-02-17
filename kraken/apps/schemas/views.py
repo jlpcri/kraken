@@ -91,7 +91,8 @@ def edit_version(request, client_id, schema_id, version_id):
             'state': 'edit',
             'schema_form': ClientSchemaForm(),
             'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED}),
-            'client_schemas': client_schemas
+            'client_schemas': client_schemas,
+            'fields': version.getFields()
         }
         return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
@@ -150,8 +151,8 @@ def save_schema(request, client_id):
                     schema = schema_form.save()
                     version = version_form.save(commit=False)
                     version.client_schema = schema
-                    fields = version.saveFields(fields)
                     version.save()
+                    fields = version.saveFields(fields)
                     messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
                     return redirect('core:home')
                 else:
