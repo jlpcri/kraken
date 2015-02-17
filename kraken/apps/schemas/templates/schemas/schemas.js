@@ -65,7 +65,56 @@ $('#validation_input_to_schema').click(function(){
         var rows = input.split('\n');
 
         if (delimiter == 'Fixed') {
-            parse_input(rows, '');
+            var field_length_error_found = false,
+                field_type_error_found = false;
+
+            var total_length = $('#fields_total_length').val();
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].length > total_length) {
+                    field_length_error_found = true;
+                    alert('Row ' + Number(i + 1) + ' exceed total length of fields.');
+                    break;
+                }
+            }
+
+            if (! field_length_error_found) {
+                for (var i = 0; i < rows.length; i++) {
+                    var field, position = 0;
+                    for (var j = 0; j < field_number; j++) {
+                        var type = $('#field_type_' + j).val();
+                        var length = $('#field_length_' + j).val();
+
+                        // check type
+                        field = rows[i].substr(position, length);
+                        if (field && type == 'Number' && isNaN(field)) {
+                            field_type_error_found = true;
+                            alert('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
+                            break;
+                        }
+                        position += Number(length);
+                    }
+                }
+            }
+
+            if (!field_length_error_found && !field_type_error_found) {
+                for (var i = 0; i < rows.length; i++) {
+                    var field, position = 0;
+                    for (var j = 0; j < field_number; j++) {
+                        var type = $('#field_type_' + j).val();
+                        var length = $('#field_length_' + j).val();
+
+                        // check type
+                        field = rows[i].substr(position, length);
+                        if (field) {
+                            $('#record{0}{1}'.format(j, i)).val(field);
+                        }
+                        position += Number(length);
+                    }
+                }
+            }
+
+
+
         } else if (delimiter == 'Pipe') {
             parse_input(rows, '|');
 
@@ -120,6 +169,7 @@ function parse_input(rows, delimiter) {
         if (columns.length > field_number) {
             field_number_error_found = true;
             alert('Row ' + Number(i+1) + ' exceed field number.');
+            break;
         }
     }
 

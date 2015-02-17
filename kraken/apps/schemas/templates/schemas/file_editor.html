@@ -23,6 +23,7 @@
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
         <input type="hidden" name="version_id" value="{{ version.id }}">
         <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="fields_total_length" id="fields_total_length" value="{{ version.schema_fields_total_length }}">
         <div class="row">
             <div class="col-xs-10">
                 <h3>{{ client.name }}</h3>
