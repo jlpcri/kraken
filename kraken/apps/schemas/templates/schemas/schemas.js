@@ -22,7 +22,7 @@ $('#buttonGenerate').click(function(){
         alert('Input \'' + record_number + '\' is not a Number');
     }
     else if (field_number == 0){
-        alert('No schema fields is added, Cannot generate records');
+        alert('No schema field is added, Cannot generate records');
     }
     else {
         var contents_head = '<tr>';
@@ -68,59 +68,9 @@ $('#validation_input_to_schema').click(function(){
         var rows = input.split('\n');
 
         if (delimiter == 'Fixed') {
-            var field_length_error_found = false,
-                field_type_error_found = false;
-
-            var total_length = $('#fields_total_length').val();
-            for (var i = 0; i < rows.length; i++) {
-                if (rows[i].length > total_length) {
-                    field_length_error_found = true;
-                    alert('Row ' + Number(i + 1) + ' exceed total length of fields.');
-                    break;
-                }
-            }
-
-            if (! field_length_error_found) {
-                for (var i = 0; i < rows.length; i++) {
-                    var field, position = 0;
-                    for (var j = 0; j < field_number; j++) {
-                        var type = $('#field_type_' + j).val();
-                        var length = $('#field_length_' + j).val();
-
-                        // check type
-                        field = rows[i].substr(position, length);
-                        if (field && type == 'Number' && isNaN(field)) {
-                            field_type_error_found = true;
-                            alert('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
-                            break;
-                        }
-                        position += Number(length);
-                    }
-                }
-            }
-
-            if (!field_length_error_found && !field_type_error_found) {
-                for (var i = 0; i < rows.length; i++) {
-                    var field, position = 0;
-                    for (var j = 0; j < field_number; j++) {
-                        var type = $('#field_type_' + j).val();
-                        var length = $('#field_length_' + j).val();
-
-                        // check type
-                        field = rows[i].substr(position, length);
-                        if (field) {
-                            $('#record{0}{1}'.format(j, i)).val(field);
-                        }
-                        position += Number(length);
-                    }
-                }
-            }
-
-
-
+            parse_input_fixed(rows);
         } else if (delimiter == 'Pipe') {
             parse_input(rows, '|');
-
         } else if (delimiter == 'Comma') {
             parse_input(rows, ',');
         }
@@ -160,6 +110,55 @@ $('#validation_schema_to_input').click(function(){
     }
 });
 
+function parse_input_fixed(rows) {
+    var field_length_error_found = false,
+        field_type_error_found = false;
+
+    var total_length = $('#fields_total_length').val();
+    for (var i = 0; i < rows.length; i++) {
+        if (rows[i].length > total_length) {
+            field_length_error_found = true;
+            alert('Row ' + Number(i + 1) + ' exceed total length of fields.');
+            break;
+        }
+    }
+
+    if (! field_length_error_found) {
+        for (var i = 0; i < rows.length; i++) {
+            var field, position = 0;
+            for (var j = 0; j < field_number; j++) {
+                var type = $('#field_type_' + j).val();
+                var length = $('#field_length_' + j).val();
+
+                // check type
+                field = rows[i].substr(position, length);
+                if (field && type == 'Number' && isNaN(field)) {
+                    field_type_error_found = true;
+                    alert('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
+                    break;
+                }
+                position += Number(length);
+            }
+        }
+    }
+
+    if (!field_length_error_found && !field_type_error_found) {
+        for (var i = 0; i < rows.length; i++) {
+            var field, position = 0;
+            for (var j = 0; j < field_number; j++) {
+                var type = $('#field_type_' + j).val();
+                var length = $('#field_length_' + j).val();
+
+                // check type
+                field = rows[i].substr(position, length);
+                if (field) {
+                    $('#record{0}{1}'.format(j, i)).val(field);
+                }
+                position += Number(length);
+            }
+        }
+    }
+}
 
 function parse_input(rows, delimiter) {
     var field_number_error_found = false,
