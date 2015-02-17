@@ -90,52 +90,56 @@
 
         <div class="row">
             <div class="col-md-6">
-                <table id="" class="table">
-                    <thead>
-                        <tr>
-                            <th class="col-xs-6">Field Name</th>
-                            <th class="col-xs-3">Field Type</th>
-                            <th class="col-xs-2">Constraints</th>
-                            <th class="col-xs-1"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for field in fields %}
-                        <tr>
-                            <td style="line-height: 38px;">
+                {% if fields %}
+                    <table id="" class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-6">Field Name</th>
+                                <th class="col-xs-3">Field Type</th>
+                                <th class="col-xs-2">Constraints</th>
+                                <th class="col-xs-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field in fields %}
+                            <tr>
+                                <td style="line-height: 38px;">
                                 {{ field.name }}
                                 <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.field_type }}">
                                 <input type="hidden" id="field_length_{{ field.position|add:-1 }}" name="field_length_{{ field.position|add:-1 }}" value="{{ field.length }}">
-                            </td>
-                            <td>
-                                <select class="form-control">
-                                    {% for type in field_types %}
-                                        <option>{{ type }}</option>
-                                    {% endfor %}
-{#                                    <option>String</option>#}
-{#                                    <option>Number</option>#}
-{#                                    <option>List</option>#}
-{#                                    <option>Address 1</option>#}
-{#                                    <option>Address 2</option>#}
-{#                                    <option>City</option>#}
-{#                                    <option>State</option>#}
-{#                                    <option>Zip</option>#}
-{#                                    <option>Zip+4</option>#}
-{#                                    <option>Phone</option>#}
-{#                                    <option>E-mail</option>#}
-                                </select>
-                            </td>
-                            <td class="text-center" style="line-height: 38px;">
-                                <a href="#"><i class="fa fa-pencil-square-o fa-lg"></i></a>
-                            </td>
-                            <td class="text-right" style="line-height: 38px;">
-                                <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <select class="form-control">
+                                        {% for type in field_types %}
+                                            <option>{{ type }}</option>
+                                        {% endfor %}
+    {#                                    <option>String</option>#}
+    {#                                    <option>Number</option>#}
+    {#                                    <option>List</option>#}
+    {#                                    <option>Address 1</option>#}
+    {#                                    <option>Address 2</option>#}
+    {#                                    <option>City</option>#}
+    {#                                    <option>State</option>#}
+    {#                                    <option>Zip</option>#}
+    {#                                    <option>Zip+4</option>#}
+    {#                                    <option>Phone</option>#}
+    {#                                    <option>E-mail</option>#}
+                                    </select>
+                                </td>
+                                <td class="text-center" style="line-height: 38px;">
+                                    <a href="#"><i class="fa fa-pencil-square-o fa-lg"></i></a>
+                                </td>
+                                <td class="text-right" style="line-height: 38px;">
+                                    <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
+                                </td>
+                            </tr>
                         {% endfor %}
-
                     </tbody>
                 </table>
+            {% else %}
+                <br><br>
+                <p> No Schema Fields is added to this version.</p>
+            {% endif %}
             </div>
             <div class="col-md-6">
                 <div class="table-responsive" id="add_records" style="overflow: auto;">
