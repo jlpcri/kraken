@@ -54,14 +54,19 @@ $('#validation_input_to_schema').click(function(){
         }
 
         // generate records first
-        generateRecords(rows.length);
+        if (field_number == 0){
+            showErrMsg('No schema field is added, Cannot generate records');
+        }
+        else {
+            generateRecords(rows.length);
 
-        if (delimiter == 'Fixed') {
-            parse_input_fixed(rows);
-        } else if (delimiter == 'Pipe') {
-            parse_input(rows, '|');
-        } else if (delimiter == 'Comma') {
-            parse_input(rows, ',');
+            if (delimiter == 'Fixed') {
+                parse_input_fixed(rows);
+            } else if (delimiter == 'Pipe') {
+                parse_input(rows, '|');
+            } else if (delimiter == 'Comma') {
+                parse_input(rows, ',');
+            }
         }
     }
 });
@@ -238,7 +243,8 @@ function parse_schema(record_number, delimiter) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
                     content = $('#record{0}{1}'.format(j, i)).val();
-                while ( delimiter == 'Fixed' && content.length < length) {
+
+                while ( delimiter == '' && content.length < length) {
                     content += ' ';
                 }
                 schema_string += content;
