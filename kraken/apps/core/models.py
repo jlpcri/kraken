@@ -88,7 +88,6 @@ class SchemaVersion(models.Model):
                 column.full_clean()
                 field_list.append(column)
             columns['fields'] = field_list
-        print columns
         return columns
 
 
