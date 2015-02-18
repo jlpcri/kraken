@@ -1,5 +1,5 @@
 import json
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -7,6 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 from kraken.apps.core import messages
 from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn, BatchField
 from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
+
+
+def user_is_staff(user):
+    return user.is_staff
 
 
 @login_required
@@ -32,6 +36,7 @@ def create_file(request, client_id, schema_id, version_id):
 
 
 @login_required
+@user_passes_test(user_is_staff)
 def create_schema(request, client_id):
     """
     Handles GET requests to display schema editor for inputting new schema
