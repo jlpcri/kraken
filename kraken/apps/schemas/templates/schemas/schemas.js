@@ -252,7 +252,7 @@ function parse_schema(record_number, delimiter) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
                     content = $('#record{0}{1}'.format(j, i)).val();
-                while ( content.length < length) {
+                while ( delimiter == 'Fixed' && content.length < length) {
                     content += ' ';
                 }
                 schema_string += content;
