@@ -53,12 +53,31 @@ $('#validation_input_to_schema').click(function(){
             rows.splice(-1, 1);
         }
 
-        // generate records first
         if (field_number == 0){
             showErrMsg('No schema field is added, Cannot generate records');
         }
         else {
-            generateRecords(rows.length);
+            // calculate record number which exists
+            var found = true, record_number = 0;
+            while (found) {
+                if ( $('#record0{0}'.format(record_number)).length <= 0 ) {
+                    found = false;
+                } else {
+                    record_number++;
+                }
+            }
+
+            if (rows.length > record_number) {
+                // generate records first
+                generateRecords(rows.length);
+            } else {
+                // clear all fields of records
+                for (var i = 0; i < record_number; i++) {
+                    for (var j = 0; j < field_number; j++) {
+                        $('#record{0}{1}'.format(j, i)).val('');
+                    }
+                }
+            }
 
             if (delimiter == 'Fixed') {
                 parse_input_fixed(rows);
@@ -76,14 +95,14 @@ $('#validation_schema_to_input').click(function(){
     // initialize errMsg
     $('#errMsg').html('');
 
-    if ($('#record00').length > 0){
+    if ( $('#record00').length > 0 ){
         if (!$('#record00').val()){
             showErrMsg('No input from Schema');
         } else {
             //var field_number = 5;
             var delimiter = '{{version.delimiter}}';
 
-            // calculate record number
+            // calculate record number which has value
             var found = true, record_number = 0;
             while (found) {
                 if (! $('#record0{0}'.format(record_number)).val()) {
@@ -165,6 +184,9 @@ function parse_input(rows, delimiter) {
     // Check the number of fields per record
     for (var i = 0; i < rows.length; i++) {
         var columns = rows[i].split(delimiter);
+
+        // if this line of inputs is empty
+        if (columns == '') continue;
 
         //remove empty at end of each row
         while (! columns[Number(columns.length) - 1] ) {
