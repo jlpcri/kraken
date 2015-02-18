@@ -37,9 +37,9 @@ class TestSchemaViews(TestCase):
         self.assertEqual(found.func, create_schema)
 
     def test_create_schemas_url_get_return_status_200(self):
-        response = self.client.get(self.url_create_schema)
+        response = self.client.get(self.url_create_schema, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_create_schemas_url_post_return_status_200(self):
-        response = self.client.post(self.url_create_schema, self.new_schema)
+        response = self.client.post(self.url_create_schema, self.new_schema, follow=True)
         self.assertEqual(response.status_code, 200)
