@@ -31,33 +31,7 @@ $('#buttonGenerate').click(function(){
         showErrMsg('No schema field is added, Cannot generate records');
     }
     else {
-        var contents_head = '<tr>';
-        for (var i = 1; i < Number(record_number) + 1; i++) {
-            contents_head += '<th>Record ' + i + '</th>';
-        }
-        contents_head += '</tr>';
-
-        var contents_body = '';
-
-        for (i = 0; i < field_number; i++){
-            var contents_body_row = '<tr>';
-            for (var j = 0; j < Number(record_number); j++){
-                contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
-            }
-            contents_body_row += '</tr>';
-
-            contents_body += contents_body_row;
-        }
-
-        var add_records_contents = "<table id='tableData' class='table'>" +
-                " <thead>" +
-                contents_head +
-                "</thead>" +
-                "<tbody>" +
-                "</tbody>" +
-                contents_body +
-                "</table> ";
-        $('#add_records').html(add_records_contents);
+        generateRecords(record_number);
     }
 });
 
@@ -70,11 +44,17 @@ $('#validation_input_to_schema').click(function(){
 
     if (! input) {
         showErrMsg('No input from Input');
-    } else if (! $('#record00').length > 0){
-        showErrMsg('You need generate record first.');
     } else {
         var delimiter = '{{version.delimiter}}';
         var rows = input.split('\n');
+
+        // remove empty line at end
+        while (! rows[Number(rows.length) - 1] ) {
+            rows.splice(-1, 1);
+        }
+
+        // generate records first
+        generateRecords(rows.length);
 
         if (delimiter == 'Fixed') {
             parse_input_fixed(rows);
@@ -180,6 +160,12 @@ function parse_input(rows, delimiter) {
     // Check the number of fields per record
     for (var i = 0; i < rows.length; i++) {
         var columns = rows[i].split(delimiter);
+
+        //remove empty at end of each row
+        while (! columns[Number(columns.length) - 1] ) {
+            columns.splice(-1, 1);
+        }
+
         if (columns.length > field_number) {
             field_number_error_found = true;
             showErrMsg('Row ' + Number(i+1) + ' exceed field number.');
@@ -275,4 +261,34 @@ function showErrMsg(message) {
         'color': 'blue'
     });
     $('#errMsg').html('Error: ' + message);
+}
+
+function generateRecords(record_number) {
+    var contents_head = '<tr>';
+        for (var i = 1; i < Number(record_number) + 1; i++) {
+            contents_head += '<th>Record ' + i + '</th>';
+        }
+        contents_head += '</tr>';
+
+        var contents_body = '';
+
+        for (i = 0; i < field_number; i++){
+            var contents_body_row = '<tr>';
+            for (var j = 0; j < Number(record_number); j++){
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
+            }
+            contents_body_row += '</tr>';
+
+            contents_body += contents_body_row;
+        }
+
+        var add_records_contents = "<table id='tableData' class='table'>" +
+                " <thead>" +
+                contents_head +
+                "</thead>" +
+                "<tbody>" +
+                "</tbody>" +
+                contents_body +
+                "</table> ";
+        $('#add_records').html(add_records_contents);
 }
