@@ -70,7 +70,7 @@ $('#validation_input_to_schema').click(function(){
 
     if (! input) {
         showErrMsg('No input from Input');
-    } else if (! $('#record11').length > 0){
+    } else if (! $('#record00').length > 0){
         showErrMsg('You need generate record first.');
     } else {
         var delimiter = '{{version.delimiter}}';
