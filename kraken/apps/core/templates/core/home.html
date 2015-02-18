@@ -11,36 +11,6 @@
             </div>
         </div>
         <br>
-{#        <div class="row">#}
-{#            <div class="col-xs-3">#}
-{#                <button id="button_create_client" type="button" class="btn btn-success content-header-button"#}
-{#                            data-toggle="modal" style="width: 100%;"#}
-{#                            data-target="#modal_create_client"><i class="fa fa-plus fa-fw"></i>&nbsp;Client#}
-{#                </button>#}
-{#            </div>#}
-{#            <div class="col-xs-3">#}
-{#                <a href="{% url 'schemas:create_schema' '1' %}" id="buttonCreateSchema" class="btn btn-success" style="width: 100%;">#}
-{#                    <i class="fa fa-plus"></i>&nbsp;Schema#}
-{#                </a>#}
-{#            </div>#}
-{#            <div class="col-xs-3">#}
-{#                <button id="buttonCreateVersion" class="btn btn-success" style="width: 100%;">#}
-{#                    <i class="fa fa-plus"></i>&nbsp;Version#}
-{#                </button>#}
-{#            </div>#}
-{#            <div class="col-xs-3">#}
-{#                <button id="buttonCreateFile" class="btn btn-success" style="width: 100%;">#}
-{#                    <i class="fa fa-plus"></i>&nbsp;File#}
-{#                </button>#}
-{#            </div>#}
-{#        </div>#}
-
-{#        <div id="cliens_list">#}
-{#            <br><br>#}
-{#            {% for client in clients %}#}
-{#                {{ client.name }} <br>#}
-{#            {% endfor %}#}
-{#        </div>#}
 
         <div class="row">
             <div class="col-xs-12">
@@ -72,7 +42,7 @@
                     // if inital load
                     if(node_id === null) {
                         return callback(null, [
-                            { id: clientIdPrefix, label: "New Client", type: "create_client" },
+                            {% if user.is_staff %}{ id: clientIdPrefix, label: "New Client", type: "create_client" },{% endif %}
                             {% for client in clients %}
                                 { id: clientIdPrefix + {{ client.id }}, label: "{{ client.name }}", type: "folder" },
                             {% endfor %}
@@ -82,7 +52,7 @@
                     {% for client in clients %}
                         if(node_id === clientIdPrefix + {{ client.id }}) {
                             return callback(null, [
-                                { id: schemaIdPrefix, label: "New Schema", type: "create", url: "{% url 'schemas:create_schema' client.id %}" },
+                                {% if user.is_staff %}{ id: schemaIdPrefix, label: "New Schema", type: "create", url: "{% url 'schemas:create_schema' client.id %}" },{% endif %}
                                 {% for schema in client.schemas %}
                                     { id: schemaIdPrefix + {{ schema.id }}, label: "{{ schema.name }}", type: "folder" },
                                 {% endfor %}
@@ -91,7 +61,7 @@
                         {% for schema in client.schemas %}
                             if (node_id === schemaIdPrefix + {{ schema.id }}) {
                                 return callback(null, [
-                                    { id: versionIdPrefix, label: "New Version", type: "create", url: "{% url 'schemas:create_version' client.id schema.id %}" },
+{#                                    { id: versionIdPrefix, label: "New Version", type: "create", url: "{% url 'schemas:create_version' client.id schema.id %}" },#}
                                     {% for version in schema.versions %}
                                         { id: versionIdPrefix + {{ version.id }}, label: "{{ version.identifier }}", type: "folder" },
                                     {% endfor %}

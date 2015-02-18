@@ -50,6 +50,30 @@ class SchemaVersion(models.Model):
 
         return total_length
 
+    def getFields(self):
+        return SchemaColumn.objects.filter(schema_version=self)
+
+    def saveFields(self, fields=[]):
+        for i, f in enumerate(fields):
+            column = SchemaColumn(schema_version=self)
+            column.position = i+1
+            column.name = f.get('name')
+            column.length = f.get('length')
+            if f.get('type') == 'Number':
+                column.type = SchemaColumn.NUMBER
+            elif f.get('type') == 'Text':
+                column.type = SchemaColumn.TEXT
+            if f.get('unique'):
+                column.unique = True
+            else:
+                column.unique = False
+            column.save()
+        return self.getFields()
+
+    def validateFields(self, fields=[]):
+        for i, f in enumerate(fields):
+            pass
+
 
 class VersionFile(models.Model):
     name = models.CharField(max_length=200)
@@ -97,19 +121,21 @@ class BatchField(models.Model):
     payload = models.TextField()  # JSON objects defining options for chosen generator
 
 
-
 class SchemaColumn(models.Model):
     # field type options
     TEXT = 'Text'
     NUMBER = 'Number'
-    FIELD_TYPE_CHOICES = (
+    TYPE_CHOICES = (
         (TEXT, 'Text'),
         (NUMBER, 'Number')
     )
 
     position = models.IntegerField()
     schema_version = models.ForeignKey(SchemaVersion)
-    name = models.CharField(max_length=200)
-    field_type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
+    name = models.CharField(max_length=200, blank=False)
+    type = models.TextField(choices=TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = (("name", "schema_version"), )

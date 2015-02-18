@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.forms import ModelForm, TextInput
 
 from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile
@@ -12,8 +13,9 @@ class ClientForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ClientForm, self).__init__(*args, **kwargs)
         self.fields['name'] = forms.CharField(error_messages={
-            'required': 'Client Name field is required',
-            'invalid': 'Client Name field is not a valid value'
+            'required': 'Client Name is required',
+            'invalid': 'Client Name is not a valid value',
+            'unique': 'Client Name already exists'
         })
         self.fields['name'].widget = TextInput(attrs={
             'placeholder': 'Client Name',
@@ -25,12 +27,18 @@ class ClientSchemaForm(ModelForm):
     class Meta:
         model = ClientSchema
         exclude = []
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                # 'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                'unique_together': "Schema Name is not unique",
+            }
+        }
 
     def __init__(self, *args, **kwargs):
         super(ClientSchemaForm, self).__init__(*args, **kwargs)
         self.fields['name'] = forms.CharField(error_messages={
-            'required': 'Schema Name field is required',
-            'invalid': 'Schema Name field is not a valid value'
+            'required': 'Schema Name is required',
+            'invalid': 'Schema Name is not a valid value'
         })
         self.fields['name'].widget = TextInput(attrs={
             'placeholder': 'Schema Name',
@@ -42,12 +50,18 @@ class SchemaVersionForm(ModelForm):
     class Meta:
         model = SchemaVersion
         exclude = ['client_schema', 'current']
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                # 'unique_together': "%(model_name)s's %(field_labels)s are not unique",
+                'unique_together': "Version is not unique",
+            }
+        }
 
     def __init__(self, *args, **kwargs):
         super(SchemaVersionForm, self).__init__(*args, **kwargs)
         self.fields['identifier'] = forms.CharField(error_messages={
-            'required': 'Version Name field is required',
-            'invalid': 'Version Name field is not a valid value'
+            'required': 'Version is required',
+            'invalid': 'Version is not a valid value'
         })
         self.fields['identifier'].widget = TextInput(attrs={
             'placeholder': '1.0',
