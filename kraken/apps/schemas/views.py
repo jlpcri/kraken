@@ -181,19 +181,10 @@ def edit_version(request, client_id, schema_id, version_id):
         version = get_object_or_404(SchemaVersion, pk=version_id)
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
-        row_order = request.POST.get('row_order', '').strip()
-        fields = []
-        if row_order:
-            row_order = row_order.strip().split(' ')
-            for r in row_order:
-                fields.append({'name': request.POST.get('inputFieldName_' + r),
-                               'length': request.POST.get('inputFieldLength_' + r),
-                               'type': request.POST.get('selectFieldType_' + r),
-                               'unique': request.POST.get('checkFieldUnique_' + r)
-                               })
+        fields = version.validateFields(request.POST)
 
         try:
-            if schema_form.is_valid() and version_form.is_valid():
+            if schema_form.is_valid() and version_form.is_valid() and not fields.get('valid'):
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema

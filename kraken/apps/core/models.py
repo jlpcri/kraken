@@ -54,7 +54,10 @@ class SchemaVersion(models.Model):
         return SchemaColumn.objects.filter(schema_version=self)
 
     def saveFields(self, fields=[]):
+        columns = {'errors': False, 'message': None, 'fields': None}
         for i, f in enumerate(fields):
+            if f.id:
+                pass
             column = SchemaColumn(schema_version=self)
             column.position = i+1
             column.name = f.get('name')
@@ -71,8 +74,28 @@ class SchemaVersion(models.Model):
         return self.getFields()
 
     def validateFields(self, fields=[]):
+        columns = {'valid': True, 'error_message': None, 'fields': None}
+        field_list = []
         for i, f in enumerate(fields):
-            pass
+            if f.get('id'):
+                column = SchemaColumn.objects.get(pk=f.get('id'))
+            else:
+                column = SchemaColumn()
+            column.position = i+1
+            column.name = f.get('name')
+            column.length = f.get('length')
+            if f.get('type') == SchemaColumn.NUMBER:
+                column.type = SchemaColumn.NUMBER
+            elif f.get('type') == SchemaColumn.TEXT:
+                column.type = SchemaColumn.TEXT
+            if f.get('unique'):
+                column.unique = True
+            else:
+                column.unique = False
+            column.full_clean()
+            field_list.append(column)
+            columns['fields'] = field_list
+        return columns
 
 
 class VersionFile(models.Model):
