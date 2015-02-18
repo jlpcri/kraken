@@ -126,7 +126,7 @@ class SchemaColumn(models.Model):
     # field type options
     TEXT = 'Text'
     NUMBER = 'Number'
-    FIELD_TYPE_CHOICES = (
+    TYPE_CHOICES = (
         (TEXT, 'Text'),
         (NUMBER, 'Number')
     )
@@ -134,7 +134,7 @@ class SchemaColumn(models.Model):
     position = models.IntegerField()
     schema_version = models.ForeignKey(SchemaVersion)
     name = models.CharField(max_length=200, blank=False)
-    type = models.TextField(choices=FIELD_TYPE_CHOICES, default=TEXT)
+    type = models.TextField(choices=TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
 
