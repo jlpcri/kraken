@@ -19,8 +19,9 @@
     <script type="text/javascript">
         function specifyModal(element) {
             var value = element.value;
-            $(element).closest('tr').find('.data-generator-params > a')[0]
-            console.log(element.selected)
+            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
+            modalButton.setAttribute("data-target", "#" + value.replace(" ", "-").toLowerCase() + "-modal");
+            console.log(modalButton.getAttribute("data-target"))
         }
     </script>
 {% endblock %}
@@ -126,7 +127,7 @@
                                     </select>
                                 </td>
                                 <td class="text-center data-generator-params" style="line-height: 38px;">
-                                    <a href="#"><i class="fa fa-pencil-square-o fa-lg"></i></a>
+                                    <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
                                 </td>
                                 <td class="text-right" style="line-height: 38px;">
                                     <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
@@ -149,12 +150,63 @@
     </form>
 
     </div>
-    <div class="modal fade">
+    <div class="modal fade" id="random-text-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-
-                </div>
+                <form>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Random text</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">Minimum length</label><input class="form-control" name="min-length" />
+                        <label class="control-label">Maximum length</label><input class="form-control" name="max-length" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="number-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Number</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
+                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="user-defined-list-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">User Defined List</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
+                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
