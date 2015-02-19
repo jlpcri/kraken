@@ -50,13 +50,14 @@ class SchemaVersion(models.Model):
 
         return total_length
 
-    def get_columns(self):
+    def get_columns(self, position_order=False):
+        if position_order:
+            return SchemaColumn.objects.filter(schema_version=self).order_by('position')
         return SchemaColumn.objects.filter(schema_version=self)
 
     def save_columns(self, columns={}):
         if columns.get('valid'):
             for c in columns.get('fields'):
-                c.schema_version = self
                 c.save()
         return columns
 
@@ -67,28 +68,35 @@ class SchemaVersion(models.Model):
         if row_order:
             row_order = row_order.strip().split(' ')
             for i, r in enumerate(row_order):
-                cid = post.get('hiddenFieldId_' + r)
-                if cid:
-                    column = SchemaColumn.objects.get(pk=cid)
-                else:
-                    column = SchemaColumn()
-                column.position = i+1
-                column.name = post.get('inputFieldName_' + r)
-                column.length = post.get('inputFieldLength_' + r)
-                ftype = post.get('selectFieldType_' + r)
-                if ftype == SchemaColumn.NUMBER:
-                    column.type = SchemaColumn.NUMBER
-                elif ftype == SchemaColumn.TEXT:
-                    column.type = SchemaColumn.TEXT
-                funique = post.get('checkFieldUnique_' + r)
-                if funique:
-                    column.unique = True
-                else:
-                    column.unique = False
-                column.full_clean()
-                field_list.append(column)
+                try:
+                    cid = post.get('hiddenFieldId_' + r)
+                    if cid:
+                        column = SchemaColumn.objects.get(pk=cid)
+                    else:
+                        column = SchemaColumn()
+                    column.position = i+1
+                    column.name = post.get('inputFieldName_' + r)
+                    column.length = post.get('inputFieldLength_' + r)
+                    column.schema_version = self
+                    ftype = post.get('selectFieldType_' + r)
+                    if ftype == SchemaColumn.NUMBER:
+                        column.type = SchemaColumn.NUMBER
+                    elif ftype == SchemaColumn.TEXT:
+                        column.type = SchemaColumn.TEXT
+                    funique = post.get('checkFieldUnique_' + r)
+                    if funique:
+                        column.unique = True
+                    else:
+                        column.unique = False
+                    column.full_clean()
+                    field_list.append(column)
+                except Exception as e:
+                    if columns['valid']:
+                        columns['valid'] = False
+                        columns['error_message'] = e.message
             columns['fields'] = field_list
-        return columns
+            return columns
+        return {'valid': True, 'error_message': None, 'fields': None}
 
 
 class VersionFile(models.Model):
@@ -135,7 +143,6 @@ class BatchField(models.Model):
     column = models.ForeignKey('SchemaColumn')
     generator = models.TextField(choices=GENERATOR_CHOICES, default=RANDOM_TEXT)
     payload = models.TextField()  # JSON objects defining options for chosen generator
-
 
 
 class SchemaColumn(models.Model):

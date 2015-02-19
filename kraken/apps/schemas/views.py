@@ -55,18 +55,10 @@ def create_schema(request, client_id):
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
         client = get_object_or_404(Client, pk=client_id)
+        schema = get_or_create(ClientSchema, client=client, )
+        version = get_or_create(SchemaVersion, pk=version_id)
         schema_form = ClientSchemaForm(request.POST)
         version_form = SchemaVersionForm(request.POST)
-        row_order = request.POST.get('row_order', '').strip()
-        fields = []
-        if row_order:
-            row_order = row_order.strip().split(' ')
-            for r in row_order:
-                fields.append({'name': request.POST.get('inputFieldName_' + r),
-                               'length': request.POST.get('inputFieldLength_' + r),
-                               'type': request.POST.get('selectFieldType_' + r),
-                               'unique': request.POST.get('checkFieldUnique_' + r)
-                               })
 
         try:
             if schema_form.is_valid() and version_form.is_valid():
@@ -74,9 +66,11 @@ def create_schema(request, client_id):
                 version = version_form.save(commit=False)
                 version.client_schema = schema
                 version.save()
-                fields = version.saveFields(fields)
+                columns = version.validate_columns(request.POST)
                 messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
-                return redirect('core:home')
+                if not columns['valid']:
+                    columns = version.save_columns(columns)
+                return redirect('schemas:edit_version', client_id, schema.pk, version.pk)
             else:
                 error_message = "Something went wrong"
                 if not schema_form.is_valid():
@@ -143,11 +137,15 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
 
 @login_required
 def download_file(request, client_id, schema_id, version_id, file_id):
+    """
+    Handles GET requests to download file to client computer
+            returns 200 or 404
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        file = get_object_or_404(SchemaVersion, pk=version_id)
+        file = get_object_or_404(SchemaVersion, pk=file_id)
         return render(request, "schemas/home.html")
     return HttpResponseNotFound()
 
@@ -170,7 +168,7 @@ def edit_version(request, client_id, schema_id, version_id):
             'state': 'edit',
             'schema_form': ClientSchemaForm(instance=schema),
             'version_form': SchemaVersionForm(instance=version),
-            'fields': version.get_columns()
+            'fields': version.get_columns(position_order=True)
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
@@ -188,7 +186,7 @@ def edit_version(request, client_id, schema_id, version_id):
                 version.client_schema = schema
                 version.save()
                 columns = version.save_columns(columns)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
+                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
                 return redirect('schemas:edit_version', client_id, schema_id, version_id)
             else:
                 error_message = "Something went wrong"
