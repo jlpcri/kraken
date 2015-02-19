@@ -94,39 +94,25 @@ class SchemaVersion(models.Model):
             row_order = row_order.strip().split(' ')
             for i, r in enumerate(row_order):
                 try:
-                    print 'aaa'
                     cid = post.get('hiddenFieldId_' + r)
-                    print type(cid)
                     if cid:
-                        print 'check a'
                         column = SchemaColumn.objects.get(pk=cid)
                     else:
-                        print 'check b'
                         column = SchemaColumn()
-                    print 'bbb'
                     column.position = i+1
-                    print 'ccc'
                     column.name = post.get('inputFieldName_' + r)
-                    print 'ddd'
                     column.length = post.get('inputFieldLength_' + r)
-                    print 'eee'
                     column.schema_version = self
-                    print 'fff'
                     ftype = post.get('selectFieldType_' + r)
-                    print 'ggg'
                     if ftype == SchemaColumn.NUMBER:
                         column.type = SchemaColumn.NUMBER
                     elif ftype == SchemaColumn.TEXT:
                         column.type = SchemaColumn.TEXT
-                    print 'hhh'
                     funique = post.get('checkFieldUnique_' + r)
-                    print 'iii'
                     if funique:
                         column.unique = True
                     else:
                         column.unique = False
-                    print 'jjj'
-                    print column
                     field_list.append(column)
                     column.full_clean()
                 except Exception as e:
@@ -134,8 +120,6 @@ class SchemaVersion(models.Model):
                         columns['valid'] = False
                         columns['error_message'] = 'Custom Fields contain errors'
             columns['fields'] = field_list
-            print field_list
-            return columns
         return {'valid': None, 'error_message': None, 'fields': None}
 
 
