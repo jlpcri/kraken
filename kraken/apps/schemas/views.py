@@ -148,7 +148,9 @@ def download_file(request, client_id, schema_id, version_id, file_id):
         return render(request, "schemas/home.html")
     return HttpResponseNotFound()
 
+
 @login_required
+@user_passes_test(user_is_staff)
 def edit_version(request, client_id, schema_id, version_id):
     """
     Handles GET requests to display an already created schema version for editing
