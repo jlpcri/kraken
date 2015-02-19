@@ -76,6 +76,12 @@ class SchemaVersion(models.Model):
         Returns:    dict
         """
         if columns.get('valid') and columns.get('fields'):
+            cols = SchemaColumn.objects.filter(schema_version=self)
+            cols_pks = cols.values_list('pk', flat=True)
+            columns_pks = [x.pk for x in columns.get('fields')]
+            for c in cols_pks:
+                if c not in columns_pks:
+                    SchemaColumn.objects.get(pk=c).delete()
             for c in columns.get('fields'):
                 c.save()
         return columns
