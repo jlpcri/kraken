@@ -55,21 +55,20 @@ def create_schema(request, client_id):
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
         client = get_object_or_404(Client, pk=client_id)
-        schema = get_or_create(ClientSchema, client=client, )
-        version = get_or_create(SchemaVersion, pk=version_id)
-        schema_form = ClientSchemaForm(request.POST)
-        version_form = SchemaVersionForm(request.POST)
+        schema = ClientSchema.objects.get_or_create(client=client, name=request.POST.get('name'))
+        version = SchemaVersion.objects.get_or_create(client_schema=schema, identifier=request.POST.get('identifier'))
+        schema_form = ClientSchemaForm(request.POST, instance=schema)
+        version_form = SchemaVersionForm(request.POST, instance=version)
+        columns = version.validate_columns(request.POST)
 
         try:
-            if schema_form.is_valid() and version_form.is_valid():
+            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid'):
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema
                 version.save()
-                columns = version.validate_columns(request.POST)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
-                if not columns['valid']:
-                    columns = version.save_columns(columns)
+                columns = version.save_columns(columns)
+                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
                 return redirect('schemas:edit_version', client_id, schema.pk, version.pk)
             else:
                 error_message = "Something went wrong"
@@ -93,7 +92,7 @@ def create_schema(request, client_id):
                     'state': 'create',
                     'schema_form': schema_form,
                     'version_form': version_form,
-                    'fields': fields
+                    'fields': columns.get('fields')
                 }
                 return render(request, "schemas/schema_editor.html", context)
         except Exception as e:
@@ -103,7 +102,7 @@ def create_schema(request, client_id):
                 'state': 'create',
                 'schema_form': schema_form,
                 'version_form': version_form,
-                'fields': fields
+                'fields': columns.get('fields')
             }
             return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
