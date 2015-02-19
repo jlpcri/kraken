@@ -75,7 +75,7 @@ class SchemaVersion(models.Model):
         Receives:   columns (dict) default (empty dict)
         Returns:    dict
         """
-        if columns.get('valid'):
+        if columns.get('valid') and columns.get('fields'):
             for c in columns.get('fields'):
                 c.save()
         return columns
@@ -120,6 +120,7 @@ class SchemaVersion(models.Model):
                         columns['valid'] = False
                         columns['error_message'] = 'Custom Fields contain errors'
             columns['fields'] = field_list
+            return columns
         return {'valid': None, 'error_message': None, 'fields': None}
 
 
