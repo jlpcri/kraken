@@ -15,7 +15,14 @@
             min-width: 180px;
         }
     </style>
-    <script type="text/javascript" src="{% static 'common/mockjson/js/main.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
+    <script type="text/javascript">
+        function specifyModal(element) {
+            var value = element.value;
+            $(element).closest('tr').find('.data-generator-params > a')[0]
+            console.log(element.selected)
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -112,21 +119,10 @@
                                 <input type="hidden" id="field_length_{{ field.position|add:-1 }}" name="field_length_{{ field.position|add:-1 }}" value="{{ field.length }}">
                                 </td>
                                 <td class="data-generator-select">
-                                    <select class="form-control">
+                                    <select class="form-control" onchange="specifyModal(this)">
                                         {% for type in field_types %}
-                                            <option>{{ type }}</option>
+                                            <option data-payload="{}">{{ type }}</option>
                                         {% endfor %}
-    {#                                    <option>String</option>#}
-    {#                                    <option>Number</option>#}
-    {#                                    <option>List</option>#}
-    {#                                    <option>Address 1</option>#}
-    {#                                    <option>Address 2</option>#}
-    {#                                    <option>City</option>#}
-    {#                                    <option>State</option>#}
-    {#                                    <option>Zip</option>#}
-    {#                                    <option>Zip+4</option>#}
-    {#                                    <option>Phone</option>#}
-    {#                                    <option>E-mail</option>#}
                                     </select>
                                 </td>
                                 <td class="text-center data-generator-params" style="line-height: 38px;">
@@ -153,13 +149,18 @@
     </form>
 
     </div>
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
-        //$(function () {
-
-        //});
-
         {% include 'schemas/schemas.js' %}
     </script>
 {% endblock %}
