@@ -67,8 +67,6 @@ def create_schema(request, client_id):
                                'type': request.POST.get('selectFieldType_' + r),
                                'unique': request.POST.get('checkFieldUnique_' + r)
                                })
-        for f in fields:
-            print f
 
         try:
             if schema_form.is_valid() and version_form.is_valid():
@@ -172,35 +170,26 @@ def edit_version(request, client_id, schema_id, version_id):
             'state': 'edit',
             'schema_form': ClientSchemaForm(instance=schema),
             'version_form': SchemaVersionForm(instance=version),
-            'fields': version.getFields()
+            'fields': version.get_columns()
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        schema_form = ClientSchemaForm(request.POST)
-        version_form = SchemaVersionForm(request.POST)
-        row_order = request.POST.get('row_order', '').strip()
-        fields = []
-        if row_order:
-            row_order = row_order.strip().split(' ')
-            for r in row_order:
-                fields.append({'name': request.POST.get('inputFieldName_' + r),
-                               'length': request.POST.get('inputFieldLength_' + r),
-                               'type': request.POST.get('selectFieldType_' + r),
-                               'unique': request.POST.get('checkFieldUnique_' + r)
-                               })
+        schema_form = ClientSchemaForm(request.POST, instance=schema)
+        version_form = SchemaVersionForm(request.POST, instance=version)
+        columns = version.validate_columns(request.POST)
 
         try:
-            if schema_form.is_valid() and version_form.is_valid():
+            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid'):
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema
                 version.save()
-                fields = version.saveFields(fields)
+                columns = version.save_columns(columns)
                 messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
-                return redirect('core:home')
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
             else:
                 error_message = "Something went wrong"
                 if not schema_form.is_valid():
@@ -225,7 +214,7 @@ def edit_version(request, client_id, schema_id, version_id):
                     'state': 'edit',
                     'schema_form': schema_form,
                     'version_form': version_form,
-                    'fields': fields
+                    'fields': columns.get('fields')
                 }
                 return render(request, "schemas/schema_editor.html", context)
         except Exception as e:
@@ -237,7 +226,7 @@ def edit_version(request, client_id, schema_id, version_id):
                 'state': 'edit',
                 'schema_form': schema_form,
                 'version_form': version_form,
-                'fields': fields
+                'fields': columns.get('fields')
             }
             return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
