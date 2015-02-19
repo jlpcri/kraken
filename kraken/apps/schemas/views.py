@@ -171,17 +171,14 @@ def edit_version(request, client_id, schema_id, version_id):
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
-        print 'aaa'
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
         schema_form = ClientSchemaForm(request.POST, instance=schema)
         version_form = SchemaVersionForm(request.POST, instance=version)
         columns = version.validate_columns(request.POST)
-        print 'bbb'
         try:
             if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
-                print 'ccc'
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema
@@ -190,7 +187,6 @@ def edit_version(request, client_id, schema_id, version_id):
                 messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
                 return redirect('schemas:edit_version', client_id, schema_id, version_id)
             else:
-                print 'ddd'
                 error_message = "Something went wrong"
                 if not schema_form.is_valid():
                     if schema_form['name'].errors:
@@ -218,7 +214,6 @@ def edit_version(request, client_id, schema_id, version_id):
                 }
                 return render(request, "schemas/schema_editor.html", context)
         except Exception as e:
-            print 'eee'
             messages.danger(request, e.message)
             context = {
                 'client': client,

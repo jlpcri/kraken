@@ -51,19 +51,33 @@ class SchemaVersion(models.Model):
         return total_length
 
     def get_columns(self, position_order=False):
+        """
+        Gets a ModelSet of columns from VersionColumn associated with this ClientVersion
+        Receives:   position_order (True or False) default (False)
+        Returns:    ModelSet
+        """
         if position_order:
             return SchemaColumn.objects.filter(schema_version=self).order_by('position')
         return SchemaColumn.objects.filter(schema_version=self)
 
     def save_columns(self, columns={}):
-        print 'save_columns()'
+        """
+        Saves ModelSet of columns to database
+        Receives:   columns (dict) default (empty dict)
+        Returns:    dict
+        """
         if columns.get('valid'):
             for c in columns.get('fields'):
                 c.save()
         return columns
 
     def validate_columns(self, post):
-        print 'validate_columns()'
+        """
+        Populates list of VersionColumn models from fields in form inside Schema Editor template
+                and validates columns using model.full_clean()
+        Receives:   request.POST
+        Returns:    dict
+        """
         columns = {'valid': None, 'error_message': None, 'fields': None}
         row_order = post.get('row_order', '').strip()
         field_list = []
