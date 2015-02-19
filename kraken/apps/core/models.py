@@ -50,29 +50,45 @@ class SchemaVersion(models.Model):
 
         return total_length
 
-    def getFields(self):
+    def get_columns(self):
         return SchemaColumn.objects.filter(schema_version=self)
 
-    def saveFields(self, fields=[]):
-        for i, f in enumerate(fields):
-            column = SchemaColumn(schema_version=self)
-            column.position = i+1
-            column.name = f.get('name')
-            column.length = f.get('length')
-            if f.get('type') == 'Number':
-                column.type = SchemaColumn.NUMBER
-            elif f.get('type') == 'Text':
-                column.type = SchemaColumn.TEXT
-            if f.get('unique'):
-                column.unique = True
-            else:
-                column.unique = False
-            column.save()
-        return self.getFields()
+    def save_columns(self, columns={}):
+        if columns.get('valid'):
+            for c in columns.get('fields'):
+                c.schema_version = self
+                c.save()
+        return columns
 
-    def validateFields(self, fields=[]):
-        for i, f in enumerate(fields):
-            pass
+    def validate_columns(self, post):
+        columns = {'valid': True, 'error_message': None, 'fields': None}
+        row_order = post.get('row_order', '').strip()
+        field_list = []
+        if row_order:
+            row_order = row_order.strip().split(' ')
+            for i, r in enumerate(row_order):
+                cid = post.get('hiddenFieldId_' + r)
+                if cid:
+                    column = SchemaColumn.objects.get(pk=cid)
+                else:
+                    column = SchemaColumn()
+                column.position = i+1
+                column.name = post.get('inputFieldName_' + r)
+                column.length = post.get('inputFieldLength_' + r)
+                ftype = post.get('selectFieldType_' + r)
+                if ftype == SchemaColumn.NUMBER:
+                    column.type = SchemaColumn.NUMBER
+                elif ftype == SchemaColumn.TEXT:
+                    column.type = SchemaColumn.TEXT
+                funique = post.get('checkFieldUnique_' + r)
+                if funique:
+                    column.unique = True
+                else:
+                    column.unique = False
+                column.full_clean()
+                field_list.append(column)
+            columns['fields'] = field_list
+        return columns
 
 
 class VersionFile(models.Model):
