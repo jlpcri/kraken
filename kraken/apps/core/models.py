@@ -56,13 +56,15 @@ class SchemaVersion(models.Model):
         return SchemaColumn.objects.filter(schema_version=self)
 
     def save_columns(self, columns={}):
+        print 'save_columns()'
         if columns.get('valid'):
             for c in columns.get('fields'):
                 c.save()
         return columns
 
     def validate_columns(self, post):
-        columns = {'valid': True, 'error_message': None, 'fields': None}
+        print 'validate_columns()'
+        columns = {'valid': None, 'error_message': None, 'fields': None}
         row_order = post.get('row_order', '').strip()
         field_list = []
         if row_order:
@@ -96,7 +98,7 @@ class SchemaVersion(models.Model):
                         columns['error_message'] = e.message
             columns['fields'] = field_list
             return columns
-        return {'valid': True, 'error_message': None, 'fields': None}
+        return {'valid': None, 'error_message': None, 'fields': None}
 
 
 class VersionFile(models.Model):
