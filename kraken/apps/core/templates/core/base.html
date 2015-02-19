@@ -94,23 +94,12 @@
             border-color: #666666;
         }
 
-        .popover {
-            max-width: 1037px;
-            width: 1037px;
+        #clientNavigator {
+            max-width: 1005px;
+            width: 1005px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-{#        .column-view-composition {#}
-{#            width: 100%;#}
-{#            display: inline;#}
-{#        }#}
-{##}
-{#        .column {#}
-{#            width: 25%;#}
-{#        }#}
-{##}
-{#        .column ul {#}
-{#            width: 100%;#}
-{#        }#}
 
         .navbar-dropdown-menu {
             width: 100%;
@@ -188,9 +177,6 @@
             {% endfor %}
         </div>
     {% endif %}
-{#    <div class="container">#}
-{#        <div id="columns"></div>#}
-{#    </div>#}
     <div id="content">
         {% block content %}{% endblock %}
     </div>
