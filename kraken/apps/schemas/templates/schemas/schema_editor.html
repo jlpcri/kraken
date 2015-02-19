@@ -143,6 +143,7 @@
                 $('table#tableFields').append($(
                     '<tr id="' + counter + '">' +
                     '<td>' +
+                    '<input type="hidden" name="hiddenFieldId_' + counter + '" value="{{ f.id }}">' +
                     '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name" value="{{ f.name }}">' +
                     '</td>' +
                     '<td>' +
