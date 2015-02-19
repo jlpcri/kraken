@@ -82,10 +82,10 @@
                 <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-left"></i></a>
-                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-right"></i></a>
-                </div>
+{#                <div class="btn-group btn-group-justified">#}
+{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-left"></i></a>#}
+{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-right"></i></a>#}
+{#                </div>#}
             </div>
         </div>
 
@@ -106,7 +106,7 @@
                             <tr>
                                 <td style="line-height: 38px;">
                                 {{ field.name }}
-                                <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.field_type }}">
+                                <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.type }}">
                                 <input type="hidden" id="field_length_{{ field.position|add:-1 }}" name="field_length_{{ field.position|add:-1 }}" value="{{ field.length }}">
                                 </td>
                                 <td>

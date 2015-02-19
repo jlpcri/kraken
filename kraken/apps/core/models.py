@@ -8,6 +8,9 @@ class Client(models.Model):
     def schemas(self):
         return ClientSchema.objects.filter(client=self)
 
+    def __unicode__(self):
+        return self.name
+
 
 class ClientSchema(models.Model):
     name = models.CharField(max_length=200)
@@ -18,6 +21,9 @@ class ClientSchema(models.Model):
 
     def versions(self):
         return SchemaVersion.objects.filter(client_schema=self)
+
+    def __unicode__(self):
+        return self.client.name + " " + self.name
 
 
 class SchemaVersion(models.Model):
@@ -35,6 +41,9 @@ class SchemaVersion(models.Model):
     client_schema = models.ForeignKey(ClientSchema, related_name='schema')
     current = models.BooleanField(default=True)
     delimiter = models.TextField(choices=DELIMITER_TYPE_CHOICES, default=FIXED)
+
+    def __unicode__(self):
+        return unicode(self.client_schema) + u", " + self.identifier
 
     class Meta:
         unique_together = (("identifier", "client_schema"), )
@@ -176,6 +185,9 @@ class SchemaColumn(models.Model):
     type = models.TextField(choices=TYPE_CHOICES, default=TEXT)
     length = models.IntegerField()
     unique = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return unicode(self.schema_version) + u" - {0}: {1}".format(self.position, self.name)
 
     class Meta:
         unique_together = (("name", "schema_version"), )

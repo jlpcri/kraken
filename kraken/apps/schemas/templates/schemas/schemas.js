@@ -31,33 +31,7 @@ $('#buttonGenerate').click(function(){
         showErrMsg('No schema field is added, Cannot generate records');
     }
     else {
-        var contents_head = '<tr>';
-        for (var i = 1; i < Number(record_number) + 1; i++) {
-            contents_head += '<th>Record ' + i + '</th>';
-        }
-        contents_head += '</tr>';
-
-        var contents_body = '';
-
-        for (i = 0; i < field_number; i++){
-            var contents_body_row = '<tr>';
-            for (var j = 0; j < Number(record_number); j++){
-                contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
-            }
-            contents_body_row += '</tr>';
-
-            contents_body += contents_body_row;
-        }
-
-        var add_records_contents = "<table id='tableData' class='table'>" +
-                " <thead>" +
-                contents_head +
-                "</thead>" +
-                "<tbody>" +
-                "</tbody>" +
-                contents_body +
-                "</table> ";
-        $('#add_records').html(add_records_contents);
+        generateRecords(record_number);
     }
 });
 
@@ -70,18 +44,48 @@ $('#validation_input_to_schema').click(function(){
 
     if (! input) {
         showErrMsg('No input from Input');
-    } else if (! $('#record11').length > 0){
-        showErrMsg('You need generate record first.');
     } else {
         var delimiter = '{{version.delimiter}}';
         var rows = input.split('\n');
 
-        if (delimiter == 'Fixed') {
-            parse_input_fixed(rows);
-        } else if (delimiter == 'Pipe') {
-            parse_input(rows, '|');
-        } else if (delimiter == 'Comma') {
-            parse_input(rows, ',');
+        // remove empty line at end
+        while (! rows[Number(rows.length) - 1] ) {
+            rows.splice(-1, 1);
+        }
+
+        if (field_number == 0){
+            showErrMsg('No schema field is added, Cannot generate records');
+        }
+        else {
+            // calculate record number which exists
+            var found = true, record_number = 0;
+            while (found) {
+                if ( $('#record0{0}'.format(record_number)).length <= 0 ) {
+                    found = false;
+                } else {
+                    record_number++;
+                }
+            }
+
+            if (rows.length > record_number) {
+                // generate records first
+                generateRecords(rows.length);
+            } else {
+                // clear all fields of records
+                for (var i = 0; i < record_number; i++) {
+                    for (var j = 0; j < field_number; j++) {
+                        $('#record{0}{1}'.format(j, i)).val('');
+                    }
+                }
+            }
+
+            if (delimiter == 'Fixed') {
+                parse_input_fixed(rows);
+            } else if (delimiter == 'Pipe') {
+                parse_input(rows, '|');
+            } else if (delimiter == 'Comma') {
+                parse_input(rows, ',');
+            }
         }
     }
 });
@@ -91,14 +95,14 @@ $('#validation_schema_to_input').click(function(){
     // initialize errMsg
     $('#errMsg').html('');
 
-    if ($('#record00').length > 0){
+    if ( $('#record00').length > 0 ){
         if (!$('#record00').val()){
             showErrMsg('No input from Schema');
         } else {
             //var field_number = 5;
             var delimiter = '{{version.delimiter}}';
 
-            // calculate record number
+            // calculate record number which has value
             var found = true, record_number = 0;
             while (found) {
                 if (! $('#record0{0}'.format(record_number)).val()) {
@@ -180,6 +184,15 @@ function parse_input(rows, delimiter) {
     // Check the number of fields per record
     for (var i = 0; i < rows.length; i++) {
         var columns = rows[i].split(delimiter);
+
+        // if this line of inputs is empty
+        if (columns == '') continue;
+
+        //remove empty at end of each row
+        while (! columns[Number(columns.length) - 1] ) {
+            columns.splice(-1, 1);
+        }
+
         if (columns.length > field_number) {
             field_number_error_found = true;
             showErrMsg('Row ' + Number(i+1) + ' exceed field number.');
@@ -252,7 +265,8 @@ function parse_schema(record_number, delimiter) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
                     content = $('#record{0}{1}'.format(j, i)).val();
-                while ( content.length < length) {
+
+                while ( delimiter == '' && content.length < length) {
                     content += ' ';
                 }
                 schema_string += content;
@@ -275,4 +289,34 @@ function showErrMsg(message) {
         'color': 'blue'
     });
     $('#errMsg').html('Error: ' + message);
+}
+
+function generateRecords(record_number) {
+    var contents_head = '<tr>';
+        for (var i = 1; i < Number(record_number) + 1; i++) {
+            contents_head += '<th>Record ' + i + '</th>';
+        }
+        contents_head += '</tr>';
+
+        var contents_body = '';
+
+        for (i = 0; i < field_number; i++){
+            var contents_body_row = '<tr>';
+            for (var j = 0; j < Number(record_number); j++){
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
+            }
+            contents_body_row += '</tr>';
+
+            contents_body += contents_body_row;
+        }
+
+        var add_records_contents = "<table id='tableData' class='table'>" +
+                " <thead>" +
+                contents_head +
+                "</thead>" +
+                "<tbody>" +
+                "</tbody>" +
+                contents_body +
+                "</table> ";
+        $('#add_records').html(add_records_contents);
 }
