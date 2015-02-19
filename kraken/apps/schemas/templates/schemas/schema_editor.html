@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label class="control-label col-xs-12">Delimiter</label>
 
-                        <table class="col-xs-12">
+                        <table id="tableDelimiter" class="col-xs-12">
                             <tr>
                                 {% for choice in version_form.delimiter %}
                                     <td class="col-xs-4" style="line-height: 38px;">
@@ -129,8 +129,27 @@
         }
 
         function updateViewer() {
-
-            var s = 'XXX';
+{#            $( "#myselect option:selected" )#}
+            var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
+            delimiter = '' // for Fixed
+            if (delimiterType == 'Pipe') {
+                delimiter = '|';
+            } else if (delimiterType == 'Comma') {
+                delimiter = ',';
+            }
+            var s = "";
+            $("#tableFields tbody tr").each(function() {
+                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();
+                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
+                if (fieldType == 'Number') {
+                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
+                } else if (fieldType == 'Text') {
+                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
+                }
+                for (var i = 0; i < (fieldLength-1); i++ ) {
+                    s = s + '.';
+                }
+            });
             $('#textareaViewer').val(s);
         }
 
