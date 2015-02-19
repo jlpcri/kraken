@@ -86,6 +86,8 @@ def create_schema(request, client_id):
                         error_message = version_form.errors
                     else:
                         error_message = 'Version Name is not a valid value'
+                elif columns.get('valid') is False:
+                    error_message = columns.get('error_message')
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
@@ -179,6 +181,7 @@ def edit_version(request, client_id, schema_id, version_id):
         schema_form = ClientSchemaForm(request.POST, instance=schema)
         version_form = SchemaVersionForm(request.POST, instance=version)
         columns = version.validate_columns(request.POST)
+
         try:
             if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
                 schema = schema_form.save()
@@ -204,6 +207,8 @@ def edit_version(request, client_id, schema_id, version_id):
                         error_message = version_form.errors
                     else:
                         error_message = 'Version Name is not a valid value'
+                elif columns.get('valid') is False:
+                    error_message = columns.get('error_message')
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
