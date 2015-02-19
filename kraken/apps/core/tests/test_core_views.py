@@ -51,6 +51,12 @@ class CreateClientTests(TestCase):
             username=self.user_account['username'],
             password=self.user_account['password'],
         )
+        self.staff = User.objects.create_user(
+            username='staff_user',
+            password='staff_password'
+        )
+        self.staff.is_staff = True
+        self.staff.save()
         self.client.login(
             username=self.user_account['username'],
             password=self.user_account['password']
@@ -63,6 +69,14 @@ class CreateClientTests(TestCase):
     def test_client_create_url_return_status_200(self):
         response = self.client.post(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_whatever_you_call_it(self):
+        self.client.logout()
+        self.client.login(
+            username='staff_user',
+            password='staff_password'
+        )
+
 
     def test_client_create_with_valid_data_successful(self):
         response = self.client.post(self.url, self.create_client_valid)
