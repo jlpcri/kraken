@@ -55,8 +55,8 @@ def create_schema(request, client_id):
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
         client = get_object_or_404(Client, pk=client_id)
-        schema = ClientSchema.objects.get_or_create(client=client, name=request.POST.get('name'))
-        version = SchemaVersion.objects.get_or_create(client_schema=schema, identifier=request.POST.get('identifier'))
+        schema, schema_created = ClientSchema.objects.get_or_create(client=client, name=request.POST.get('name'))
+        version, version_created = SchemaVersion.objects.get_or_create(client_schema=schema, identifier=request.POST.get('identifier'))
         schema_form = ClientSchemaForm(request.POST, instance=schema)
         version_form = SchemaVersionForm(request.POST, instance=version)
         columns = version.validate_columns(request.POST)
