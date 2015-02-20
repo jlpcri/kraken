@@ -22,7 +22,23 @@
             var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
             modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
             console.log(modalButton.getAttribute("data-target"))
+        };
+        function openModal(event) {
+            window.currentRow = $(event.toElement).closest('tr');
         }
+        function saveDataPayload(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
+                    JSON.stringify(form.serializeArray()));
+            form.closest(".modal").modal('hide');
+        };
+        $(function() {
+            $(".fa-pencil-square-o").on('click', openModal);
+            $(".data-generator-form").on('submit', saveDataPayload);
+
+            
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -113,7 +129,7 @@
                         </thead>
                         <tbody>
                             {% for field in fields %}
-                            <tr>
+                            <tr data-row="{{ field.position|add:-1 }}">
                                 <td style="line-height: 38px;">
                                 {{ field.name }}
                                 <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.type }}">
@@ -153,7 +169,7 @@
     <div class="modal fade" id="random-text-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Random text</h4>
@@ -164,7 +180,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -173,7 +189,7 @@
     <div class="modal fade" id="number-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Number</h4>
@@ -184,7 +200,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -193,7 +209,7 @@
     <div class="modal fade" id="user-defined-list-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">User Defined List</h4>
@@ -203,7 +219,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -212,7 +228,7 @@
     <div class="modal fade" id="first-name-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">First Name</h4>
@@ -222,7 +238,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -231,7 +247,7 @@
     <div class="modal fade" id="last-name-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Last Name</h4>
@@ -241,7 +257,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -250,7 +266,7 @@
     <div class="modal fade" id="address-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Address</h4>
@@ -260,7 +276,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -269,7 +285,7 @@
     <div class="modal fade" id="zip-code-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">ZIP Code</h4>
@@ -279,7 +295,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary param-save">Save changes</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
                     </div>
                 </form>
             </div>
