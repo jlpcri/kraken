@@ -129,7 +129,6 @@
         }
 
         function updateViewer() {
-{#            $( "#myselect option:selected" )#}
             var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
             delimiter = '' // for Fixed
             if (delimiterType == 'Pipe') {
@@ -143,11 +142,14 @@
                 var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
                 if (fieldType == 'Number') {
                     if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
+                    for (var i = 0; i < (fieldLength-1); i++ ) {
+                        s = s + '#';
+                    }
                 } else if (fieldType == 'Text') {
                     if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
-                }
-                for (var i = 0; i < (fieldLength-1); i++ ) {
-                    s = s + '.';
+                    for (var i = 0; i < (fieldLength-1); i++ ) {
+                        s = s + 'x';
+                    }
                 }
             });
             $('#textareaViewer').val(s);

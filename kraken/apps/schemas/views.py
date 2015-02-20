@@ -98,6 +98,8 @@ def create_schema(request, client_id):
                 }
                 return render(request, "schemas/schema_editor.html", context)
         except Exception as e:
+            version.delete()
+            schema.delete()
             messages.danger(request, e.message)
             context = {
                 'client': client,
