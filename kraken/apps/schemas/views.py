@@ -16,6 +16,14 @@ def user_is_staff(user):
 @login_required
 @csrf_exempt
 def create_file(request, client_id, schema_id, version_id):
+    """
+    Fetch needed information for create file
+    :param request:
+    :param client_id: id of client
+    :param schema_id: id of schema
+    :param version_id: id of version
+    :return: needed infomation for preparing create new file
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
@@ -258,6 +266,11 @@ def save_file(request, client_id, schema_id, version_id):
 
 
 def clients_list(request):
+    """
+    Handle fetch client list as json
+    :param request:
+    :return: json list of client names
+    """
     clients = Client.objects.all().order_by('name')
 
     data = {}
@@ -284,6 +297,13 @@ def client_schemas_list(request, client_name):
 
 
 def schema_versions_list(request, client_name, schema_name):
+    """
+    Return json list of client-schema-versions
+    :param request:
+    :param client_name: matching client name
+    :param schema_name: matching schema name
+    :return: json list of versions identifier
+    """
     data = {}
     try:
         client = get_object_or_404(Client, name=client_name)
@@ -295,7 +315,6 @@ def schema_versions_list(request, client_name, schema_name):
         data['error'] = e.message
 
     return HttpResponse(json.dumps(data), content_type='application/json')
-
 
 
 def batch_files(request):
