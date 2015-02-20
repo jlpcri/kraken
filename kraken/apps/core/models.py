@@ -3,6 +3,11 @@ from django.db import models
 
 
 class Client(models.Model):
+    """
+    Model for client.
+
+    Currently serves as essentially a folder for schemas
+    """
     name = models.CharField(max_length=200, unique=True)
 
     def schemas(self):
@@ -13,6 +18,11 @@ class Client(models.Model):
 
 
 class ClientSchema(models.Model):
+    """
+    Model for schemas.
+
+    Currently serves as essentially a folder for schema versions
+    """
     name = models.CharField(max_length=200)
     client = models.ForeignKey(Client)
 
@@ -27,6 +37,12 @@ class ClientSchema(models.Model):
 
 
 class SchemaVersion(models.Model):
+    """
+    Model for schema versions
+
+    Contains version identifier and delimiter. Individual field constraints for a schema version are
+    SchemaColumn objects with a foreign key back to a SchemaVersion.
+    """
     # delimiter options
     FIXED = 'Fixed'
     PIPE = 'Pipe'
