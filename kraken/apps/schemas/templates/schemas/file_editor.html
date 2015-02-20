@@ -21,7 +21,6 @@
             var value = element.value;
             var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
             modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
-            console.log(modalButton.getAttribute("data-target"))
         };
         function openModal(event) {
             window.currentRow = $(event.toElement).closest('tr');
