@@ -11,7 +11,7 @@ class Client(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
     def schemas(self):
-        return ClientSchema.objects.filter(client=self)
+        return ClientSchema.objects.filter(client=self).order_by('name')
 
     def __unicode__(self):
         return self.name
@@ -30,7 +30,7 @@ class ClientSchema(models.Model):
         unique_together = (("name", "client"), )
 
     def versions(self):
-        return SchemaVersion.objects.filter(client_schema=self)
+        return SchemaVersion.objects.filter(client_schema=self).order_by('identifier')
 
     def __unicode__(self):
         return self.client.name + " " + self.name
@@ -91,7 +91,13 @@ class SchemaVersion(models.Model):
         Receives:   columns (dict) default (empty dict)
         Returns:    dict
         """
-        if columns.get('valid'):
+        if columns.get('valid') and columns.get('fields'):
+            cols = SchemaColumn.objects.filter(schema_version=self)
+            cols_pks = cols.values_list('pk', flat=True)
+            columns_pks = [x.pk for x in columns.get('fields')]
+            for c in cols_pks:
+                if c not in columns_pks:
+                    SchemaColumn.objects.get(pk=c).delete()
             for c in columns.get('fields'):
                 c.save()
         return columns
@@ -136,6 +142,7 @@ class SchemaVersion(models.Model):
                         columns['valid'] = False
                         columns['error_message'] = 'Custom Fields contain errors'
             columns['fields'] = field_list
+            return columns
         return {'valid': None, 'error_message': None, 'fields': None}
 
 

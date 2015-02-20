@@ -69,6 +69,12 @@ def clients_list(request):
 @login_required
 @csrf_exempt
 def create_client(request):
+    """
+    Handle create new client with valid client name
+    :param request:
+    :return: if succeed, back to home
+             if un-succeed, back to create client modal with error message
+    """
     if request.method == "POST":
         form = ClientForm(request.POST)
         try:
