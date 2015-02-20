@@ -16,6 +16,14 @@ def user_is_staff(user):
 @login_required
 @csrf_exempt
 def create_file(request, client_id, schema_id, version_id):
+    """
+    Fetch needed information for create file
+    :param request:
+    :param client_id: id of client
+    :param schema_id: id of schema
+    :param version_id: id of version
+    :return: needed infomation for preparing create new file
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
@@ -262,32 +270,56 @@ def save_file(request, client_id, schema_id, version_id):
     return HttpResponseNotFound()
 
 
-def client_schemas_list(request, client_id):
+def clients_list(request):
+    """
+    Handle fetch client list as json
+    :param request:
+    :return: json list of client names
+    """
+    clients = Client.objects.all().order_by('name')
+
+    data = {}
+    data['clients'] = [client.name for client in clients]
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def client_schemas_list(request, client_name):
     """
     :param request:
     :param client_name: matching client name
     :return: JSON list of schema names for matching client, ordered alphabetically
     """
-    client = get_object_or_404(Client, pk=client_id)
-    schemas = ClientSchema.objects.filter(client=client).order_by('name')
     data = {}
-
-    data['client_schema'] = [schema.name for schema in schemas]
+    try:
+        client = get_object_or_404(Client, name=client_name)
+        schemas = client.schemas()
+        data['client_schemas'] = [schema.name for schema in schemas]
+    except Exception as e:
+        data['error'] = e.message
 
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-
-
-def schema_version_list(request, schema_id):
-    client_schema = get_object_or_404(ClientSchema, pk=schema_id)
-    schema_versions = SchemaVersion.objects.filter(client_schema=client_schema)
+def schema_versions_list(request, client_name, schema_name):
+    """
+    Return json list of client-schema-versions
+    :param request:
+    :param client_name: matching client name
+    :param schema_name: matching schema name
+    :return: json list of versions identifier
+    """
     data = {}
+    try:
+        client = get_object_or_404(Client, name=client_name)
+        client_schema = get_object_or_404(ClientSchema, client=client, name=schema_name)
+        schema_versions = client_schema.versions()
 
-    data['schema_versions'] = [version.identifier for version in schema_versions]
+        data['schema_versions'] = [version.identifier for version in schema_versions]
+    except Exception as e:
+        data['error'] = e.message
 
     return HttpResponse(json.dumps(data), content_type='application/json')
-
 
 
 def batch_files(request):

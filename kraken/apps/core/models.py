@@ -6,7 +6,7 @@ class Client(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
     def schemas(self):
-        return ClientSchema.objects.filter(client=self)
+        return ClientSchema.objects.filter(client=self).order_by('name')
 
     def __unicode__(self):
         return self.name
@@ -20,7 +20,7 @@ class ClientSchema(models.Model):
         unique_together = (("name", "client"), )
 
     def versions(self):
-        return SchemaVersion.objects.filter(client_schema=self)
+        return SchemaVersion.objects.filter(client_schema=self).order_by('identifier')
 
     def __unicode__(self):
         return self.client.name + " " + self.name
