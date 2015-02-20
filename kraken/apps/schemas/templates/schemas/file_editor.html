@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load staticfiles %}
 {% block title %}File Editor{% endblock %}
 {% block headscript %}
     <style>
@@ -14,6 +15,30 @@
             min-width: 180px;
         }
     </style>
+    <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
+    <script type="text/javascript">
+        function specifyModal(element) {
+            var value = element.value;
+            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
+            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
+        };
+        function openModal(event) {
+            window.currentRow = $(event.toElement).closest('tr');
+        }
+        function saveDataPayload(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
+                    JSON.stringify(form.serializeArray()));
+            form.closest(".modal").modal('hide');
+        };
+        $(function() {
+            $(".fa-pencil-square-o").on('click', openModal);
+            $(".data-generator-form").on('submit', saveDataPayload);
+
+            
+        });
+    </script>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -48,7 +73,7 @@
         <div class="row">
             <div class="col-xs-5">
                 <div class="form-group">
-                    <label class="control-label" for="inputFileName">File Name</label>
+                    <label class="control-label" for="id_name">File Name</label>
                     {{ file_form.name }}
                 </div>
             </div>
@@ -97,38 +122,27 @@
                             <tr>
                                 <th class="col-xs-6">Field Name</th>
                                 <th class="col-xs-3">Field Type</th>
-                                <th class="col-xs-2">Constraints</th>
+                                <th class="col-xs-2">Parameters</th>
                                 <th class="col-xs-1"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for field in fields %}
-                            <tr>
+                            <tr data-row="{{ field.position|add:-1 }}">
                                 <td style="line-height: 38px;">
                                 {{ field.name }}
                                 <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.type }}">
                                 <input type="hidden" id="field_length_{{ field.position|add:-1 }}" name="field_length_{{ field.position|add:-1 }}" value="{{ field.length }}">
                                 </td>
-                                <td>
-                                    <select class="form-control">
+                                <td class="data-generator-select">
+                                    <select class="form-control" onchange="specifyModal(this)">
                                         {% for type in field_types %}
-                                            <option>{{ type }}</option>
+                                            <option data-payload="{}">{{ type }}</option>
                                         {% endfor %}
-    {#                                    <option>String</option>#}
-    {#                                    <option>Number</option>#}
-    {#                                    <option>List</option>#}
-    {#                                    <option>Address 1</option>#}
-    {#                                    <option>Address 2</option>#}
-    {#                                    <option>City</option>#}
-    {#                                    <option>State</option>#}
-    {#                                    <option>Zip</option>#}
-    {#                                    <option>Zip+4</option>#}
-    {#                                    <option>Phone</option>#}
-    {#                                    <option>E-mail</option>#}
                                     </select>
                                 </td>
-                                <td class="text-center" style="line-height: 38px;">
-                                    <a href="#"><i class="fa fa-pencil-square-o fa-lg"></i></a>
+                                <td class="text-center data-generator-params" style="line-height: 38px;">
+                                    <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
                                 </td>
                                 <td class="text-right" style="line-height: 38px;">
                                     <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
@@ -139,7 +153,7 @@
                 </table>
             {% else %}
                 <br><br>
-                <p> No Schema Field is added to this version.</p>
+                <p> No fields have been added to this schema version.</p>
             {% endif %}
             </div>
             <div class="col-md-6">
@@ -151,13 +165,144 @@
     </form>
 
     </div>
+    <div class="modal fade" id="random-text-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Random text</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">Minimum length</label><input class="form-control" name="min-length" />
+                        <label class="control-label">Maximum length</label><input class="form-control" name="max-length" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="number-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Number</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
+                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="user-defined-list-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">User Defined List</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label class="control-label">List</label><textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="first-name-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">First Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>No options are currently available for this data generator.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="last-name-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Last Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>No options are currently available for this data generator.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="address-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Address</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>No options are currently available for this data generator.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="zip-code-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="data-generator-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">ZIP Code</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>No options are currently available for this data generator.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
-        $(function () {
-
-        });
-
         {% include 'schemas/schemas.js' %}
     </script>
 {% endblock %}

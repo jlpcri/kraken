@@ -16,8 +16,13 @@
             <input type="hidden" name="row_order" value="">
 
             <div class="row">
-                <div class="col-xs-10">
+                <div class="col-xs-8">
                     <h3>{{ client.name }}</h3>
+                </div>
+                <div class="col-xs-2">
+                    <button name="update_viewer" class="btn btn-primary" style="width: 100%;">
+                        <i class="fa fa-refresh"></i>&nbsp;Refresh
+                    </button>
                 </div>
                 <div class="col-xs-2">
                     <button type="submit" name="save_schema" class="btn btn-primary" style="width: 100%;">
@@ -47,7 +52,7 @@
                     <div class="form-group">
                         <label class="control-label col-xs-12">Delimiter</label>
 
-                        <table class="col-xs-12">
+                        <table id="tableDelimiter" class="col-xs-12">
                             <tr>
                                 {% for choice in version_form.delimiter %}
                                     <td class="col-xs-4" style="line-height: 38px;">
@@ -124,9 +129,36 @@
         }
 
         function updateViewer() {
-            var s = 'XXX';
+            var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
+            delimiter = '' // for Fixed
+            if (delimiterType == 'Pipe') {
+                delimiter = '|';
+            } else if (delimiterType == 'Comma') {
+                delimiter = ',';
+            }
+            var s = "";
+            $("#tableFields tbody tr").each(function() {
+                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();
+                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
+                if (fieldType == 'Number') {
+                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
+                    for (var i = 0; i < (fieldLength-1); i++ ) {
+                        s = s + '#';
+                    }
+                } else if (fieldType == 'Text') {
+                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
+                    for (var i = 0; i < (fieldLength-1); i++ ) {
+                        s = s + 'x';
+                    }
+                }
+            });
             $('#textareaViewer').val(s);
         }
+
+        $("button[name='update_viewer").on('click', function () {
+            event.preventDefault();
+            updateViewer();
+        })
 
         $("button[name='save_schema']").on('click', function () {
             var s = "";
@@ -143,7 +175,7 @@
                 $('table#tableFields').append($(
                     '<tr id="' + counter + '">' +
                     '<td>' +
-                    '<input type="hidden" name="hiddenFieldId_' + counter + '" value="{{ f.id }}">' +
+                    '<input type="hidden" name="hiddenFieldId_' + counter + '" value="{% if f.id %}{{ f.id }}{% endif %}">' +
                     '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name" value="{{ f.name }}">' +
                     '</td>' +
                     '<td>' +

@@ -3,6 +3,11 @@ from django.db import models
 
 
 class Client(models.Model):
+    """
+    Model for client.
+
+    Currently serves as essentially a folder for schemas
+    """
     name = models.CharField(max_length=200, unique=True)
 
     def schemas(self):
@@ -13,6 +18,11 @@ class Client(models.Model):
 
 
 class ClientSchema(models.Model):
+    """
+    Model for schemas.
+
+    Currently serves as essentially a folder for schema versions
+    """
     name = models.CharField(max_length=200)
     client = models.ForeignKey(Client)
 
@@ -27,6 +37,12 @@ class ClientSchema(models.Model):
 
 
 class SchemaVersion(models.Model):
+    """
+    Model for schema versions
+
+    Contains version identifier and delimiter. Individual field constraints for a schema version are
+    SchemaColumn objects with a foreign key back to a SchemaVersion.
+    """
     # delimiter options
     FIXED = 'Fixed'
     PIPE = 'Pipe'
@@ -59,45 +75,75 @@ class SchemaVersion(models.Model):
 
         return total_length
 
-    def get_columns(self):
+    def get_columns(self, position_order=False):
+        """
+        Gets a ModelSet of columns from VersionColumn associated with this ClientVersion
+        Receives:   position_order (True or False) default (False)
+        Returns:    ModelSet
+        """
+        if position_order:
+            return SchemaColumn.objects.filter(schema_version=self).order_by('position')
         return SchemaColumn.objects.filter(schema_version=self)
 
     def save_columns(self, columns={}):
-        if columns.get('valid'):
+        """
+        Saves ModelSet of columns to database
+        Receives:   columns (dict) default (empty dict)
+        Returns:    dict
+        """
+        if columns.get('valid') and columns.get('fields'):
+            cols = SchemaColumn.objects.filter(schema_version=self)
+            cols_pks = cols.values_list('pk', flat=True)
+            columns_pks = [x.pk for x in columns.get('fields')]
+            for c in cols_pks:
+                if c not in columns_pks:
+                    SchemaColumn.objects.get(pk=c).delete()
             for c in columns.get('fields'):
-                c.schema_version = self
                 c.save()
         return columns
 
     def validate_columns(self, post):
+        """
+        Populates list of VersionColumn models from fields in form inside Schema Editor template
+                and validates columns using model.full_clean()
+        Receives:   request.POST
+        Returns:    dict
+        """
         columns = {'valid': True, 'error_message': None, 'fields': None}
         row_order = post.get('row_order', '').strip()
         field_list = []
         if row_order:
             row_order = row_order.strip().split(' ')
             for i, r in enumerate(row_order):
-                cid = post.get('hiddenFieldId_' + r)
-                if cid:
-                    column = SchemaColumn.objects.get(pk=cid)
-                else:
-                    column = SchemaColumn()
-                column.position = i+1
-                column.name = post.get('inputFieldName_' + r)
-                column.length = post.get('inputFieldLength_' + r)
-                ftype = post.get('selectFieldType_' + r)
-                if ftype == SchemaColumn.NUMBER:
-                    column.type = SchemaColumn.NUMBER
-                elif ftype == SchemaColumn.TEXT:
-                    column.type = SchemaColumn.TEXT
-                funique = post.get('checkFieldUnique_' + r)
-                if funique:
-                    column.unique = True
-                else:
-                    column.unique = False
-                column.full_clean()
-                field_list.append(column)
+                try:
+                    cid = post.get('hiddenFieldId_' + r)
+                    if cid:
+                        column = SchemaColumn.objects.get(pk=cid)
+                    else:
+                        column = SchemaColumn()
+                    column.position = i+1
+                    column.name = post.get('inputFieldName_' + r)
+                    column.length = post.get('inputFieldLength_' + r)
+                    column.schema_version = self
+                    ftype = post.get('selectFieldType_' + r)
+                    if ftype == SchemaColumn.NUMBER:
+                        column.type = SchemaColumn.NUMBER
+                    elif ftype == SchemaColumn.TEXT:
+                        column.type = SchemaColumn.TEXT
+                    funique = post.get('checkFieldUnique_' + r)
+                    if funique:
+                        column.unique = True
+                    else:
+                        column.unique = False
+                    field_list.append(column)
+                    column.full_clean()
+                except Exception as e:
+                    if columns['valid']:
+                        columns['valid'] = False
+                        columns['error_message'] = 'Custom Fields contain errors'
             columns['fields'] = field_list
-        return columns
+            return columns
+        return {'valid': None, 'error_message': None, 'fields': None}
 
 
 class VersionFile(models.Model):
