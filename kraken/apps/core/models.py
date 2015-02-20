@@ -146,16 +146,18 @@ class SchemaVersion(models.Model):
         return {'valid': None, 'error_message': None, 'fields': None}
 
 
+def version_batch_location(instance, filename):
+    return "{0}_{1}".format(str(time.time()).replace('.', ''), filename)
+
+
 class VersionFile(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, blank=False)
     schema_version = models.ForeignKey(SchemaVersion)
+    last_opened = models.DateTimeField('last opened', auto_now=True)
+    contents = models.FileField(upload_to=version_batch_location)
 
     class Meta:
         unique_together = (("name", "schema_version"), )
-
-
-def version_batch_location(instance, filename):
-    return "{0}_{1}".format(str(time.time()).replace('.', ''), filename)
 
 
 class VersionBatch(models.Model):
