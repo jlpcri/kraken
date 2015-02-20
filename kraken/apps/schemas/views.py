@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
-from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn, BatchField
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile, VersionBatch, SchemaColumn, BatchField
 from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
@@ -156,8 +156,12 @@ def download_file(request, client_id, schema_id, version_id, file_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        file = get_object_or_404(SchemaVersion, pk=file_id)
-        return render(request, "schemas/home.html")
+        file = get_object_or_404(VersionFile, pk=file_id)
+        response = HttpResponse(content_type='text/plain')
+        # response['Content-Disposition'] = 'attachment; filename="test.txt"'
+        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(file.name)
+        response.write('Hello World.')
+        return response
     return HttpResponseNotFound()
 
 
