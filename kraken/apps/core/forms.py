@@ -76,7 +76,7 @@ class SchemaVersionForm(ModelForm):
 class VersionFileForm(ModelForm):
     class Meta:
         model = VersionFile
-        exclude = ['schema_version']
+        exclude = ['schema_version', 'last_opened', 'contents']
 
     def __init__(self, *args, **kwargs):
         super(VersionFileForm, self).__init__(*args, **kwargs)

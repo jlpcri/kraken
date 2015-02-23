@@ -156,11 +156,10 @@ def download_file(request, client_id, schema_id, version_id, file_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        file = get_object_or_404(VersionFile, pk=file_id)
+        f = get_object_or_404(VersionFile, pk=file_id)
         response = HttpResponse(content_type='text/plain')
-        # response['Content-Disposition'] = 'attachment; filename="test.txt"'
-        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(file.name)
-        response.write('Hello World.')
+        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
+        response.write(f.contents)
         return response
     return HttpResponseNotFound()
 
