@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
-from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn, BatchField
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile, FileColumn, SchemaColumn
 from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
@@ -35,7 +35,7 @@ def create_file(request, client_id, schema_id, version_id):
             'version': version,
             'fields': fields,
             'field_number': len(fields),
-            'field_types': [item[1] for item in BatchField.GENERATOR_CHOICES],
+            'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
         }
@@ -63,28 +63,21 @@ def create_schema(request, client_id):
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
         client = get_object_or_404(Client, pk=client_id)
-        schema_form = ClientSchemaForm(request.POST)
-        version_form = SchemaVersionForm(request.POST)
-        row_order = request.POST.get('row_order', '').strip()
-        fields = []
-        if row_order:
-            row_order = row_order.strip().split(' ')
-            for r in row_order:
-                fields.append({'name': request.POST.get('inputFieldName_' + r),
-                               'length': request.POST.get('inputFieldLength_' + r),
-                               'type': request.POST.get('selectFieldType_' + r),
-                               'unique': request.POST.get('checkFieldUnique_' + r)
-                               })
+        schema, schema_created = ClientSchema.objects.get_or_create(client=client, name=request.POST.get('name'))
+        version, version_created = SchemaVersion.objects.get_or_create(client_schema=schema, identifier=request.POST.get('identifier'))
+        schema_form = ClientSchemaForm(request.POST, instance=schema)
+        version_form = SchemaVersionForm(request.POST, instance=version)
+        columns = version.validate_columns(request.POST)
 
         try:
-            if schema_form.is_valid() and version_form.is_valid():
+            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema
                 version.save()
-                fields = version.saveFields(fields)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
-                return redirect('core:home')
+                columns = version.save_columns(columns)
+                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
+                return redirect('schemas:edit_version', client_id, schema.pk, version.pk)
             else:
                 error_message = "Something went wrong"
                 if not schema_form.is_valid():
@@ -101,23 +94,27 @@ def create_schema(request, client_id):
                         error_message = version_form.errors
                     else:
                         error_message = 'Version Name is not a valid value'
+                elif columns.get('valid') is False:
+                    error_message = columns.get('error_message')
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
                     'state': 'create',
                     'schema_form': schema_form,
                     'version_form': version_form,
-                    'fields': fields
+                    'fields': columns.get('fields')
                 }
                 return render(request, "schemas/schema_editor.html", context)
         except Exception as e:
+            version.delete()
+            schema.delete()
             messages.danger(request, e.message)
             context = {
                 'client': client,
                 'state': 'create',
                 'schema_form': schema_form,
                 'version_form': version_form,
-                'fields': fields
+                'fields': columns.get('fields')
             }
             return render(request, "schemas/schema_editor.html", context)
     return HttpResponseNotFound()
@@ -151,15 +148,24 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
 
 @login_required
 def download_file(request, client_id, schema_id, version_id, file_id):
+    """
+    Handles GET requests to download file to client computer
+            returns 200 or 404
+    """
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        file = get_object_or_404(SchemaVersion, pk=version_id)
-        return render(request, "schemas/home.html")
+        f = get_object_or_404(VersionFile, pk=file_id)
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
+        response.write(f.contents)
+        return response
     return HttpResponseNotFound()
 
+
 @login_required
+@user_passes_test(user_is_staff)
 def edit_version(request, client_id, schema_id, version_id):
     """
     Handles GET requests to display an already created schema version for editing
@@ -178,7 +184,7 @@ def edit_version(request, client_id, schema_id, version_id):
             'state': 'edit',
             'schema_form': ClientSchemaForm(instance=schema),
             'version_form': SchemaVersionForm(instance=version),
-            'fields': version.get_columns()
+            'fields': version.get_columns(position_order=True)
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
@@ -190,13 +196,13 @@ def edit_version(request, client_id, schema_id, version_id):
         columns = version.validate_columns(request.POST)
 
         try:
-            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid'):
+            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
                 schema = schema_form.save()
                 version = version_form.save(commit=False)
                 version.client_schema = schema
                 version.save()
                 columns = version.save_columns(columns)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been created'.format(schema.name, version.identifier))
+                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
                 return redirect('schemas:edit_version', client_id, schema_id, version_id)
             else:
                 error_message = "Something went wrong"
@@ -214,6 +220,8 @@ def edit_version(request, client_id, schema_id, version_id):
                         error_message = version_form.errors
                     else:
                         error_message = 'Version Name is not a valid value'
+                elif columns.get('valid') is False:
+                    error_message = columns.get('error_message')
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
@@ -332,12 +340,12 @@ def batch_files(request):
         schema_version = get_object_or_404(SchemaVersion,
                                            client_schema=client_schema,
                                            identifier=schema_version_identifier)
-        version_batch_files = VersionBatch.objects.filter(schema_version=schema_version)
+        version_files = VersionFile.objects.filter(schema_version=schema_version)
         data = []
 
-        for item in version_batch_files:
+        for item in version_files:
             temp = {}
-            temp['name'] = item.identifier
+            temp['name'] = item.name
             temp['url'] = item.batch_file_path
             temp['last_opened'] = item.last_opened
 
