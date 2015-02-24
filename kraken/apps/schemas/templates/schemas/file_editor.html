@@ -35,8 +35,6 @@
         $(function() {
             $(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
-
-            
         });
     </script>
 {% endblock %}
@@ -107,23 +105,18 @@
                 <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
-{#                <div class="btn-group btn-group-justified">#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-left"></i></a>#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-right"></i></a>#}
-{#                </div>#}
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
                 {% if fields %}
-                    <table id="" class="table">
+                    <table id="tableDefinitions" class="table">
                         <thead>
                             <tr>
                                 <th class="col-xs-6">Field Name</th>
-                                <th class="col-xs-3">Field Type</th>
+                                <th class="col-xs-4">Field Type</th>
                                 <th class="col-xs-2">Parameters</th>
-                                <th class="col-xs-1"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,9 +136,6 @@
                                 </td>
                                 <td class="text-center data-generator-params" style="line-height: 38px;">
                                     <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
-                                </td>
-                                <td class="text-right" style="line-height: 38px;">
-                                    <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
