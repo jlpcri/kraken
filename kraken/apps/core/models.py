@@ -146,29 +146,25 @@ class SchemaVersion(models.Model):
         return {'valid': None, 'error_message': None, 'fields': None}
 
 
-class VersionFile(models.Model):
-    name = models.CharField(max_length=200)
-    schema_version = models.ForeignKey(SchemaVersion)
-
-    class Meta:
-        unique_together = (("name", "schema_version"), )
-
-
 def version_batch_location(instance, filename):
     return "{0}_{1}".format(str(time.time()).replace('.', ''), filename)
 
 
-class VersionBatch(models.Model):
-    identifier = models.CharField(max_length=200)
+class VersionFile(models.Model):
+    name = models.CharField(max_length=200, blank=False)
     schema_version = models.ForeignKey(SchemaVersion)
     last_opened = models.DateTimeField('last opened', auto_now=True)
     contents = models.FileField(upload_to=version_batch_location)
+
+    class Meta:
+        unique_together = (("name", "schema_version"), )
 
     @property
     def batch_file_path(self):
         return ''
 
-class BatchField(models.Model):
+
+class FileColumn(models.Model):
     NUMBER = 'Number'
     RANDOM_TEXT = 'Random text'
     USER_DEFINED_LIST = 'User defined list'
@@ -186,10 +182,13 @@ class BatchField(models.Model):
         (ZIP_CODE, 'Zip code')
     )
 
-    parent = models.ForeignKey('VersionBatch')
-    column = models.ForeignKey('SchemaColumn')
+    version_file = models.ForeignKey('VersionFile')
+    schema_column = models.ForeignKey('SchemaColumn')
     generator = models.TextField(choices=GENERATOR_CHOICES, default=RANDOM_TEXT)
     payload = models.TextField()  # JSON objects defining options for chosen generator
+
+    class Meta:
+        unique_together = (("version_file", "schema_column"), )
 
 
 class SchemaColumn(models.Model):

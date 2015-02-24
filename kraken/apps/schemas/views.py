@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
-from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionBatch, SchemaColumn, BatchField
+from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile, FileColumn, SchemaColumn
 from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
@@ -35,7 +35,7 @@ def create_file(request, client_id, schema_id, version_id):
             'version': version,
             'fields': fields,
             'field_number': len(fields),
-            'field_types': [item[1] for item in BatchField.GENERATOR_CHOICES],
+            'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
         }
@@ -156,8 +156,11 @@ def download_file(request, client_id, schema_id, version_id, file_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
-        file = get_object_or_404(SchemaVersion, pk=file_id)
-        return render(request, "schemas/home.html")
+        f = get_object_or_404(VersionFile, pk=file_id)
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
+        response.write(f.contents)
+        return response
     return HttpResponseNotFound()
 
 
@@ -337,12 +340,12 @@ def batch_files(request):
         schema_version = get_object_or_404(SchemaVersion,
                                            client_schema=client_schema,
                                            identifier=schema_version_identifier)
-        version_batch_files = VersionBatch.objects.filter(schema_version=schema_version)
+        version_files = VersionFile.objects.filter(schema_version=schema_version)
         data = []
 
-        for item in version_batch_files:
+        for item in version_files:
             temp = {}
-            temp['name'] = item.identifier
+            temp['name'] = item.name
             temp['url'] = item.batch_file_path
             temp['last_opened'] = item.last_opened
 
