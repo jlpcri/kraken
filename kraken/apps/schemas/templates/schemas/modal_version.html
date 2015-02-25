@@ -5,29 +5,32 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Create Version</h4>
+                    <h4 class="modal-title">Create Version or Save Version?</h4>
                 </div>
                 <div class="modal-body">
 
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label for="modal_select_version_identifier">
-                                Select Version
+                            <label for="modal_old_version_identifier">
+                                Old Identifier:
                             </label>
-
+                            <p>{{ version.identifier }}</p>
+                            <br>
+                            <label for="modal_new_version_identifier">
+                                New Identifier:
+                            </label>
+                            <p id="modal_version_name_new_display"></p>
+                            <input id="modal_version_name" name="modal_version_name" value="" hidden>
 
                         </div>
                     </div>
-
                     <br>
-                    <div class="col-lg-12">
-                        <p id="modal_create_version_error" style="color: red"></p>
-                    </div>
+
                     {% csrf_token %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-success" name="save_version">Save</button>
+                    <button type="submit" class="btn btn-success" name="create_version">Create</button>
                 </div>
             </div>
         </form>

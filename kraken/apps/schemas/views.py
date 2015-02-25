@@ -195,34 +195,47 @@ def edit_version(request, client_id, schema_id, version_id):
         version_form = SchemaVersionForm(request.POST, instance=version)
         columns = version.validate_columns(request.POST)
 
-        try:
-            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
-                schema = schema_form.save()
-                version = version_form.save(commit=False)
-                version.client_schema = schema
-                version.save()
-                columns = version.save_columns(columns)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
-                return redirect('schemas:edit_version', client_id, schema_id, version_id)
-            else:
-                error_message = "Something went wrong"
-                if not schema_form.is_valid():
-                    if schema_form['name'].errors:
-                        error_message = schema_form['name'].errors
-                    elif schema_form.errors:
-                        error_message = schema_form.errors
-                    else:
-                        error_message = 'Schema Name is not a valid value'
-                elif not version_form.is_valid():
-                    if version_form['identifier'].errors:
-                        error_message = version_form['identifier'].errors
-                    elif version_form.errors:
-                        error_message = version_form.errors
-                    else:
-                        error_message = 'Version Name is not a valid value'
-                elif columns.get('valid') is False:
-                    error_message = columns.get('error_message')
-                messages.danger(request, error_message)
+        if 'save_schema' in request.POST:
+            try:
+                if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
+                    schema = schema_form.save()
+                    version = version_form.save(commit=False)
+                    version.client_schema = schema
+                    version.save()
+                    columns = version.save_columns(columns)
+                    messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
+                    return redirect('schemas:edit_version', client_id, schema_id, version_id)
+                else:
+                    error_message = "Something went wrong"
+                    if not schema_form.is_valid():
+                        if schema_form['name'].errors:
+                            error_message = schema_form['name'].errors
+                        elif schema_form.errors:
+                            error_message = schema_form.errors
+                        else:
+                            error_message = 'Schema Name is not a valid value'
+                    elif not version_form.is_valid():
+                        if version_form['identifier'].errors:
+                            error_message = version_form['identifier'].errors
+                        elif version_form.errors:
+                            error_message = version_form.errors
+                        else:
+                            error_message = 'Version Name is not a valid value'
+                    elif columns.get('valid') is False:
+                        error_message = columns.get('error_message')
+                    messages.danger(request, error_message)
+                    context = {
+                        'client': client,
+                        'schema': schema,
+                        'version': version,
+                        'state': 'edit',
+                        'schema_form': schema_form,
+                        'version_form': version_form,
+                        'fields': columns.get('fields')
+                    }
+                    return render(request, "schemas/schema_editor.html", context)
+            except Exception as e:
+                messages.danger(request, e.message)
                 context = {
                     'client': client,
                     'schema': schema,
@@ -233,18 +246,27 @@ def edit_version(request, client_id, schema_id, version_id):
                     'fields': columns.get('fields')
                 }
                 return render(request, "schemas/schema_editor.html", context)
-        except Exception as e:
-            messages.danger(request, e.message)
-            context = {
-                'client': client,
-                'schema': schema,
-                'version': version,
-                'state': 'edit',
-                'schema_form': schema_form,
-                'version_form': version_form,
-                'fields': columns.get('fields')
-            }
-            return render(request, "schemas/schema_editor.html", context)
+        elif 'save_version' in request.POST:
+            version.identifier = request.POST.get('modal_version_name')
+            try:
+                version.save()
+                messages.success(request, 'Version \"{0}\" has been updated'.format(version.identifier))
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+            except Exception as e:
+                messages.danger(request, e.message)
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+
+        elif 'create_version' in request.POST:
+            try:
+                version_new = SchemaVersion.objects.create(identifier=request.POST.get('modal_version_name'),
+                                                           client_schema=version.client_schema,
+                                                           delimiter=version.delimiter)
+                messages.success(request, 'Version \"{0}\" has been created'.format(version_new.identifier))
+                return redirect('schemas:edit_version', client_id, schema_id, version_new.id)
+            except Exception as e:
+                messages.danger(request, e.message)
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+
     return HttpResponseNotFound()
 
 
