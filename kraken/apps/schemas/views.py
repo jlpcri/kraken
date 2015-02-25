@@ -261,6 +261,16 @@ def edit_version(request, client_id, schema_id, version_id):
                 version_new = SchemaVersion.objects.create(identifier=request.POST.get('modal_version_name'),
                                                            client_schema=version.client_schema,
                                                            delimiter=version.delimiter)
+                cols = version.get_columns(position_order=True)
+                for col in cols:
+                    SchemaColumn.objects.create(
+                        position=col.position,
+                        schema_version=version_new,
+                        name=col.name,
+                        type=col.type,
+                        length=col.length
+                    )
+
                 messages.success(request, 'Version \"{0}\" has been created'.format(version_new.identifier))
                 return redirect('schemas:edit_version', client_id, schema_id, version_new.id)
             except Exception as e:
