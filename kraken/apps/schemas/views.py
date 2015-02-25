@@ -121,15 +121,6 @@ def create_schema(request, client_id):
 
 
 @login_required
-@csrf_exempt
-def create_version(request, client_id, schema_id):
-    if request.method == "POST":
-        version_name = request.POST.get('version')
-        print version_name
-    return HttpResponseNotFound()
-
-
-@login_required
 def edit_file(request, client_id, schema_id, version_id, file_id):
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)
@@ -289,9 +280,15 @@ def save_file(request, client_id, schema_id, version_id):
                 if file_form.is_valid():
                     file = file_form.save(commit=False)
                     file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
-                    file.save()
-                    messages.success(request, 'File \"{0}\" has been created'.format(file.name))
-                    return redirect('core:home')
+                    file_contents = request.POST.get('textareaViewer', '')
+                    if not file_contents:
+                        messages.danger(request, 'No contents need saved to file')
+                        return redirect('schemas:create_file', client_id, schema_id, version_id)
+                    else:
+                        file.contents = file_contents
+                        file.save()
+                        messages.success(request, 'File \"{0}\" has been created'.format(file.name))
+                        return redirect('core:home')
                 else:
                     if file_form['name'].errors:
                         error_message = file_form['name'].errors
