@@ -105,6 +105,9 @@
             </div>
         </form>
     </div>
+
+    {% include 'schemas/modal_version.html' %}
+
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
@@ -166,6 +169,18 @@
                 s = s + this.id + " ";
             });
             $('input[name="row_order"]').val(s);
+
+            var version_name_new = $("input[name='identifier']").val();
+            var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
+
+            if (( '{{ version.identifier }}' != version_name_new ) &&
+                    ( '{{ schema.name }}' == $("input[name='name']").val()) &&
+                    ( delimiterType == '{{ version.delimiter }}')) {
+                event.preventDefault();
+                $('#modal_version_name_new_display').html(version_name_new);
+                $('#modal_version_name').val(version_name_new);
+                $('#modal_create_version').modal('show');
+            }
             unsavedChanges = false;
         });
 

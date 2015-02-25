@@ -74,7 +74,8 @@ class TestSchemaViewsAsStaff(TestCase):
         self.client = Client()
         self.kraken_client = KrakenClient.objects.create(name='Kraken Client')
         self.kraken_schema = ClientSchema.objects.create(name='Client Schema', client=self.kraken_client)
-        self.kraken_version = SchemaVersion.objects.create(identifier='New Identifier', client_schema=self.kraken_schema)
+        self.kraken_version = SchemaVersion.objects.create(identifier='New Identifier',
+                                                           client_schema=self.kraken_schema)
 
         self.url_create_schema = reverse(
             'schemas:create_schema',
@@ -91,8 +92,37 @@ class TestSchemaViewsAsStaff(TestCase):
         }
         self.edit_version = {
             'state': 'edit',
-            'name': 'edit version',
-            'identifier': 'identifier'
+            'save_schema': '',
+            'name': self.kraken_schema.name,
+            'identifier': self.kraken_version.identifier
+        }
+        self.edit_version_schema_name_change = {
+            'hiddenFieldId_1': self.kraken_client.id,
+            'name': 'New Schema Name',
+            'delimiter': self.kraken_version.delimiter,
+            'inputFieldName_1': 'String5',
+            'inputFieldLength_1': 5,
+            'selectFieldType_1': 'Text',
+            'save_schema': '',
+            'state': 'edit',
+            'client': self.kraken_client.id,
+            'client_id': self.kraken_client.id,
+            'row_order': '1 ',
+            'identifier': self.kraken_version.identifier
+        }
+        self.edit_version_version_name_change = {
+            'hiddenFieldId_1': self.kraken_client.id,
+            'name': self.kraken_schema.name,
+            'delimiter': self.kraken_version.delimiter,
+            'inputFieldName_1': 'String5',
+            'inputFieldLength_1': 5,
+            'selectFieldType_1': 'Text',
+            'save_schema': '',
+            'state': 'edit',
+            'client': self.kraken_client.id,
+            'client_id': self.kraken_client.id,
+            'row_order': '1 ',
+            'identifier': self.kraken_version.identifier
         }
         self.user_account = {
             'username': 'Test Username',
@@ -134,3 +164,11 @@ class TestSchemaViewsAsStaff(TestCase):
     def test_edit_version_url_post_return_status_200_as_staff(self):
         response = self.client.post(self.url_edit_version, self.edit_version)
         self.assertEqual(response.status_code, 200)
+
+    def test_edit_version_with_schema_name_update(self):
+        response = self.client.post(self.url_edit_version, self.edit_version_schema_name_change)
+        self.assertContains(response, self.edit_version_schema_name_change['name'])
+
+    def test_edit_version_with_version_name_update(self):
+        response = self.client.post(self.url_edit_version, self.edit_version_version_name_change)
+        self.assertContains(response, self.edit_version_version_name_change['identifier'])
