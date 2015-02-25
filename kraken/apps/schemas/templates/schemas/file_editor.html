@@ -163,9 +163,45 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Text Parameters</h4>
                     </div>
-                    <div class="modal-body">
-                        <label class="control-label">Minimum length</label><input class="form-control" name="min-length" />
-                        <label class="control-label">Maximum length</label><input class="form-control" name="max-length" />
+                    <div class="modal-body"><div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-10" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="manual" checked="">
+                                    Manual
+                                </label>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="fill">
+                                    Fill
+                                </label>
+                            </div>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="random">
+                                    Random
+                                </label>
+                            </div>
+                            <div class="col-xs-8">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -189,8 +225,7 @@
                             </div>
                             <div class="col-xs-10" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioManual" value="manual"
-                                           checked="">
+                                    <input type="radio" name="radiosGenerate" value="manual" checked="">
                                     Manual
                                 </label>
                             </div>
@@ -202,12 +237,12 @@
                             </div>
                             <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioFill" value="fill">
+                                    <input type="radio" name="radiosGenerate" value="fill">
                                     Fill
                                 </label>
                             </div>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputFill" placeholder="Value to fill">
+                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
                             </div>
                             <div class="col-xs-1">
                             </div>
@@ -217,12 +252,12 @@
                             </div>
                             <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioIncrement" value="increment">
+                                    <input type="radio" name="radiosGenerate" value="increment">
                                     Increment
                                 </label>
                             </div>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputIncrement" placeholder="Beginning value">
+                                <input type="text" class="form-control input-sm" name="inputIncrement" placeholder="Beginning value">
                             </div>
                             <div class="col-xs-1">
                             </div>
@@ -232,7 +267,7 @@
                             </div>
                             <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioRandom" value="random">
+                                    <input type="radio" name="radiosGenerate" value="random">
                                     Random
                                 </label>
                             </div>
