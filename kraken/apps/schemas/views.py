@@ -188,14 +188,14 @@ def edit_version(request, client_id, schema_id, version_id):
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
-        if 'save_schema' in request.POST:
-            client = get_object_or_404(Client, pk=client_id)
-            schema = get_object_or_404(ClientSchema, pk=schema_id)
-            version = get_object_or_404(SchemaVersion, pk=version_id)
-            schema_form = ClientSchemaForm(request.POST, instance=schema)
-            version_form = SchemaVersionForm(request.POST, instance=version)
-            columns = version.validate_columns(request.POST)
+        client = get_object_or_404(Client, pk=client_id)
+        schema = get_object_or_404(ClientSchema, pk=schema_id)
+        version = get_object_or_404(SchemaVersion, pk=version_id)
+        schema_form = ClientSchemaForm(request.POST, instance=schema)
+        version_form = SchemaVersionForm(request.POST, instance=version)
+        columns = version.validate_columns(request.POST)
 
+        if 'save_schema' in request.POST:
             try:
                 if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
                     schema = schema_form.save()
@@ -247,12 +247,26 @@ def edit_version(request, client_id, schema_id, version_id):
                 }
                 return render(request, "schemas/schema_editor.html", context)
         elif 'save_version' in request.POST:
-            client = get_object_or_404(Client, pk=client_id)
-            schema = get_object_or_404(ClientSchema, pk=schema_id)
-            version = get_object_or_404(SchemaVersion, pk=version_id)
-            print request.POST.get('modal_version_name')
+            version.identifier = request.POST.get('modal_version_name')
+            try:
+                version.save()
+                messages.success(request, 'Version \"{0}\" has been updated'.format(version.identifier))
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+            except Exception as e:
+                messages.danger(request, e.message)
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+
         elif 'create_version' in request.POST:
-            print 'create'
+            try:
+                version_new = SchemaVersion.objects.create(identifier=request.POST.get('modal_version_name'),
+                                                           client_schema=version.client_schema,
+                                                           delimiter=version.delimiter)
+                messages.success(request, 'Version \"{0}\" has been created'.format(version_new.identifier))
+                return redirect('schemas:edit_version', client_id, schema_id, version_new.id)
+            except Exception as e:
+                messages.danger(request, e.message)
+                return redirect('schemas:edit_version', client_id, schema_id, version_id)
+
     return HttpResponseNotFound()
 
 
