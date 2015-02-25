@@ -35,8 +35,6 @@
         $(function() {
             $(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
-
-            
         });
     </script>
 {% endblock %}
@@ -107,23 +105,18 @@
                 <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
-{#                <div class="btn-group btn-group-justified">#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-left"></i></a>#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-right"></i></a>#}
-{#                </div>#}
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
                 {% if fields %}
-                    <table id="" class="table">
+                    <table id="tableDefinitions" class="table">
                         <thead>
                             <tr>
                                 <th class="col-xs-6">Field Name</th>
-                                <th class="col-xs-3">Field Type</th>
+                                <th class="col-xs-4">Field Type</th>
                                 <th class="col-xs-2">Parameters</th>
-                                <th class="col-xs-1"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,9 +136,6 @@
                                 </td>
                                 <td class="text-center data-generator-params" style="line-height: 38px;">
                                     <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
-                                </td>
-                                <td class="text-right" style="line-height: 38px;">
-                                    <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -194,8 +184,62 @@
                         <h4 class="modal-title">Number</h4>
                     </div>
                     <div class="modal-body">
-                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
-                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <label class="control-label">Minimum</label><input class="form-control input-sm"
+                                                                                   name="min" placeholder="Minimum value">
+                            </div>
+                            <div class="col-xs-6">
+                                <label class="control-label">Maximum</label><input class="form-control input-sm"
+                                                                                   name="max" placeholder="Maximum value">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-12" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioManual" value="manual"
+                                           checked="">
+                                    Manual
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioFill" value="fill">
+                                    Fill
+                                </label>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputFill" placeholder="Value to fill">
+                            </div>
+                            <div class="col-xs-3">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioIncrement" value="increment">
+                                    Increment
+                                </label>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputIncrement" placeholder="Beginning value">
+                            </div>
+                            <div class="col-xs-3">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioRandom" value="random">
+                                    Random
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
