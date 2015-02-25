@@ -280,6 +280,7 @@ def save_file(request, client_id, schema_id, version_id):
                 if file_form.is_valid():
                     file = file_form.save(commit=False)
                     file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
+                    file.contents = request.POST.get('textareaViewer')
                     file.save()
                     messages.success(request, 'File \"{0}\" has been created'.format(file.name))
                     return redirect('core:home')
