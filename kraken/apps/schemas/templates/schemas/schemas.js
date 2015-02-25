@@ -412,20 +412,89 @@ function generateRecords(record_number) {
                 d.push("Custom List");
             }
         } else if (type == "First Name") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("First Name");
+            // use mockjson to get random first names for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "name": "@MALE_FIRST_NAME" }
+                ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['name']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         } else if (type == "Last Name") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("Last Name");
+            // use mockjson to get random last names for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "name": "@LAST_NAME" }
+                ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['name']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         } else if (type == "Address") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("Address");
+            // use mockjson to get random addresses for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
+                ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['address']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         } else if (type == "Zip Code") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("Zip Code");
+            // use mockjson to get random zip codes for generating fields
+            var min = 10000;
+            var max = 99999;
+            var s = "result|{0}-{1}".format(record_number, record_number);
+            var n = "zipcode|{0}-{1}".format(min, max);
+            var o = {};
+            o[n] = 0;
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                o
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['zipcode']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         }
         data.push(d);
