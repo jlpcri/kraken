@@ -121,15 +121,6 @@ def create_schema(request, client_id):
 
 
 @login_required
-@csrf_exempt
-def create_version(request, client_id, schema_id):
-    if request.method == "POST":
-        version_name = request.POST.get('version')
-        print version_name
-    return HttpResponseNotFound()
-
-
-@login_required
 def edit_file(request, client_id, schema_id, version_id, file_id):
     if request.method == "GET":
         client = get_object_or_404(Client, pk=client_id)

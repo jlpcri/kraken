@@ -3,7 +3,7 @@ from django.test import TestCase, Client
 from django.core.urlresolvers import reverse, resolve
 
 from kraken.apps.core.models import Client as KrakenClient, ClientSchema, SchemaVersion
-from kraken.apps.schemas.views import create_schema, create_version, edit_version
+from kraken.apps.schemas.views import create_schema, edit_version
 
 
 class TestSchemaViewsAsUser(TestCase):
