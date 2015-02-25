@@ -184,8 +184,62 @@
                         <h4 class="modal-title">Number</h4>
                     </div>
                     <div class="modal-body">
-                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
-                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <label class="control-label">Minimum</label><input class="form-control input-sm"
+                                                                                   name="min" placeholder="Minimum value">
+                            </div>
+                            <div class="col-xs-6">
+                                <label class="control-label">Maximum</label><input class="form-control input-sm"
+                                                                                   name="max" placeholder="Maximum value">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-12" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioManual" value="manual"
+                                           checked="">
+                                    Manual
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioFill" value="fill">
+                                    Fill
+                                </label>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputFill" placeholder="Value to fill">
+                            </div>
+                            <div class="col-xs-3">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioIncrement" value="increment">
+                                    Increment
+                                </label>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputIncrement" placeholder="Beginning value">
+                            </div>
+                            <div class="col-xs-3">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" id="radioRandom" value="random">
+                                    Random
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

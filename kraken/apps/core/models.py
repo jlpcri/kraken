@@ -166,25 +166,25 @@ class VersionFile(models.Model):
 
 class FileColumn(models.Model):
     NUMBER = 'Number'
-    RANDOM_TEXT = 'Random text'
-    USER_DEFINED_LIST = 'User defined list'
-    FIRST_NAME = 'First name'
-    LAST_NAME = 'Last name'
+    TEXT = 'Text'
+    CUSTOM_LIST = 'Custom List'
+    FIRST_NAME = 'First Name'
+    LAST_NAME = 'Last Name'
     ADDRESS = 'Address'
-    ZIP_CODE = 'Zip code'
+    ZIP_CODE = 'Zip Code'
     GENERATOR_CHOICES = (
-        (RANDOM_TEXT, 'Random text'),
+        (TEXT, 'Text'),
         (NUMBER, 'Number'),
-        (USER_DEFINED_LIST, 'User defined list'),
-        (FIRST_NAME, 'First name'),
-        (LAST_NAME, 'Last name'),
+        (CUSTOM_LIST, 'Custom List'),
+        (FIRST_NAME, 'First Name'),
+        (LAST_NAME, 'Last Name'),
         (ADDRESS, 'Address'),
-        (ZIP_CODE, 'Zip code')
+        (ZIP_CODE, 'Zip Code')
     )
 
     version_file = models.ForeignKey('VersionFile')
     schema_column = models.ForeignKey('SchemaColumn')
-    generator = models.TextField(choices=GENERATOR_CHOICES, default=RANDOM_TEXT)
+    generator = models.TextField(choices=GENERATOR_CHOICES, default=TEXT)
     payload = models.TextField()  # JSON objects defining options for chosen generator
 
     class Meta:

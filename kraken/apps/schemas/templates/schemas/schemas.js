@@ -302,10 +302,10 @@ function generateRecords(record_number) {
         var type = $(this).find("select option:selected").val();
         var payload = $(this).find("select option:selected").attr('data-payload');
         var d = []
-        if (type == "Random text") {
+        if (type == "Text") {
             var min = record_number;
             var max = record_number;
-            var s = "result|{0}-{1}".format(min, max);
+            var s = "result|{0}-{1}".format(record_number, record_number);
 
             var textTemplate = {};
             textTemplate[s] = [
@@ -316,7 +316,6 @@ function generateRecords(record_number) {
                 $.mockJSON(/mockme\.json/, textTemplate);
 
                 $.getJSON('mockme.json', function(json) {
-                    console.log(json);
                     for (var i = 0; i < json['result'].length; i++) {
                         d.push(json['result'][i]['text']);
                     }
@@ -326,8 +325,8 @@ function generateRecords(record_number) {
             }
         } else if (type == "Number") {
             var s = "result|{0}-{1}".format(record_number, record_number);
-            var min = 1000; // from modal
-            var max = 9999; // from modal
+            var min = 1000; // from payload
+            var max = 9999; // from payload
             var n = "number|{0}-{1}".format(min, max);
             var o = {};
             o[n] = 0;
