@@ -303,12 +303,50 @@ function generateRecords(record_number) {
         var payload = $(this).find("select option:selected").attr('data-payload');
         var d = []
         if (type == "Random text") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("text");
+            var min = record_number;
+            var max = record_number;
+            var s = "result|{0}-{1}".format(min, max);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "text": "@LOREM" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    console.log(json);
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['text']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         } else if (type == "Number") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("number");
+            var s = "result|{0}-{1}".format(record_number, record_number);
+            var min = 1000; // from modal
+            var max = 9999; // from modal
+            var n = "number|{0}-{1}".format(min, max);
+            var o = {};
+            o[n] = 0;
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                o
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['number']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
             }
         } else if (type == "User defined list") {
             for (var i = 0; i < record_number; i++) {
@@ -333,13 +371,12 @@ function generateRecords(record_number) {
         }
         data.push(d);
     })
-    console.log(data);
 
     var contents_body = '';
     for (i = 0; i < field_number; i++) {
         var contents_body_row = '<tr>';
         for (var j = 0; j < Number(record_number); j++) {
-            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='" + data[i][j] + "'></td>".format('record' + i + j);
+            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value={1}></td>".format('record' + i + j, data[i][j]);
         }
         contents_body_row += '</tr>';
 
