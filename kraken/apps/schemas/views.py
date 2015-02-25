@@ -188,41 +188,54 @@ def edit_version(request, client_id, schema_id, version_id):
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
-        client = get_object_or_404(Client, pk=client_id)
-        schema = get_object_or_404(ClientSchema, pk=schema_id)
-        version = get_object_or_404(SchemaVersion, pk=version_id)
-        schema_form = ClientSchemaForm(request.POST, instance=schema)
-        version_form = SchemaVersionForm(request.POST, instance=version)
-        columns = version.validate_columns(request.POST)
+        if 'save_schema' in request.POST:
+            client = get_object_or_404(Client, pk=client_id)
+            schema = get_object_or_404(ClientSchema, pk=schema_id)
+            version = get_object_or_404(SchemaVersion, pk=version_id)
+            schema_form = ClientSchemaForm(request.POST, instance=schema)
+            version_form = SchemaVersionForm(request.POST, instance=version)
+            columns = version.validate_columns(request.POST)
 
-        try:
-            if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
-                schema = schema_form.save()
-                version = version_form.save(commit=False)
-                version.client_schema = schema
-                version.save()
-                columns = version.save_columns(columns)
-                messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
-                return redirect('schemas:edit_version', client_id, schema_id, version_id)
-            else:
-                error_message = "Something went wrong"
-                if not schema_form.is_valid():
-                    if schema_form['name'].errors:
-                        error_message = schema_form['name'].errors
-                    elif schema_form.errors:
-                        error_message = schema_form.errors
-                    else:
-                        error_message = 'Schema Name is not a valid value'
-                elif not version_form.is_valid():
-                    if version_form['identifier'].errors:
-                        error_message = version_form['identifier'].errors
-                    elif version_form.errors:
-                        error_message = version_form.errors
-                    else:
-                        error_message = 'Version Name is not a valid value'
-                elif columns.get('valid') is False:
-                    error_message = columns.get('error_message')
-                messages.danger(request, error_message)
+            try:
+                if schema_form.is_valid() and version_form.is_valid() and columns.get('valid') is not False:
+                    schema = schema_form.save()
+                    version = version_form.save(commit=False)
+                    version.client_schema = schema
+                    version.save()
+                    columns = version.save_columns(columns)
+                    messages.success(request, 'Schema \"{0}\" and Version \"{1}\" have been updated'.format(schema.name, version.identifier))
+                    return redirect('schemas:edit_version', client_id, schema_id, version_id)
+                else:
+                    error_message = "Something went wrong"
+                    if not schema_form.is_valid():
+                        if schema_form['name'].errors:
+                            error_message = schema_form['name'].errors
+                        elif schema_form.errors:
+                            error_message = schema_form.errors
+                        else:
+                            error_message = 'Schema Name is not a valid value'
+                    elif not version_form.is_valid():
+                        if version_form['identifier'].errors:
+                            error_message = version_form['identifier'].errors
+                        elif version_form.errors:
+                            error_message = version_form.errors
+                        else:
+                            error_message = 'Version Name is not a valid value'
+                    elif columns.get('valid') is False:
+                        error_message = columns.get('error_message')
+                    messages.danger(request, error_message)
+                    context = {
+                        'client': client,
+                        'schema': schema,
+                        'version': version,
+                        'state': 'edit',
+                        'schema_form': schema_form,
+                        'version_form': version_form,
+                        'fields': columns.get('fields')
+                    }
+                    return render(request, "schemas/schema_editor.html", context)
+            except Exception as e:
+                messages.danger(request, e.message)
                 context = {
                     'client': client,
                     'schema': schema,
@@ -233,18 +246,13 @@ def edit_version(request, client_id, schema_id, version_id):
                     'fields': columns.get('fields')
                 }
                 return render(request, "schemas/schema_editor.html", context)
-        except Exception as e:
-            messages.danger(request, e.message)
-            context = {
-                'client': client,
-                'schema': schema,
-                'version': version,
-                'state': 'edit',
-                'schema_form': schema_form,
-                'version_form': version_form,
-                'fields': columns.get('fields')
-            }
-            return render(request, "schemas/schema_editor.html", context)
+        elif 'save_version' in request.POST:
+            client = get_object_or_404(Client, pk=client_id)
+            schema = get_object_or_404(ClientSchema, pk=schema_id)
+            version = get_object_or_404(SchemaVersion, pk=version_id)
+            print request.POST.get('modal_version_name')
+        elif 'create_version' in request.POST:
+            print 'create'
     return HttpResponseNotFound()
 
 
