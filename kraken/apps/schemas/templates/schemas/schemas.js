@@ -303,13 +303,164 @@ function generateRecords(record_number) {
         var payload = $(this).find("select option:selected").attr('data-payload');
         var d = []
         if (type == "Text") {
-            var min = record_number;
-            var max = record_number;
+            var generate = "manual";
+            var fill = "";
+            var p = $.parseJSON(payload);
+            for (var i = 0; i < p.length; i++) {
+                if (p[i]['name'] == "radiosGenerate") {
+                    generate = p[i]['value'];
+                } else if (p[i]['name'] == "inputFill") {
+                    fill = p[i]['value'];
+                }
+            }
+
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push("");
+                }
+            } else if (generate == "fill") {
+                // use value from fill to generate fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(fill);
+                }
+            } else if (generate == "random") {
+                // use mockjson to get random text for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "text": "@LOREM" }
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['text']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "Number") {
+            var min = 0;
+            var max = 9;
+            var generate = "manual";
+            var fill = "";
+            var increment = 0;
+            var p = $.parseJSON(payload);
+            for (var i = 0; i < p.length; i++) {
+                if (p[i]['name'] == "min") {
+                    min = p[i]['value'];
+                } else if (p[i]['name'] == "max") {
+                    max = p[i]['value'];
+                } else if (p[i]['name'] == "radiosGenerate") {
+                    generate = p[i]['value'];
+                } else if (p[i]['name'] == "inputFill") {
+                    fill = p[i]['value'];
+                } else if (p[i]['name'] == "inputIncrement") {
+                    increment = p[i]['value'];
+                }
+            }
+
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push("");
+                }
+            } else if (generate == "fill") {
+                // use value from fill to generate fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(fill);
+                }
+            } else if (generate == "increment") {
+                // use value from increment as base value to begin generating fields
+                var inc = increment;
+                for (var i = 0; i < record_number; i++) {
+                    d.push(inc);
+                    inc++;
+                }
+            } else if (generate == "random") {
+                // use mockjson to get random numbers for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+                var n = "number|{0}-{1}".format(min, max);
+                var o = {};
+                o[n] = 0;
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    o
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['number']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "Custom List") {
+            var generate = "inorder";
+            var list = [];
+            var p = $.parseJSON(payload);
+            for (var i = 0; i < p.length; i++) {
+                if (p[i]['name'] == "radiosGenerate") {
+                    generate = p[i]['value'];
+                } else if (p[i]['name'] == "list") {
+                    list = p[i]['value'].split('\n');
+                }
+            }
+
+            if (generate == "inorder") {
+                // use order of values from list to begin generating fields
+                var len = list.length;
+                var inc = 0;
+                if (len > 0) {
+                    for (var i = 0; i < record_number; i++) {
+                        if (inc >= len) {
+                            inc = 0;
+                        }
+                        d.push(list[inc]);
+                        inc++;
+                    }
+                }
+            } else if (generate == "random") {
+                // use mockjson to randomize list items for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+                $.mockJSON.data.CUSTOM_LIST = list;
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "item": "@CUSTOM_LIST" }
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['item']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "First Name") {
+            // use mockjson to get random first names for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
             var textTemplate = {};
             textTemplate[s] = [
-                { "text": "@LOREM" }
+                { "name": "@MALE_FIRST_NAME" }
             ];
 
             try {
@@ -317,17 +468,58 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['text']);
+                        d.push(json['result'][i]['name']);
                     }
                 });
             } catch(e) {
                 alert('Invalid JSON');
             }
-        } else if (type == "Number") {
+        } else if (type == "Last Name") {
+            // use mockjson to get random last names for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
-            var min = 1000; // from payload
-            var max = 9999; // from payload
-            var n = "number|{0}-{1}".format(min, max);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "name": "@LAST_NAME" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['name']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
+        } else if (type == "Address") {
+            // use mockjson to get random addresses for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['address']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
+        } else if (type == "Zip Code") {
+            // use mockjson to get random zip codes for generating fields
+            var min = 10000;
+            var max = 99999;
+            var s = "result|{0}-{1}".format(record_number, record_number);
+            var n = "zipcode|{0}-{1}".format(min, max);
             var o = {};
             o[n] = 0;
 
@@ -341,31 +533,11 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['number']);
+                        d.push(json['result'][i]['zipcode']);
                     }
                 });
             } catch(e) {
                 alert('Invalid JSON');
-            }
-        } else if (type == "User defined list") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("list");
-            }
-        } else if (type == "First name") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("first name");
-            }
-        } else if (type == "Last name") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("last name");
-            }
-        } else if (type == "Address") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("address");
-            }
-        } else if (type == "Zip code") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("zip code");
             }
         }
         data.push(d);
