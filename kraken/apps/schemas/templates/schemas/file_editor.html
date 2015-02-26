@@ -161,11 +161,47 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Random text</h4>
+                        <h4 class="modal-title">Text Parameters</h4>
                     </div>
-                    <div class="modal-body">
-                        <label class="control-label">Minimum length</label><input class="form-control" name="min-length" />
-                        <label class="control-label">Maximum length</label><input class="form-control" name="max-length" />
+                    <div class="modal-body"><div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-10" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="manual" checked="">
+                                    Manual
+                                </label>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="fill">
+                                    Fill
+                                </label>
+                            </div>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="random">
+                                    Random
+                                </label>
+                            </div>
+                            <div class="col-xs-8">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -181,63 +217,67 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Number</h4>
+                        <h4 class="modal-title">Number Parameters</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-xs-6">
-                                <label class="control-label">Minimum</label><input class="form-control input-sm"
-                                                                                   name="min" placeholder="Minimum value">
+                            <div class="col-xs-1">
                             </div>
-                            <div class="col-xs-6">
-                                <label class="control-label">Maximum</label><input class="form-control input-sm"
-                                                                                   name="max" placeholder="Maximum value">
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-xs-12" style="line-height: 30px;">
+                            <div class="col-xs-10" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioManual" value="manual"
-                                           checked="">
+                                    <input type="radio" name="radiosGenerate" value="manual" checked="">
                                     Manual
                                 </label>
                             </div>
+                            <div class="col-xs-1">
+                            </div>
                         </div>
                         <div class="row">
+                            <div class="col-xs-1">
+                            </div>
                             <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioFill" value="fill">
+                                    <input type="radio" name="radiosGenerate" value="fill">
                                     Fill
                                 </label>
                             </div>
-                            <div class="col-xs-6">
-                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputFill" placeholder="Value to fill">
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
                             </div>
-                            <div class="col-xs-3">
-
+                            <div class="col-xs-1">
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-xs-1">
+                            </div>
                             <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioIncrement" value="increment">
+                                    <input type="radio" name="radiosGenerate" value="increment">
                                     Increment
                                 </label>
                             </div>
-                            <div class="col-xs-6">
-                                <input type="text" class="form-control input-sm" id="inputSmall" name="inputIncrement" placeholder="Beginning value">
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control input-sm" name="inputIncrement" placeholder="Beginning value">
                             </div>
-                            <div class="col-xs-3">
-
+                            <div class="col-xs-1">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12" style="line-height: 30px;">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
                                 <label>
-                                    <input type="radio" name="radiosGenerate" id="radioRandom" value="random">
+                                    <input type="radio" name="radiosGenerate" value="random">
                                     Random
                                 </label>
+                            </div>
+                            <div class="col-xs-3">
+                                <input class="form-control input-sm" name="min" placeholder="Minimum">
+                            </div>
+                            <div class="col-xs-3">
+                                <input class="form-control input-sm" name="max" placeholder="Maximum">
+                            </div>
+                            <div class="col-xs-2">
                             </div>
                         </div>
                     </div>
@@ -249,16 +289,45 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="user-defined-list-modal">
+    <div class="modal fade" id="custom-list-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">User Defined List</h4>
+                        <h4 class="modal-title">Custom List Parameters</h4>
                     </div>
                     <div class="modal-body">
-                        <label class="control-label">List</label><textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                        <div class="row">
+                            <div class="col-xs-1">
+
+                            </div>
+                            <div class="col-xs-10">
+                                <label class="control-label">List</label>
+                                <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                            </div>
+                            <div class="col-xs-1">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="inorder" checked="">
+                                    In Order
+                                </label>
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="random">
+                                    Random
+                                </label>
+                            </div>
+                            <div class="col-xs-5">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -274,7 +343,7 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">First Name</h4>
+                        <h4 class="modal-title">First Name Parameters</h4>
                     </div>
                     <div class="modal-body">
                         <p>No options are currently available for this data generator.</p>
@@ -293,7 +362,7 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Last Name</h4>
+                        <h4 class="modal-title">Last Name Parameters</h4>
                     </div>
                     <div class="modal-body">
                         <p>No options are currently available for this data generator.</p>
@@ -312,7 +381,7 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Address</h4>
+                        <h4 class="modal-title">Address Parameters</h4>
                     </div>
                     <div class="modal-body">
                         <p>No options are currently available for this data generator.</p>
@@ -331,7 +400,7 @@
                 <form class="data-generator-form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">ZIP Code</h4>
+                        <h4 class="modal-title">ZIP Code Parameters</h4>
                     </div>
                     <div class="modal-body">
                         <p>No options are currently available for this data generator.</p>
