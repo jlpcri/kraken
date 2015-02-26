@@ -289,7 +289,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="user-defined-list-modal">
+    <div class="modal fade" id="custom-list-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form class="data-generator-form">
@@ -298,7 +298,36 @@
                         <h4 class="modal-title">Custom List Parameters</h4>
                     </div>
                     <div class="modal-body">
-                        <label class="control-label">List</label><textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                        <div class="row">
+                            <div class="col-xs-1">
+
+                            </div>
+                            <div class="col-xs-10">
+                                <label class="control-label">List</label>
+                                <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                            </div>
+                            <div class="col-xs-1">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="inorder" checked="">
+                                    In Order
+                                </label>
+                            </div>
+                            <div class="col-xs-3" style="line-height: 30px;">
+                                <label>
+                                    <input type="radio" name="radiosGenerate" value="random">
+                                    Random
+                                </label>
+                            </div>
+                            <div class="col-xs-5">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

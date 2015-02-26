@@ -408,17 +408,60 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Custom List") {
-            for (var i = 0; i < record_number; i++) {
-                d.push("Custom List");
+            var generate = "inorder";
+            var list = [];
+            var p = $.parseJSON(payload);
+            for (var i = 0; i < p.length; i++) {
+                if (p[i]['name'] == "radiosGenerate") {
+                    generate = p[i]['value'];
+                } else if (p[i]['name'] == "list") {
+                    list = p[i]['value'].split('\n');
+                }
+            }
+
+            if (generate == "inorder") {
+                // use order of values from list to begin generating fields
+                var len = list.length;
+                var inc = 0;
+                if (len > 0) {
+                    for (var i = 0; i < record_number; i++) {
+                        if (inc >= len) {
+                            inc = 0;
+                        }
+                        d.push(list[inc]);
+                        inc++;
+                    }
+                }
+            } else if (generate == "random") {
+                // use mockjson to randomize list items for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+                $.mockJSON.data.CUSTOM_LIST = list;
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "item": "@CUSTOM_LIST" }
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['item']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
             }
         } else if (type == "First Name") {
             // use mockjson to get random first names for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
-                var textTemplate = {};
-                textTemplate[s] = [
-                    { "name": "@MALE_FIRST_NAME" }
-                ];
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "name": "@MALE_FIRST_NAME" }
+            ];
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
@@ -435,10 +478,10 @@ function generateRecords(record_number) {
             // use mockjson to get random last names for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
-                var textTemplate = {};
-                textTemplate[s] = [
-                    { "name": "@LAST_NAME" }
-                ];
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "name": "@LAST_NAME" }
+            ];
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
@@ -455,10 +498,10 @@ function generateRecords(record_number) {
             // use mockjson to get random addresses for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
-                var textTemplate = {};
-                textTemplate[s] = [
-                    { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
-                ];
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
+            ];
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
