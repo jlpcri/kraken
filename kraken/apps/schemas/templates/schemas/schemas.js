@@ -16,6 +16,29 @@ String.prototype.format = function () {
 // get number of fields
 var field_number = Number('{{field_number}}');
 
+var file_names = '{{version_files_names | safe}}';
+
+$("button[name='save_file']").on('click', function () {
+    if ( !$.trim($("#textareaViewer").val()) ) {   // check file contents empty
+        showErrMsg('No input of contents');
+        return false;
+    } else if ( !$("#id_name").val() ){   //check file name empty
+        showErrMsg('No input of file name');
+        return false;
+    } else if (file_names.indexOf($('#id_name').val()) > -1 ) {
+        showErrMsg('File Name is duplicated');
+        return false;
+    }
+
+    var payloads = [];
+    $("#tableDefinitions tbody tr").each(function () {
+        var type = $(this).find("select option:selected").val();
+        var payload = $(this).find("select option:selected").attr('data-payload');
+        payloads.push({"type": type, "payload": payload});
+    });
+    $('input[name="payloads"]').val(JSON.stringify(payloads));
+});
+
 
 $('#buttonGenerate').click(function () {
     // initialize errMsg
