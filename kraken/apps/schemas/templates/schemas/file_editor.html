@@ -47,7 +47,7 @@
                         $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
                     }
                 }
-            })
+            });
 
             $('#number-modal').on('show.bs.modal', function () {
                 var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
@@ -69,7 +69,7 @@
                         $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
                     }
                 }
-            })
+            });
 
             $('#custom-list-modal').on('show.bs.modal', function () {
                 var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
@@ -82,18 +82,21 @@
                         $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
                     }
                 }
-            })
+            });
+
+            var payloads = $.parseJSON('{{ payloads|safe }}');
         });
     </script>
 {% endblock %}
 {% block content %}
     <div class="container">
-    <form action="{% url 'schemas:save_file' client.id schema.id version.id %}" method="POST">
+    <form action="{% url 'schemas:create_file' client.id schema.id version.id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="client_id" value="{{ client.id }}">
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
         <input type="hidden" name="version_id" value="{{ version.id }}">
         <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="payloads" value="">
         <input type="hidden" name="fields_total_length" id="fields_total_length" value="{{ version.schema_fields_total_length }}">
         <div class="row">
             <div class="col-xs-6">

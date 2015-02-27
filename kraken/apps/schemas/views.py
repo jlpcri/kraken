@@ -40,6 +40,54 @@ def create_file(request, client_id, schema_id, version_id):
             'file_form': VersionFileForm,
         }
         return render(request, "schemas/file_editor.html", context)
+    if request.method == "POST":
+        if 'save_file' in request.POST:
+            client = get_object_or_404(Client, pk=client_id)
+            schema = get_object_or_404(ClientSchema, pk=schema_id)
+            version = get_object_or_404(SchemaVersion, pk=version_id)
+            fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
+            file_form = VersionFileForm(request.POST)
+            payloads = request.POST.get('payloads')
+
+            try:
+                if file_form.is_valid():
+                    file = file_form.save(commit=False)
+                    file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
+                    file.save()
+                    messages.success(request, 'File \"{0}\" has been created'.format(file.name))
+                    return redirect('core:home')
+                else:
+                    if file_form['name'].errors:
+                        error_message = file_form['name'].errors
+                    else:
+                        error_message = 'Something went wrong'
+                    messages.danger(request, error_message)
+                    context = {
+                        'client': client,
+                        'schema': schema,
+                        'version': version,
+                        'fields': fields,
+                        'field_number': len(fields),
+                        'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+                        'state': 'create',
+                        'file_form': VersionFileForm,
+                        'payloads': payloads
+                    }
+                    return render(request, "schemas/file_editor.html", context)
+            except Exception as e:
+                messages.danger(request, e.message)
+                context = {
+                    'client': client,
+                    'schema': schema,
+                    'version': version,
+                    'fields': fields,
+                    'field_number': len(fields),
+                    'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+                    'state': 'create',
+                    'file_form': VersionFileForm,
+                    'payloads': payloads
+                }
+                return render(request, "schemas/file_editor.html", context)
     return HttpResponseNotFound()
 
 
