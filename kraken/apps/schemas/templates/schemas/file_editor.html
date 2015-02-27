@@ -35,6 +35,32 @@
         $(function() {
             $(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
+
+            $('#text-modal').on('show.bs.modal', function (event) {
+                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $("input[name=radiosGenerate][value=" + p[i]['value'] + "]").prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        // set input for inputFill to p[i]['value'];
+                    }
+                }
+{#                var form = $(event.target);#}
+{#                if (p.hasOwnProperty('name')) {#}
+{#                    console.log(p['name'])#}
+{#                }#}
+{#                $("#radio_1").prop("checked", true);#}
+            })
+
+            $('#number-modal').on('show.bs.modal', function () {
+                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+
+            })
+
+            $('#custom-list-modal').on('show.bs.modal', function () {
+                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+
+            })
         });
     </script>
 {% endblock %}
