@@ -15,78 +15,6 @@
             min-width: 180px;
         }
     </style>
-    <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
-    <script type="text/javascript">
-        function specifyModal(element) {
-            var value = element.value;
-            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
-            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
-        };
-        function openModal(event) {
-            window.currentRow = $(event.toElement).closest('tr');
-        }
-        function saveDataPayload(event) {
-            event.preventDefault();
-            var form = $(event.target);
-            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
-                    JSON.stringify(form.serializeArray()));
-            form.closest(".modal").modal('hide');
-        };
-        $(function() {
-            $(".fa-pencil-square-o").on('click', openModal);
-            $(".data-generator-form").on('submit', saveDataPayload);
-
-            $('#text-modal').on('show.bs.modal', function (event) {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
-                $(this).find("input[name='inputFill']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "inputFill") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
-
-            $('#number-modal').on('show.bs.modal', function () {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
-                $(this).find("input[name='inputFill']").val('');
-                $(this).find("input[name='inputIncrement']").val('');
-                $(this).find("input[name='min']").val('');
-                $(this).find("input[name='max']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "inputFill") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "inputIncrement") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "min") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "max") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
-
-            $('#custom-list-modal').on('show.bs.modal', function () {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
-                $(this).find("textarea[name='list']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "list") {
-                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
-
-            var payloads = $.parseJSON('{{ payloads|safe }}');
-        });
-    </script>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -181,7 +109,7 @@
                                 <td class="data-generator-select">
                                     <select class="form-control" onchange="specifyModal(this)">
                                         {% for type in field_types %}
-                                            <option data-payload="{}">{{ type }}</option>
+                                            <option data-payload="{}" value="{{ type }}">{{ type }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
@@ -466,7 +394,84 @@
     </div>
 {% endblock %}
 {% block endscript %}
+    <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
     <script type="text/javascript">
         {% include 'schemas/schemas.js' %}
+        function specifyModal(element) {
+            var value = element.value;
+            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
+            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
+        };
+        function openModal(event) {
+            window.currentRow = $(event.toElement).closest('tr');
+        }
+        function saveDataPayload(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
+                    JSON.stringify(form.serializeArray()));
+            form.closest(".modal").modal('hide');
+        };
+        $(function() {
+            $(".fa-pencil-square-o").on('click', openModal);
+            $(".data-generator-form").on('submit', saveDataPayload);
+
+            $('#text-modal').on('show.bs.modal', function (event) {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            $('#number-modal').on('show.bs.modal', function () {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
+                $(this).find("input[name='inputIncrement']").val('');
+                $(this).find("input[name='min']").val('');
+                $(this).find("input[name='max']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "min") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "max") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            $('#custom-list-modal').on('show.bs.modal', function () {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
+                $(this).find("textarea[name='list']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "list") {
+                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            var payloads = $.parseJSON('{{ payloads|safe }}');
+            var inc = 0;
+            $("#tableDefinitions tbody tr").each(function () {
+                $(this).find("select option[value='" + payloads[inc]['type'] + "']").prop('selected', true);
+                $(this).find("select option[value='" + payloads[inc]['type'] + "']").prop('data-payload', payloads[inc]['payload']);
+                $(this).find("a[data-toggle='modal']").attr('data-target', '#' + payloads[inc]['type'].replace(/ /g, "-").toLowerCase() + "-modal");
+                inc++;
+            });
+        });
     </script>
 {% endblock %}

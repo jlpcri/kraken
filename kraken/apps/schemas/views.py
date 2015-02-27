@@ -38,6 +38,7 @@ def create_file(request, client_id, schema_id, version_id):
             'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
+            'payloads': "{}"
         }
         return render(request, "schemas/file_editor.html", context)
     if request.method == "POST":
