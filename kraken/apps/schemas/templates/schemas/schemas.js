@@ -16,6 +16,16 @@ String.prototype.format = function () {
 // get number of fields
 var field_number = Number('{{field_number}}');
 
+$("button[name='save_file']").on('click', function () {
+    var payloads = [];
+    $("#tableDefinitions tbody tr").each(function () {
+        var type = $(this).find("select option:selected").val();
+        var payload = $(this).find("select option:selected").attr('data-payload');
+        payloads.push({"type": type, "payload": payload});
+    });
+    $('input[name="payloads"]').val(JSON.stringify(payloads));
+});
+
 
 $('#buttonGenerate').click(function () {
     // initialize errMsg

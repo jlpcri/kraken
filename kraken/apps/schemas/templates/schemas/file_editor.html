@@ -35,17 +35,68 @@
         $(function() {
             $(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
+
+            $('#text-modal').on('show.bs.modal', function (event) {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            $('#number-modal').on('show.bs.modal', function () {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
+                $(this).find("input[name='inputIncrement']").val('');
+                $(this).find("input[name='min']").val('');
+                $(this).find("input[name='max']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "min") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "max") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            $('#custom-list-modal').on('show.bs.modal', function () {
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
+                $(this).find("textarea[name='list']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "list") {
+                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
+            });
+
+            var payloads = $.parseJSON('{{ payloads|safe }}');
         });
     </script>
 {% endblock %}
 {% block content %}
     <div class="container">
-    <form action="{% url 'schemas:save_file' client.id schema.id version.id %}" method="POST">
+    <form action="{% url 'schemas:create_file' client.id schema.id version.id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="client_id" value="{{ client.id }}">
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
         <input type="hidden" name="version_id" value="{{ version.id }}">
         <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="payloads" value="">
         <input type="hidden" name="fields_total_length" id="fields_total_length" value="{{ version.schema_fields_total_length }}">
         <div class="row">
             <div class="col-xs-6">
@@ -135,7 +186,7 @@
                                     </select>
                                 </td>
                                 <td class="text-center data-generator-params" style="line-height: 38px;">
-                                    <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
+                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -155,7 +206,7 @@
     </form>
 
     </div>
-    <div class="modal fade" id="random-text-modal">
+    <div class="modal fade" id="text-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form class="data-generator-form">
