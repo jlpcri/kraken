@@ -28,7 +28,12 @@ def create_file(request, client_id, schema_id, version_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
+        version_files_names = []
+        for item in version.files():
+            version_files_names.append(item.name)
+
         fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
+
         context = {
             'client': client,
             'schema': schema,
@@ -38,6 +43,7 @@ def create_file(request, client_id, schema_id, version_id):
             'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
+            'version_files_names': json.dumps(version_files_names)
         }
         return render(request, "schemas/file_editor.html", context)
     if request.method == "POST":
