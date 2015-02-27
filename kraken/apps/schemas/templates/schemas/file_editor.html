@@ -37,29 +37,51 @@
             $(".data-generator-form").on('submit', saveDataPayload);
 
             $('#text-modal').on('show.bs.modal', function (event) {
-                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
                 for (var i = 0; i < p.length; i++) {
                     if (p[i]['name'] == "radiosGenerate") {
-                        $("input[name=radiosGenerate][value=" + p[i]['value'] + "]").prop('checked', true);
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
                     } else if (p[i]['name'] == "inputFill") {
-                        // set input for inputFill to p[i]['value'];
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
                     }
                 }
-{#                var form = $(event.target);#}
-{#                if (p.hasOwnProperty('name')) {#}
-{#                    console.log(p['name'])#}
-{#                }#}
-{#                $("#radio_1").prop("checked", true);#}
             })
 
             $('#number-modal').on('show.bs.modal', function () {
-                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
+                $(this).find("input[name='inputFill']").val('');
+                $(this).find("input[name='inputIncrement']").val('');
+                $(this).find("input[name='min']").val('');
+                $(this).find("input[name='max']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "inputFill") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "min") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    } else if (p[i]['name'] == "max") {
+                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
             })
 
             $('#custom-list-modal').on('show.bs.modal', function () {
-                p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-
+                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
+                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
+                $(this).find("textarea[name='list']").val('');
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "radiosGenerate") {
+                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
+                    } else if (p[i]['name'] == "list") {
+                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
+                    }
+                }
             })
         });
     </script>
