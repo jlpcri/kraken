@@ -6,17 +6,13 @@ from kraken.apps.core.models import Client as KrakenClient, ClientSchema, Schema
 from kraken.apps.schemas.views import create_schema, edit_version
 
 
-class TestSchemaViewsAsUser(TestCase):
+class TestSchemaVersionsAsUser(TestCase):
     def setUp(self):
         self.client = Client()
         self.kraken_client = KrakenClient.objects.create(name='Kraken Client')
         self.kraken_schema = ClientSchema.objects.create(name='Client Schema', client=self.kraken_client)
         self.kraken_version = SchemaVersion.objects.create(identifier='New Identifier', client_schema=self.kraken_schema)
 
-        self.url_create_schema = reverse(
-            'schemas:create_schema',
-            args=[self.kraken_client.id, ]
-        )
         self.url_edit_version = reverse(
             'schemas:edit_version',
             args=[self.kraken_client.id, self.kraken_schema.id, self.kraken_version.id, ]
@@ -44,18 +40,6 @@ class TestSchemaViewsAsUser(TestCase):
             password=self.user_account['password']
         )
 
-    def test_create_schemas_url_resolve_to_view_as_user(self):
-        found = resolve(self.url_create_schema)
-        self.assertEqual(found.func, create_schema)
-
-    def test_create_schemas_url_get_return_status_302_as_user(self):
-        response = self.client.get(self.url_create_schema)
-        self.assertEqual(response.status_code, 302)
-
-    def test_create_schemas_url_post_return_status_302_as_user(self):
-        response = self.client.post(self.url_create_schema, self.new_schema)
-        self.assertEqual(response.status_code, 302)
-
     def test_edit_version_url_resolve_to_view_as_user(self):
         found = resolve(self.url_edit_version)
         self.assertEqual(found.func, edit_version)
@@ -69,7 +53,7 @@ class TestSchemaViewsAsUser(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestSchemaViewsAsStaff(TestCase):
+class TestSchemaVersionsAsStaff(TestCase):
     def setUp(self):
         self.client = Client()
         self.kraken_client = KrakenClient.objects.create(name='Kraken Client')
@@ -154,18 +138,6 @@ class TestSchemaViewsAsStaff(TestCase):
             username=self.user_account['username'],
             password=self.user_account['password']
         )
-
-    def test_create_schemas_url_resolve_to_view_as_staff(self):
-        found = resolve(self.url_create_schema)
-        self.assertEqual(found.func, create_schema)
-
-    def test_create_schemas_url_get_return_status_200_as_staff(self):
-        response = self.client.get(self.url_create_schema)
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_schemas_url_post_return_status_200_as_staff(self):
-        response = self.client.post(self.url_create_schema, self.new_schema)
-        self.assertEqual(response.status_code, 200)
 
     def test_edit_version_url_resolve_to_view_as_staff(self):
         found = resolve(self.url_edit_version)
