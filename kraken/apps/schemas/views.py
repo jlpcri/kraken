@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -28,7 +29,12 @@ def create_file(request, client_id, schema_id, version_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
+        version_files_names = []
+        for item in version.files():
+            version_files_names.append(item.name)
+
         fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
+
         context = {
             'client': client,
             'schema': schema,
@@ -38,7 +44,7 @@ def create_file(request, client_id, schema_id, version_id):
             'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
-            'payloads': "{}"
+            'version_files_names': json.dumps(version_files_names)
         }
         return render(request, "schemas/file_editor.html", context)
     if request.method == "POST":
@@ -54,6 +60,7 @@ def create_file(request, client_id, schema_id, version_id):
                 if file_form.is_valid():
                     file = file_form.save(commit=False)
                     file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
+                    file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
                     file.save()
                     messages.success(request, 'File \"{0}\" has been created'.format(file.name))
                     return redirect('core:home')
@@ -145,8 +152,6 @@ def create_schema(request, client_id):
                         error_message = 'Version Name is not a valid value'
                 elif columns.get('valid') is False:
                     error_message = columns.get('error_message')
-                version.delete()
-                schema.delete()
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
@@ -168,15 +173,6 @@ def create_schema(request, client_id):
                 'fields': columns.get('fields')
             }
             return render(request, "schemas/schema_editor.html", context)
-    return HttpResponseNotFound()
-
-
-@login_required
-@csrf_exempt
-def create_version(request, client_id, schema_id):
-    if request.method == "POST":
-        version_name = request.POST.get('version')
-        print version_name
     return HttpResponseNotFound()
 
 
@@ -204,14 +200,18 @@ def download_file(request, client_id, schema_id, version_id, file_id):
             returns 200 or 404
     """
     if request.method == "GET":
-        client = get_object_or_404(Client, pk=client_id)
-        schema = get_object_or_404(ClientSchema, pk=schema_id)
-        version = get_object_or_404(SchemaVersion, pk=version_id)
-        f = get_object_or_404(VersionFile, pk=file_id)
-        response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
-        response.write(f.contents)
-        return response
+        # client = get_object_or_404(Client, pk=client_id)
+        # schema = get_object_or_404(ClientSchema, pk=schema_id)
+        # version = get_object_or_404(SchemaVersion, pk=version_id)
+        try:
+            f = get_object_or_404(VersionFile, pk=file_id)
+            response = HttpResponse(f.contents, content_type='text/plain')
+            response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
+            #response.write(f.contents)
+            return response
+        except Exception as e:
+            messages.danger(request, e)
+            return redirect('core:home')
     return HttpResponseNotFound()
 
 
@@ -328,31 +328,6 @@ def edit_version(request, client_id, schema_id, version_id):
                 messages.danger(request, e.message)
                 return redirect('schemas:edit_version', client_id, schema_id, version_id)
 
-    return HttpResponseNotFound()
-
-
-@login_required
-def save_file(request, client_id, schema_id, version_id):
-    if request.method == "POST":
-        if 'save_file' in request.POST:
-            file_form = VersionFileForm(request.POST)
-            try:
-                if file_form.is_valid():
-                    file = file_form.save(commit=False)
-                    file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
-                    file.save()
-                    messages.success(request, 'File \"{0}\" has been created'.format(file.name))
-                    return redirect('core:home')
-                else:
-                    if file_form['name'].errors:
-                        error_message = file_form['name'].errors
-                    else:
-                        error_message = 'Something went wrong'
-                    messages.danger(request, error_message)
-                    return redirect('schemas:create_file', client_id, schema_id, version_id)
-            except Exception as e:
-                messages.danger(request, e.message)
-                return redirect('core:home')
     return HttpResponseNotFound()
 
 
