@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -59,7 +60,7 @@ def create_file(request, client_id, schema_id, version_id):
                 if file_form.is_valid():
                     file = file_form.save(commit=False)
                     file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
-                    file.contents = request.POST.get('textareaViewer', '')
+                    file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
                     file.save()
                     messages.success(request, 'File \"{0}\" has been created'.format(file.name))
                     return redirect('core:home')
@@ -203,9 +204,9 @@ def download_file(request, client_id, schema_id, version_id, file_id):
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
         f = get_object_or_404(VersionFile, pk=file_id)
-        response = HttpResponse(content_type='text/plain')
+        response = HttpResponse(f.contents, content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
-        response.write(f.contents)
+        #response.write(f.contents)
         return response
     return HttpResponseNotFound()
 
