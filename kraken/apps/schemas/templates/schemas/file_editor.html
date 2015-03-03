@@ -23,27 +23,34 @@
             var select = $(element).closest('tr').find('.data-generator-params > select');
             switch (value) {
                 case 'Text':
-                    updateColumnParams(select, columns_params['text']);
+                    updateColumnParams(select, columns_params['text'], 'text');
                     break;
                 case 'Number':
-                    updateColumnParams(select, columns_params['number']);
+                    updateColumnParams(select, columns_params['number'], 'number');
                     break;
                 case 'Custom List':
-                    updateColumnParams(select, columns_params['custom_list']);
+                    updateColumnParams(select, columns_params['custom_list'], 'custom');
                     break;
                 default:
-                    updateColumnParams(select, columns_params['others']);
+                    updateColumnParams(select, columns_params['others'], 'others');
             }
 
 {#            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];#}
 {#            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");#}
         }
-        function updateColumnParams(select, options){
+        function updateColumnParams(select, options, prefix){
             select.empty();
-            $.each(options, function(param){
-                select.append($("<option></option").text(param));
+            $.each(options, function(k, v){
+                select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
             });
         }
+
+        function openParamsModal(element) {
+            var value = element.value;
+            console.log(value);
+        }
+
+
         function openModal(event) {
             window.currentRow = $(event.toElement).closest('tr');
         }
@@ -219,9 +226,10 @@
 {#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
 {#                                </td>#}
                                 <td class="data-generator-params">
-                                    <select class="form-control" >
-                                        {% for parameter in column_parameters.text %}
-                                            <option>{{ parameter}}</option>
+                                    <select class="form-control" onchange="openParamsModal(this)">
+                                        <option value="specify">Specify</option>
+                                        {% for key in column_parameters.text %}
+                                            <option value="text_{{ key|lower }}">{{ key }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>

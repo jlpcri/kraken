@@ -358,7 +358,7 @@ function generateRecords(record_number) {
         var payload = $(this).find("select option:selected").attr('data-payload');
         var d = []
         if (type == "Text") {
-            var generate = "random";
+            var generate = "manual";
             var fill = "";
             var p = $.parseJSON(payload);
             for (var i = 0; i < p.length; i++) {
@@ -403,7 +403,7 @@ function generateRecords(record_number) {
         } else if (type == "Number") {
             var min = 0;
             var max = 9;
-            var generate = "random";
+            var generate = "manual";
             var fill = "";
             var increment = 0;
             var p = $.parseJSON(payload);

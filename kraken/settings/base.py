@@ -161,20 +161,20 @@ TEMPLATE_LOADERS = (
 
 # Batch File Column Parameters
 TEXT_PARAS = {
-    'Manual': 'Manual',
-    'Fill': 'Fill',
-    'Random': 'Random'
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Random': 'random'
 }
 NUMBER_PARAS = {
-    'Manual': 'Manual',
-    'Fill': 'Fill',
-    'Increment': 'Increment',
-    'Random': 'Random'
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Increment': 'increment',
+    'Random': 'random'
 }
 CUSTOM_LIST_PARAS = {
-    'In Order': 'In Order',
-    'Random': 'Random'
+    'In Order': 'order',
+    'Random': 'random'
 }
 OTHER_PARAS = {
-    'System': 'System'
+    'System': 'system'
 }

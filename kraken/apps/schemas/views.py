@@ -126,8 +126,7 @@ def create_schema(request, client_id):
             'client': client,
             'state': 'create',
             'schema_form': ClientSchemaForm(),
-            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED,
-                                               'identifier': '1.0'})
+            'version_form': SchemaVersionForm({'delimiter': SchemaVersion.FIXED})
         }
         return render(request, "schemas/schema_editor.html", context)
     elif request.method == "POST":
