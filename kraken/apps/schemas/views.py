@@ -155,6 +155,11 @@ def create_schema(request, client_id):
                         error_message = 'Version Name is not a valid value'
                 elif columns.get('valid') is False:
                     error_message = columns.get('error_message')
+
+                # remove pre created version and schema
+                version.delete()
+                schema.delete()
+
                 messages.danger(request, error_message)
                 context = {
                     'client': client,
