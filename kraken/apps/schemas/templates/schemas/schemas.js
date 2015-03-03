@@ -54,6 +54,27 @@ $('#buttonGenerate').click(function () {
     }
     else {
         generateRecords(record_number);
+
+        var delimiter = '{{version.delimiter}}';
+
+        // calculate record number which has value
+        var found = true, record_number = 0;
+        while (found) {
+            if (!$('#record0{0}'.format(record_number)).val()) {
+                found = false;
+            } else {
+                record_number++;
+            }
+        }
+
+        if (delimiter == 'Fixed') {
+            parse_schema(record_number, '');
+        } else if (delimiter == 'Pipe') {
+            parse_schema(record_number, '|');
+
+        } else if (delimiter == 'Comma') {
+            parse_schema(record_number, ',');
+        }
     }
 });
 
@@ -326,7 +347,7 @@ function generateRecords(record_number) {
         var payload = $(this).find("select option:selected").attr('data-payload');
         var d = []
         if (type == "Text") {
-            var generate = "manual";
+            var generate = "random";
             var fill = "";
             var p = $.parseJSON(payload);
             for (var i = 0; i < p.length; i++) {
