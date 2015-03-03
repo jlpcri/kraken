@@ -129,6 +129,8 @@ $('#validation_input_to_schema').click(function () {
             } else if (delimiter == 'Comma') {
                 parse_input(rows, ',');
             }
+
+            showSuccessMsg('No errors found');
         }
     }
 });
@@ -334,6 +336,15 @@ function showErrMsg(message) {
     $('#errMsg').html('Error: ' + message);
 }
 
+function showSuccessMsg(message) {
+    $('#errMsg').css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'green'
+    });
+    $('#errMsg').html('Successful: ' + message);
+}
+
 function generateRecords(record_number) {
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
@@ -392,7 +403,7 @@ function generateRecords(record_number) {
         } else if (type == "Number") {
             var min = 0;
             var max = 9;
-            var generate = "manual";
+            var generate = "random";
             var fill = "";
             var increment = 0;
             var p = $.parseJSON(payload);

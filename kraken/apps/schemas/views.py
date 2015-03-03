@@ -41,7 +41,7 @@ def create_file(request, client_id, schema_id, version_id):
             'version': version,
             'fields': fields,
             'field_number': len(fields),
-            'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
             'state': 'create',
             'file_form': VersionFileForm,
             'version_files_names': json.dumps(version_files_names)

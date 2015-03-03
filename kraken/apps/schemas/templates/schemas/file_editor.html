@@ -188,8 +188,8 @@
                                 <td>{{ field.type }}</td>
                                 <td class="data-generator-select">
                                     <select class="form-control" onchange="specifyModal(this)">
-                                        {% for type in field_types %}
-                                            <option data-payload="{}">{{ type }}</option>
+                                        {% for column in file_columns %}
+                                            <option data-payload="{}">{{ column }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
