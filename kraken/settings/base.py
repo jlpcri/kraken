@@ -172,7 +172,7 @@ NUMBER_PARAS = {
     'Random': 'random'
 }
 CUSTOM_LIST_PARAS = {
-    'In Order': 'order',
+    'In Order': 'inorder',
     'Random': 'random'
 }
 OTHER_PARAS = {

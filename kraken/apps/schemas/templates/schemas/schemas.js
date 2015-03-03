@@ -354,20 +354,23 @@ function generateRecords(record_number) {
 
     var data = [];
     $("#tableDefinitions tbody tr").each(function () {
-        var type = $(this).find("select option:selected").val();
+        var type = $(this).find(".data-generator-select option:selected").val();
+        var generate = $(this).find(".data-generator-params option:selected").val();
+        //console.log(type);
         var payload = $(this).find("select option:selected").attr('data-payload');
-        var d = []
+        var d = [];
         if (type == "Text") {
-            var generate = "manual";
+            generate = generate.substring(5);
+            //var generate = "manual";
             var fill = "";
             var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
-                }
-            }
+//            for (var i = 0; i < p.length; i++) {
+//                if (p[i]['name'] == "radiosGenerate") {
+//                    generate = p[i]['value'];
+//                } else if (p[i]['name'] == "inputFill") {
+//                    fill = p[i]['value'];
+//                }
+//            }
 
             if (generate == "manual") {
                 // generate empty fields
@@ -401,9 +404,10 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Number") {
+            generate = generate.substring(7);
             var min = 0;
             var max = 9;
-            var generate = "manual";
+            //var generate = "manual";
             var fill = "";
             var increment = 0;
             var p = $.parseJSON(payload);
@@ -463,7 +467,8 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Custom List") {
-            var generate = "inorder";
+            generate = generate.substr(7);
+            //var generate = "inorder";
             var list = [];
             var p = $.parseJSON(payload);
             for (var i = 0; i < p.length; i++) {

@@ -40,6 +40,7 @@
         }
         function updateColumnParams(select, options, prefix){
             select.empty();
+            select.append($("<option></option").attr("selected", "selected").text("Specify"));
             $.each(options, function(k, v){
                 select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
             });
@@ -47,7 +48,25 @@
 
         function openParamsModal(element) {
             var value = element.value;
-            console.log(value);
+            switch (value) {
+                case 'text_manual':
+                case 'text_fill':
+                case 'text_random':
+                    $('#text-modal').modal('show');
+                    break;
+                case 'number_fill':
+                case 'number_increment':
+                case 'number_manual':
+                case 'number_random':
+                    $('#number-modal').modal('show');
+                    break;
+                case 'custom_inorder':
+                case 'custom_random':
+                    $('#custom-list-modal').modal('show');
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -65,7 +84,7 @@
             $(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
 
-            $('#text-modal').on('show.bs.modal', function (event) {
+            $('#text1-modal').on('show.bs.modal', function (event) {
                 var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
                 $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
                 $(this).find("input[name='inputFill']").val('');
@@ -78,7 +97,7 @@
                 }
             });
 
-            $('#number-modal').on('show.bs.modal', function () {
+            $('#number1-modal').on('show.bs.modal', function () {
                 var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
                 $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
                 $(this).find("input[name='inputFill']").val('');
@@ -100,7 +119,7 @@
                 }
             });
 
-            $('#custom-list-modal').on('show.bs.modal', function () {
+            $('#custom1-list-modal').on('show.bs.modal', function () {
                 var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
                 $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
                 $(this).find("textarea[name='list']").val('');
@@ -202,7 +221,7 @@
                                 <th class="col-xs-2">Field Length</th>
                                 <th class="col-xs-2">Field Type</th>
                                 <th class="col-xs-2">File Column</th>
-                                <th class="col-xs-2">Column Params</th>
+                                <th class="col-xs-2">Column Configuration</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,7 +261,7 @@
                 <p> No fields have been added to this schema version.</p>
             {% endif %}
             </div>
-            <div class="col-md-1" hidden>
+            <div class="col-md-6" >
                 <div class="table-responsive" id="add_records" style="overflow: auto;">
 
                 </div>
