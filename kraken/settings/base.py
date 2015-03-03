@@ -157,3 +157,24 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+
+# Batch File Column Parameters
+TEXT_PARAS = {
+    'Manual': 'Manual',
+    'Fill': 'Fill',
+    'Random': 'Random'
+}
+NUMBER_PARAS = {
+    'Manual': 'Manual',
+    'Fill': 'Fill',
+    'Increment': 'Increment',
+    'Random': 'Random'
+}
+CUSTOM_LIST_PARAS = {
+    'In Order': 'In Order',
+    'Random': 'Random'
+}
+OTHER_PARAS = {
+    'System': 'System'
+}

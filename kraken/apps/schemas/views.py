@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
@@ -35,6 +36,13 @@ def create_file(request, client_id, schema_id, version_id):
 
         fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
 
+        column_parameters = {
+            'text': settings.TEXT_PARAS,
+            'number': settings.NUMBER_PARAS,
+            'custom_list': settings.CUSTOM_LIST_PARAS,
+            'others': settings.OTHER_PARAS,
+        }
+
         context = {
             'client': client,
             'schema': schema,
@@ -42,6 +50,7 @@ def create_file(request, client_id, schema_id, version_id):
             'fields': fields,
             'field_number': len(fields),
             'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'column_parameters': column_parameters,
             'state': 'create',
             'file_form': VersionFileForm,
             'version_files_names': json.dumps(version_files_names)

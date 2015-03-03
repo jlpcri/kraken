@@ -19,9 +19,31 @@
     <script type="text/javascript">
         function specifyModal(element) {
             var value = element.value;
-            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
-            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
-        };
+            var columns_params = {{ column_parameters | safe }};
+            var select = $(element).closest('tr').find('.data-generator-params > select');
+            switch (value) {
+                case 'Text':
+                    updateColumnParams(select, columns_params['text']);
+                    break;
+                case 'Number':
+                    updateColumnParams(select, columns_params['number']);
+                    break;
+                case 'Custom List':
+                    updateColumnParams(select, columns_params['custom_list']);
+                    break;
+                default:
+                    updateColumnParams(select, columns_params['others']);
+            }
+
+{#            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];#}
+{#            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");#}
+        }
+        function updateColumnParams(select, options){
+            select.empty();
+            $.each(options, function(param){
+                select.append($("<option></option").text(param));
+            });
+        }
         function openModal(event) {
             window.currentRow = $(event.toElement).closest('tr');
         }
@@ -169,11 +191,11 @@
                     <table id="tableDefinitions" class="table">
                         <thead>
                             <tr>
-                                <th class="col-xs-4">Field Name</th>
+                                <th class="col-xs-3">Field Name</th>
                                 <th class="col-xs-2">Field Length</th>
                                 <th class="col-xs-2">Field Type</th>
                                 <th class="col-xs-2">File Column</th>
-                                <th class="col-xs-2">Parameters</th>
+                                <th class="col-xs-2">Column Params</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -193,8 +215,15 @@
                                         {% endfor %}
                                     </select>
                                 </td>
-                                <td class="text-center data-generator-params" style="line-height: 38px;">
-                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
+{#                                <td class="data-generator-params" style="line-height: 38px;">#}
+{#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
+{#                                </td>#}
+                                <td class="data-generator-params">
+                                    <select class="form-control" >
+                                        {% for parameter in column_parameters.text %}
+                                            <option>{{ parameter}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </td>
                             </tr>
                         {% endfor %}
