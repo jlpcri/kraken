@@ -624,3 +624,25 @@ function generateRecords(record_number) {
         "</table> ";
     $('#add_records').html(add_records_contents);
 }
+
+function generate_empty_records_modal(record_number, location) {
+    var contents_head = '<tr>';
+    for (var i = 1; i < Number(record_number) + 1; i++) {
+        contents_head += '<th>Record ' + i + '</th>';
+    }
+    contents_head += '</tr>';
+
+    var contents_body = '';
+    for (var i = 0; i < Number(record_number); i++) {
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format('record' + i );
+    }
+    var contents = "<table id='tableData' class='table'>" +
+        " <thead>" +
+        contents_head +
+        "</thead>" +
+        "<tbody>" +
+        contents_body +
+        "</tbody>" +
+        "</table> ";
+    $(location).html(contents);
+}
