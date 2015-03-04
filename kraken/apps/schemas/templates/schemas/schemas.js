@@ -363,18 +363,6 @@ function generateRecords(record_number) {
             //var generate = "manual";
             var fill = "";
             var p = $.parseJSON(payload);
-//            console.log(p.length);
-            if (p[0]['name'] == 'inputFill') {
-                fill = p[0]['value'];
-            }
-//            console.log(p);
-//            for (var i = 0; i < p.length; i++) {
-//                if (p[i]['name'] == "radiosGenerate") {
-//                    generate = p[i]['value'];
-//                } else if (p[i]['name'] == "inputFill") {
-//                    fill = p[i]['value'];
-//                }
-//            }
 
             if (generate == "manual") {
                 // generate empty fields
@@ -382,6 +370,11 @@ function generateRecords(record_number) {
                     d.push("");
                 }
             } else if (generate == "fill") {
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    }
+                }
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);
@@ -420,8 +413,6 @@ function generateRecords(record_number) {
                     min = p[i]['value'];
                 } else if (p[i]['name'] == "max") {
                     max = p[i]['value'];
-                } else if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
                 } else if (p[i]['name'] == "inputFill") {
                     fill = p[i]['value'];
                 } else if (p[i]['name'] == "inputIncrement") {
