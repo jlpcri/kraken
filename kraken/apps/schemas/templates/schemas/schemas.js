@@ -130,7 +130,7 @@ $('#validation_input_to_schema').click(function () {
                 parse_input(rows, ',');
             }
 
-            showSuccessMsg('No errors found');
+            //showSuccessMsg('No errors found');
         }
     }
 });
@@ -218,6 +218,7 @@ function parse_input_fixed(rows) {
                 position += Number(length);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
@@ -275,6 +276,7 @@ function parse_input(rows, delimiter) {
                 $('#record{0}{1}'.format(j, i)).val(columns[j]);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
