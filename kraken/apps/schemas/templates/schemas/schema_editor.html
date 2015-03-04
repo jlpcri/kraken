@@ -133,7 +133,7 @@
 
         function updateViewer() {
             var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
-            delimiter = '' // for Fixed
+            delimiter = ''; // for Fixed
             if (delimiterType == 'Pipe') {
                 delimiter = '|';
             } else if (delimiterType == 'Comma') {
@@ -157,6 +157,8 @@
                 var fieldName = $(this).find("input[name^='inputFieldName']").val();
                 s += fieldName + delimiter;
             });
+            var len = delimiter.length;
+            s = s.substring(0, s.length - len);
             $('#textareaViewer').val(s);
         }
 
