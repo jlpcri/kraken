@@ -360,15 +360,19 @@ function generateRecords(record_number) {
         var d = [];
         if (type == "Text") {
             generate = generate.substring(5);
-            console.log(generate);
             //var generate = "manual";
             var fill = "";
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    }
                 }
+            } catch (e) {
+                ;
             }
+
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
