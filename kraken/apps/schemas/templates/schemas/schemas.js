@@ -356,14 +356,18 @@ function generateRecords(record_number) {
     $("#tableDefinitions tbody tr").each(function () {
         var type = $(this).find(".data-generator-select option:selected").val();
         var generate = $(this).find(".data-generator-params option:selected").val();
-        //console.log(type);
-        var payload = $(this).find("select option:selected").attr('data-payload');
+        var payload = $(this).find(".data-generator-params > select").attr('data-payload');
         var d = [];
         if (type == "Text") {
             generate = generate.substring(5);
             //var generate = "manual";
             var fill = "";
             var p = $.parseJSON(payload);
+//            console.log(p.length);
+            if (p[0]['name'] == 'inputFill') {
+                fill = p[0]['value'];
+            }
+//            console.log(p);
 //            for (var i = 0; i < p.length; i++) {
 //                if (p[i]['name'] == "radiosGenerate") {
 //                    generate = p[i]['value'];
