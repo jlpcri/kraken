@@ -185,7 +185,11 @@
 {#                }#}
 {#            });#}
 
-            var payloads = $.parseJSON('{{ payloads|safe }}');
+            try {
+                var payloads = $.parseJSON('{{ payloads|safe }}');
+            } catch (e) {
+                ;
+            }
         });
     </script>
 {% endblock %}
