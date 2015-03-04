@@ -83,9 +83,9 @@
         }
 
 
-        function openModal(event) {
-            window.currentRow = $(event.toElement).closest('tr');
-        }
+{#        function openModal(event) {#}
+{#            window.currentRow = $(event.toElement).closest('tr');#}
+{#        }#}
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
@@ -95,9 +95,37 @@
             form.closest(".modal").modal('hide');
         }
 
+        function saveManualTextData(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            var manual_text = $("#text-manual-modal form input");
+            var data = [];
+            $.each(manual_text, function(index, value) {
+                data.push($(value).val());
+            });
+            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+                JSON.stringify(data));
+            form.closest(".modal").modal('hide');
+        }
+
+        function saveManualNumberData(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            var manual_text = $("#number-manual-modal form input");
+            var data = [];
+            $.each(manual_text, function(index, value) {
+                data.push($(value).val());
+            });
+            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+                JSON.stringify(data));
+            form.closest(".modal").modal('hide');
+        }
+
         $(function() {
             //$(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
+            $(".data-generator-form-text").on('submit', saveManualTextData);
+            $(".data-generator-form-number").on('submit', saveManualNumberData);
 
             $('#text-manual-modal').on('show.bs.modal', function(event){
                 var record_number = $('#inputRecordNumber').val();
@@ -112,53 +140,53 @@
             });
 
 
-            $('#text1-modal').on('show.bs.modal', function (event) {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
-                $(this).find("input[name='inputFill']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "inputFill") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
-
-            $('#number1-modal').on('show.bs.modal', function () {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);
-                $(this).find("input[name='inputFill']").val('');
-                $(this).find("input[name='inputIncrement']").val('');
-                $(this).find("input[name='min']").val('');
-                $(this).find("input[name='max']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "inputFill") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "inputIncrement") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "min") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    } else if (p[i]['name'] == "max") {
-                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
-
-            $('#custom1-list-modal').on('show.bs.modal', function () {
-                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));
-                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);
-                $(this).find("textarea[name='list']").val('');
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "radiosGenerate") {
-                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);
-                    } else if (p[i]['name'] == "list") {
-                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);
-                    }
-                }
-            });
+{#            $('#text1-modal').on('show.bs.modal', function (event) {#}
+{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
+{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);#}
+{#                $(this).find("input[name='inputFill']").val('');#}
+{#                for (var i = 0; i < p.length; i++) {#}
+{#                    if (p[i]['name'] == "radiosGenerate") {#}
+{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
+{#                    } else if (p[i]['name'] == "inputFill") {#}
+{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    }#}
+{#                }#}
+{#            });#}
+{##}
+{#            $('#number1-modal').on('show.bs.modal', function () {#}
+{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
+{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);#}
+{#                $(this).find("input[name='inputFill']").val('');#}
+{#                $(this).find("input[name='inputIncrement']").val('');#}
+{#                $(this).find("input[name='min']").val('');#}
+{#                $(this).find("input[name='max']").val('');#}
+{#                for (var i = 0; i < p.length; i++) {#}
+{#                    if (p[i]['name'] == "radiosGenerate") {#}
+{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
+{#                    } else if (p[i]['name'] == "inputFill") {#}
+{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    } else if (p[i]['name'] == "inputIncrement") {#}
+{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    } else if (p[i]['name'] == "min") {#}
+{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    } else if (p[i]['name'] == "max") {#}
+{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    }#}
+{#                }#}
+{#            });#}
+{##}
+{#            $('#custom1-list-modal').on('show.bs.modal', function () {#}
+{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
+{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);#}
+{#                $(this).find("textarea[name='list']").val('');#}
+{#                for (var i = 0; i < p.length; i++) {#}
+{#                    if (p[i]['name'] == "radiosGenerate") {#}
+{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
+{#                    } else if (p[i]['name'] == "list") {#}
+{#                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
+{#                    }#}
+{#                }#}
+{#            });#}
 
             var payloads = $.parseJSON('{{ payloads|safe }}');
         });

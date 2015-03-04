@@ -360,21 +360,21 @@ function generateRecords(record_number) {
         var d = [];
         if (type == "Text") {
             generate = generate.substring(5);
+            console.log(generate);
             //var generate = "manual";
             var fill = "";
             var p = $.parseJSON(payload);
-
+            for (var i = 0; i < p.length; i++) {
+                if (p[i]['name'] == "inputFill") {
+                    fill = p[i]['value'];
+                }
+            }
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
-                for (var i = 0; i < p.length; i++) {
-                    if (p[i]['name'] == "inputFill") {
-                        fill = p[i]['value'];
-                    }
-                }
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);
@@ -423,7 +423,7 @@ function generateRecords(record_number) {
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
                 // use value from fill to generate fields
@@ -596,7 +596,7 @@ function generateRecords(record_number) {
             }
         }
         data.push(d);
-    })
+    });
 
     var contents_body = '';
     for (i = 0; i < field_number; i++) {
