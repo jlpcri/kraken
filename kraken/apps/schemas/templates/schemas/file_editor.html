@@ -40,7 +40,9 @@
         }
         function updateColumnParams(select, options, prefix){
             select.empty();
-            select.append($("<option></option").attr("selected", "selected").text("Specify"));
+            if (prefix != 'others'){
+                select.append($("<option></option").attr("selected", "selected").text("Specify"));
+            }
             $.each(options, function(k, v){
                 select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
             });
@@ -85,18 +87,24 @@
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
-            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
-                    JSON.stringify(form.serializeArray()));
+            console.log(form);
+            console.log(form.serializeArray());
+{#            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",#}
+{#                    JSON.stringify(form.serializeArray()));#}
             form.closest(".modal").modal('hide');
         };
         $(function() {
-            $(".fa-pencil-square-o").on('click', openModal);
+            //$(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
 
             $('#text-manual-modal').on('show.bs.modal', function(event){
                 var record_number = $('#inputRecordNumber').val();
                 // generate empty cell for user manully input
                 generate_empty_records_modal(record_number, '#text-manual-input');
+            });
+
+            $('#text-fill-modal').on('show.bs.modal', function(event) {
+                var fill = $(this).find("input[name='inputFill']").val();
             });
 
             $('#number-manual-modal').on('show.bs.modal', function(event){
