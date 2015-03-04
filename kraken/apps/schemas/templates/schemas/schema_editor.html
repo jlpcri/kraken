@@ -133,7 +133,7 @@
 
         function updateViewer() {
             var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
-            delimiter = '' // for Fixed
+            delimiter = ''; // for Fixed
             if (delimiterType == 'Pipe') {
                 delimiter = '|';
             } else if (delimiterType == 'Comma') {
@@ -141,20 +141,24 @@
             }
             var s = "";
             $("#tableFields tbody tr").each(function() {
-                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();
-                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
-                if (fieldType == 'Number') {
-                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + '#';
-                    }
-                } else if (fieldType == 'Text') {
-                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + 'x';
-                    }
-                }
+{#                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();#}
+{#                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();#}
+{#                if (fieldType == 'Number') {#}
+{#                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }#}
+{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
+{#                        s = s + '#';#}
+{#                    }#}
+{#                } else if (fieldType == 'Text') {#}
+{#                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }#}
+{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
+{#                        s = s + 'x';#}
+{#                    }#}
+{#                }#}
+                var fieldName = $(this).find("input[name^='inputFieldName']").val();
+                s += fieldName + delimiter;
             });
+            var len = delimiter.length;
+            s = s.substring(0, s.length - len);
             $('#textareaViewer').val(s);
         }
 
@@ -240,7 +244,7 @@
                             '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name">' +
                             '</td>' +
                             '<td>' +
-                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="10">' +
+                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="Example: 10 digits">' +
                             '</td>' +
                             '<td>' +
                             '<select onchange="formChangeHandler();" class="form-control" name="selectFieldType_' + counter + '">' +

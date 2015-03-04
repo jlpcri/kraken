@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
@@ -35,13 +36,21 @@ def create_file(request, client_id, schema_id, version_id):
 
         fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
 
+        column_parameters = {
+            'text': settings.TEXT_PARAS,
+            'number': settings.NUMBER_PARAS,
+            'custom_list': settings.CUSTOM_LIST_PARAS,
+            'others': settings.OTHER_PARAS,
+        }
+
         context = {
             'client': client,
             'schema': schema,
             'version': version,
             'fields': fields,
             'field_number': len(fields),
-            'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'column_parameters': column_parameters,
             'state': 'create',
             'file_form': VersionFileForm,
             'version_files_names': json.dumps(version_files_names)
@@ -155,6 +164,11 @@ def create_schema(request, client_id):
                         error_message = 'Version Name is not a valid value'
                 elif columns.get('valid') is False:
                     error_message = columns.get('error_message')
+
+                # remove pre created version and schema
+                version.delete()
+                schema.delete()
+
                 messages.danger(request, error_message)
                 context = {
                     'client': client,

@@ -54,6 +54,27 @@ $('#buttonGenerate').click(function () {
     }
     else {
         generateRecords(record_number);
+
+        var delimiter = '{{version.delimiter}}';
+
+        // calculate record number which has value
+        var found = true, record_number = 0;
+        while (found) {
+            if (!$('#record0{0}'.format(record_number)).val()) {
+                found = false;
+            } else {
+                record_number++;
+            }
+        }
+
+        if (delimiter == 'Fixed') {
+            parse_schema(record_number, '');
+        } else if (delimiter == 'Pipe') {
+            parse_schema(record_number, '|');
+
+        } else if (delimiter == 'Comma') {
+            parse_schema(record_number, ',');
+        }
     }
 });
 
@@ -108,6 +129,8 @@ $('#validation_input_to_schema').click(function () {
             } else if (delimiter == 'Comma') {
                 parse_input(rows, ',');
             }
+
+            showSuccessMsg('No errors found');
         }
     }
 });
@@ -313,6 +336,15 @@ function showErrMsg(message) {
     $('#errMsg').html('Error: ' + message);
 }
 
+function showSuccessMsg(message) {
+    $('#errMsg').css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'green'
+    });
+    $('#errMsg').html('Successful: ' + message);
+}
+
 function generateRecords(record_number) {
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
@@ -322,25 +354,29 @@ function generateRecords(record_number) {
 
     var data = [];
     $("#tableDefinitions tbody tr").each(function () {
-        var type = $(this).find("select option:selected").val();
-        var payload = $(this).find("select option:selected").attr('data-payload');
-        var d = []
+        var type = $(this).find(".data-generator-select option:selected").val();
+        var generate = $(this).find(".data-generator-params option:selected").val();
+        var payload = $(this).find(".data-generator-params > select").attr('data-payload');
+        var d = [];
         if (type == "Text") {
-            var generate = "manual";
+            generate = generate.substring(5);
+            //var generate = "manual";
             var fill = "";
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    }
                 }
+            } catch (e) {
+                ;
             }
 
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
                 // use value from fill to generate fields
@@ -369,9 +405,10 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Number") {
+            generate = generate.substring(7);
             var min = 0;
             var max = 9;
-            var generate = "manual";
+            //var generate = "manual";
             var fill = "";
             var increment = 0;
             var p = $.parseJSON(payload);
@@ -380,8 +417,6 @@ function generateRecords(record_number) {
                     min = p[i]['value'];
                 } else if (p[i]['name'] == "max") {
                     max = p[i]['value'];
-                } else if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
                 } else if (p[i]['name'] == "inputFill") {
                     fill = p[i]['value'];
                 } else if (p[i]['name'] == "inputIncrement") {
@@ -392,7 +427,7 @@ function generateRecords(record_number) {
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
                 // use value from fill to generate fields
@@ -431,7 +466,8 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Custom List") {
-            var generate = "inorder";
+            generate = generate.substr(7);
+            //var generate = "inorder";
             var list = [];
             var p = $.parseJSON(payload);
             for (var i = 0; i < p.length; i++) {
@@ -564,7 +600,7 @@ function generateRecords(record_number) {
             }
         }
         data.push(d);
-    })
+    });
 
     var contents_body = '';
     for (i = 0; i < field_number; i++) {
@@ -586,4 +622,26 @@ function generateRecords(record_number) {
         contents_body +
         "</table> ";
     $('#add_records').html(add_records_contents);
+}
+
+function generate_empty_records_modal(record_number, location) {
+    var contents_head = '<tr>';
+    for (var i = 1; i < Number(record_number) + 1; i++) {
+        contents_head += '<th>Record ' + i + '</th>';
+    }
+    contents_head += '</tr>';
+
+    var contents_body = '';
+    for (var i = 0; i < Number(record_number); i++) {
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format('record' + i );
+    }
+    var contents = "<table id='tableData' class='table'>" +
+        " <thead>" +
+        contents_head +
+        "</thead>" +
+        "<tbody>" +
+        contents_body +
+        "</tbody>" +
+        "</table> ";
+    $(location).html(contents);
 }
