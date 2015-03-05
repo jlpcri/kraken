@@ -207,7 +207,36 @@
         function saveManualTextData(event) {
             event.preventDefault();
             var form = $(event.target);
+            var record_number = $('#inputRecordNumber').val();
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+            //var file_column = window.currentRow.find('.data-generator-select > select').val();
+            //var column_config = window.currentRow.find('.data-generator-params > select').val();
+
+            //console.log(field_type, field_length, file_column, column_config);
+
+            var error_found = false;
             var manual_text = $("#text-manual-modal form input");
+            $.each(manual_text, function (index, value) {
+                var input = $(value).val();
+                if (input == '') {
+                    showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (input.length > field_length) {
+                    showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
+                    showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                    error_found = true;
+                    return false;
+                }
+            });
+            if (error_found) {
+                return false;
+            }
+
             var data = [];
             $.each(manual_text, function(index, value) {
                 data.push($(value).val());
@@ -220,7 +249,32 @@
         function saveManualNumberData(event) {
             event.preventDefault();
             var form = $(event.target);
+            var record_number = $('#inputRecordNumber').val();
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+
             var manual_text = $("#number-manual-modal form input");
+            var error_found = false;
+            $.each(manual_text, function (index, value) {
+                var input = $(value).val();
+                if (input == '' && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (input.length > field_length && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (!$.isNumeric(input) && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                    error_found = true;
+                    return false;
+                }
+            });
+            if (error_found) {
+                return false;
+            }
+
             var data = [];
             $.each(manual_text, function(index, value) {
                 data.push($(value).val());
