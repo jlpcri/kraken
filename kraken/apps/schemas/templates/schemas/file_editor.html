@@ -38,7 +38,11 @@
         function updateColumnParams(select, options, prefix){
             select.empty();
             if (prefix != 'others'){
-                select.append($("<option></option").attr("selected", "selected").text("Specify"));
+                select.append($("<option></option").
+                        attr({
+                            selected: "selected",
+                            value: "specify"
+                        }).text("Specify"));
             }
             $.each(options, function(k, v){
                 select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
