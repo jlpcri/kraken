@@ -49,8 +49,13 @@
             window.currentRow = $(element).closest('tr');
             //$(element).closest('tr').find('.data-generator-params > select')
             var value = element.value;
+            var record_number = $('#inputRecordNumber').val();
             switch (value) {
                 case 'text_manual':
+                    $('#textErrMessage').html('');
+                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
+                        showModalErrMsg('#textErrMessage', 'No records generated');
+                    }
                     $('#text-manual-modal').modal('show');
                     break;
                 case 'text_fill':
@@ -63,6 +68,10 @@
                     $('#number-increment-modal').modal('show');
                     break;
                 case 'number_manual':
+                    $('#numberErrMessage').html('');
+                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'No records generated');
+                    }
                     $('#number-manual-modal').modal('show');
                     break;
                 case 'number_random':
@@ -82,7 +91,6 @@
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
-            //console.log(form.serializeArray());
             window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
                 JSON.stringify(form.serializeArray()));
             form.closest(".modal").modal('hide');
@@ -127,7 +135,6 @@
 
                 try {
                     var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
-                    //console.log(p);
                     for (var i = 0; i < p.length; i++) {
                         $('#text' + i).val(p[i]);
                     }

@@ -655,3 +655,12 @@ function generate_empty_records_modal(record_number, location) {
         "</table> ";
     $(location).html(contents);
 }
+
+function showModalErrMsg(location, message) {
+    $(location).css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'blue'
+    });
+    $(location).html('Error: ' + message);
+}
