@@ -45,9 +45,11 @@
             });
         }
 
-        function openParamsModal(element) {
+        function openParamsModal(element, field_type, field_length) {
+            $('#field_type').val(field_type);
+            $('#field_length').val(field_length);
             window.currentRow = $(element).closest('tr');
-            //$(element).closest('tr').find('.data-generator-params > select')
+
             var value = element.value;
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
@@ -91,6 +93,112 @@
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+            var file_column = window.currentRow.find('.data-generator-select > select').val();
+            var column_config = window.currentRow.find('.data-generator-params > select').val();
+
+            //console.log(field_type, field_length, file_column, column_config);
+            if (file_column == 'Text') {
+                if (column_config == 'text_fill') {
+                    var input = $(this).find("input[name='inputFill']").val();
+                    if (!input) {
+                        showModalErrMsg('#textFillErrMessage', 'No inputs');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#textFillErrMessage', 'Length exceed limitation.');
+                        return false;
+                    } else if (!$.isNumeric(input) && field_type == 'Number') {
+                        showModalErrMsg('#textFillErrMessage', 'Input should be Number');
+                        return false;
+                    }
+                }
+
+            } else if (file_column == 'Number') {
+                if (column_config == 'number_random') {
+                    $("#numberRandomErrMessage").html('');
+                    var min = $(this).find("input[name='min']").val();
+                    var max = $(this).find("input[name='max']").val();
+                    if (!min || !max) {
+                        showModalErrMsg('#numberRandomErrMessage', 'No input of minimum or maximum');
+                        return false;
+                    } else if (!$.isNumeric(min) || !$.isNumeric(max)) {
+                        showModalErrMsg('#numberRandomErrMessage', 'Input of minimum or maximum is not a Number');
+                        return false;
+                    } else if (min.length > field_length || max.length > field_length){
+                        showModalErrMsg('#numberRandomErrMessage', 'Length of minimum or maximum exceed limitation');
+                        return false;
+                    } else if (Number(min) > Number(max)) {
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than Maximum');
+                        return false;
+                    }
+                } else if (column_config == 'number_increment') {
+                    $('#numberIncrementErrMessage').html('');
+                    var input = $(this).find("input[name='inputIncrement']").val();
+                    if (!input) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'No input of beginning value.');
+                        return false;
+                    } else if (!$.isNumeric(input)) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'Beginning value is not a number.');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'Length of inc value exceed limitation.');
+                        return false;
+                    }
+                } else if (column_config == 'number_fill') {
+                    $('#numberFillErrMessage').html('');
+                    var input = $(this).find("input[name='inputFill']").val();
+                    if (!input) {
+                        showModalErrMsg('#numberFillErrMessage', 'No input of fill value.');
+                        return false;
+                    } else if (!$.isNumeric(input)) {
+                        showModalErrMsg('#numberFillErrMessage', 'Fill value is not a number.');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#numberFillErrMessage', 'Length of begin value exceed limitation.');
+                        return false;
+                    }
+                }
+
+            } else if (file_column == 'Custom List') {
+                var input = $(this).find("textarea[name='list']").val();
+                if (column_config == 'custom_random') {
+                    $('#customeRandomErrMessage').html('');
+                    if (!input) {
+                        showModalErrMsg('#customRandomErrMessage', 'No inputs of custom list');
+                        return false;
+                    } else {
+                        var lines = input.split('\n');
+                        for (var i = 0; i < lines.length; i++) {
+                            if (lines[i].length > field_length) {
+                                showModalErrMsg('#customRandomErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                return false;
+                            } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                return false;
+                            }
+                        }
+                    }
+                } else if (column_config == 'custom_inorder'){
+                    $('#customInorderErrMessage').html('');
+                    if (!input) {
+                        showModalErrMsg('#customInorderErrMessage', 'No inputs of custom list');
+                        return false;
+                    } else {
+                        var lines = input.split('\n');
+                        for (var i = 0; i < lines.length; i++) {
+                            if (lines[i].length > field_length) {
+                                showModalErrMsg('#customInorderErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                return false;
+                            } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
             window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
                 JSON.stringify(form.serializeArray()));
             form.closest(".modal").modal('hide');
@@ -324,7 +432,7 @@
 {#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
 {#                                </td>#}
                                 <td class="data-generator-params">
-                                    <select class="form-control" onchange="openParamsModal(this)">
+                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
                                         <option value="specify">Specify</option>
                                         {% for key in column_parameters.text %}
                                             <option value="text_{{ key|lower }}">{{ key }}</option>
