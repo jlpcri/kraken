@@ -627,6 +627,14 @@ function generateRecords(record_number) {
 }
 
 function generate_empty_records_modal(record_number, location) {
+    var cell_id = '';
+    if (location == '#text-manual-input') {
+        cell_id = 'text';
+    } else if (location == '#number-manual-input') {
+        cell_id = 'number';
+    }
+
+
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
@@ -635,7 +643,7 @@ function generate_empty_records_modal(record_number, location) {
 
     var contents_body = '';
     for (var i = 0; i < Number(record_number); i++) {
-        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format('record' + i );
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
     }
     var contents = "<table id='tableData' class='table'>" +
         " <thead>" +

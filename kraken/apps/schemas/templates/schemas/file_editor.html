@@ -79,10 +79,6 @@
             }
         }
 
-
-{#        function openModal(event) {#}
-{#            window.currentRow = $(event.toElement).closest('tr');#}
-{#        }#}
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
@@ -128,12 +124,31 @@
                 var record_number = $('#inputRecordNumber').val();
                 // generate empty cell for user manully input
                 generate_empty_records_modal(record_number, '#text-manual-input');
+
+                try {
+                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
+                    //console.log(p);
+                    for (var i = 0; i < p.length; i++) {
+                        $('#text' + i).val(p[i]);
+                    }
+                } catch (e) {
+                    ;
+                }
             });
 
             $('#number-manual-modal').on('show.bs.modal', function(event){
                 var record_number = $('#inputRecordNumber').val();
                 // generate empty cell for user manully input
                 generate_empty_records_modal(record_number, '#number-manual-input');
+
+                try {
+                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
+                    for (var i = 0; i < p.length; i++) {
+                        $('#number' + i).val(p[i]);
+                    }
+                } catch (e) {
+                    ;
+                }
             });
 
 
