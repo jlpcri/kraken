@@ -12,6 +12,16 @@
                     <div class="table-responsive" id="text-manual-input" style="overflow: auto;">
                     </div>
 
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="textErrMessage"></div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -45,6 +55,15 @@
                             <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
                         </div>
                         <div class="col-xs-1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="textFillErrMessage"></div>
                         </div>
                     </div>
 
@@ -83,6 +102,15 @@
                         <div class="col-xs-1">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberFillErrMessage"></div>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="modal-footer">
@@ -105,8 +133,6 @@
                     <h4 class="modal-title">Number Increment Parameters</h4>
                 </div>
                 <div class="modal-body">
-
-
                     <div class="row">
                         <div class="col-xs-1">
                         </div>
@@ -122,6 +148,15 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberIncrementErrMessage"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -144,6 +179,15 @@
                 <div class="modal-body">
                     <div class="table-responsive" id="number-manual-input" style="overflow: auto;">
                     </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberErrMessage"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -164,7 +208,6 @@
                     <h4 class="modal-title">Number Random Inputs</h4>
                 </div>
                 <div class="modal-body">
-
                     <div class="row">
                         <div class="col-xs-1">
                         </div>
@@ -180,6 +223,16 @@
                             <input class="form-control input-sm" name="max" placeholder="Maximum">
                         </div>
                         <div class="col-xs-2">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberRandomErrMessage"></div>
                         </div>
                     </div>
                 </div>
@@ -204,7 +257,6 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-1">
-
                         </div>
                         <div class="col-xs-10">
                             <label class="control-label">List</label>
@@ -212,6 +264,16 @@
                         </div>
                         <div class="col-xs-1">
 
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="customInorderErrMessage"></div>
                         </div>
                     </div>
 
@@ -237,14 +299,22 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-1">
-
                         </div>
                         <div class="col-xs-10">
                             <label class="control-label">List</label>
                             <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
                         </div>
                         <div class="col-xs-1">
+                        </div>
+                    </div>
 
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="customRandomErrMessage"></div>
                         </div>
                     </div>
 

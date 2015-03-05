@@ -48,11 +48,22 @@ $('#buttonGenerate').click(function () {
     if (!$.isNumeric(record_number)) {
         showErrMsg('Input \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    }
-    else if (field_number == 0) {
+    } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
-    }
-    else {
+    } else {
+        var error_found = false;
+        $("#tableDefinitions tbody tr").each(function() {
+            var column_config = $(this).find(".data-generator-params > select").val();
+            if (column_config == 'specify') {
+                showErrMsg('Please select column configuration');
+                error_found = true;
+                return false;
+            }
+        });
+        if (error_found) {
+            return false;
+        }
+
         generateRecords(record_number);
 
         var delimiter = '{{version.delimiter}}';
@@ -627,6 +638,14 @@ function generateRecords(record_number) {
 }
 
 function generate_empty_records_modal(record_number, location) {
+    var cell_id = '';
+    if (location == '#text-manual-input') {
+        cell_id = 'text';
+    } else if (location == '#number-manual-input') {
+        cell_id = 'number';
+    }
+
+
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
@@ -635,7 +654,7 @@ function generate_empty_records_modal(record_number, location) {
 
     var contents_body = '';
     for (var i = 0; i < Number(record_number); i++) {
-        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format('record' + i );
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
     }
     var contents = "<table id='tableData' class='table'>" +
         " <thead>" +
@@ -646,4 +665,13 @@ function generate_empty_records_modal(record_number, location) {
         "</tbody>" +
         "</table> ";
     $(location).html(contents);
+}
+
+function showModalErrMsg(location, message) {
+    $(location).css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'blue'
+    });
+    $(location).html('Error: ' + message);
 }
