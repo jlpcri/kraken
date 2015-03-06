@@ -260,28 +260,6 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
 
 
 @login_required
-def download_file(request, client_id, schema_id, version_id, file_id):
-    """
-    Handles GET requests to download file to client computer
-            returns 200 or 404
-    """
-    if request.method == "GET":
-        # client = get_object_or_404(Client, pk=client_id)
-        # schema = get_object_or_404(ClientSchema, pk=schema_id)
-        # version = get_object_or_404(SchemaVersion, pk=version_id)
-        try:
-            f = get_object_or_404(VersionFile, pk=file_id)
-            response = HttpResponse(f.contents, content_type='text/plain')
-            response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
-            #response.write(f.contents)
-            return response
-        except Exception as e:
-            messages.danger(request, e)
-            return redirect('core:home')
-    return HttpResponseNotFound()
-
-
-@login_required
 @user_passes_test(user_is_staff)
 def edit_version(request, client_id, schema_id, version_id):
     """

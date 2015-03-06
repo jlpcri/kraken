@@ -351,17 +351,17 @@
             </div>
             <div class="col-xs-4" id="errMsg"></div>
             <div class="col-xs-1">
-                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 100%;" title="Generate Schema based on Input">Validate</button>
+                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 100%;" title="Validate Inputs">Validate</button>
             </div>
             <div class="col-xs-1">
-                <button type="submit" name="save_file" class="btn btn-primary btn-sm" style="width: 100%;">
+                <button type="submit" name="save_file" class="btn btn-primary btn-sm" style="width: 100%;" {% if file %}title="Save to file" {% else %} title="Create new file" {% endif %}>
                     <i class="fa fa-floppy-o"></i>&nbsp;Save
                 </button>
             </div>
             <div class="col-xs-1">
                 {% if file %}
-                <button type="submit" name="download_file" class="btn btn-primary btn-sm" style="width: 100%;">
-                    Down
+                <button type="submit" name="download_file" class="btn btn-primary btn-sm" style="width: 100%;" title="Export file">
+                    Export
                 </button>
                 {% endif %}
             </div>
@@ -410,7 +410,7 @@
                 <input id="inputRecordNumber" type="text" class="form-control input-sm" style="width: 50px; display: inline; text-align: center;">
             </div>
             <div class="col-xs-2">
-                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
+                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;" title="Generate data to inputs">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
             </div>
