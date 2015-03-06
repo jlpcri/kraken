@@ -173,7 +173,7 @@ class VersionFile(models.Model):
             data += line
         f.close()
 
-        return lines
+        return data
 
 
 class FileColumn(models.Model):
