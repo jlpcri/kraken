@@ -163,6 +163,18 @@ class VersionFile(models.Model):
     def batch_file_path(self):
         return ''
 
+    @property
+    def file_contents(self):
+        f = self.contents
+        f.open(mode='rb')
+        lines = f.readlines()
+        data = ''
+        for line in lines:
+            data += line
+        f.close()
+
+        return lines
+
 
 class FileColumn(models.Model):
     NUMBER = 'Number'

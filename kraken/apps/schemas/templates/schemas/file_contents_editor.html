@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block title %}File Contents Editor{% endblock %}
+{% block headscript %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <legend>File Edition</legend>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-2" style="text-align: left;font-size:18px;">Client Name</div>
+            <div class="col-md-8">{{ client.name }}</div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-2" style="text-align: left;font-size:18px;">Schema Name</div>
+            <div class="col-md-8">{{ schema.name }}</div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-2" style="text-align: left;font-size:18px;">Version Identifier</div>
+            <div class="col-md-8">{{ version.identifier }}</div>
+        </div>
+
+        <form>
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-2" style="text-align: left;font-size:18px;">File Name</div>
+                <div class="col-md-8">
+                    <input type="text" id="fileName" name="fileName" value="{{ file.name }}">
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-2" style="text-align: left;font-size:18px;">File Contents</div>
+                <div class="col-md-8">
+                    <textarea class="form-control" rows="5" id="fileContents" name="fileContents"
+                              style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;">
+                    {{ file.file_contents }}
+                    </textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-2">
+                    <button type="submit" name="save_file_contents" id="save_file_contents" class="btn btn-success " style="width: 100%;" title="Save edit contents to file">Save</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="download_file_contents" id="download_file_contents" class="btn btn-success " style="width: 100%;" title="Download file">Download</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="reset" name="" class="btn btn-primary " style="width: 100%;" title="Reset file contents">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

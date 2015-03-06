@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
 from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile, FileColumn, SchemaColumn
-from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
+from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm, VersionFileEditForm
 
 
 def user_is_staff(user):
@@ -199,14 +199,16 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
+        file = get_object_or_404(VersionFile, pk=file_id)
+
         context = {
             'client': client,
             'schema': schema,
             'version': version,
             'state': 'edit',
-            'file_form': VersionFileForm
+            'file': file
         }
-        return render(request, "schemas/file_editor.html", context)
+        return render(request, "schemas/file_contents_editor.html", context)
     return HttpResponseNotFound()
 
 
