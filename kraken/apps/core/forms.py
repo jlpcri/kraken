@@ -88,9 +88,3 @@ class VersionFileForm(ModelForm):
             'placeholder': 'File Name',
             'class': 'form-control'
         })
-
-
-class VersionFileEditForm(ModelForm):
-    class Meta:
-        model = VersionFile
-        exclude = ['schema_version', 'last_opened']

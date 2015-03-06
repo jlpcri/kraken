@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from kraken.apps.core import messages
 from kraken.apps.core.models import Client, ClientSchema, SchemaVersion, VersionFile, FileColumn, SchemaColumn
-from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm, VersionFileEditForm
+from kraken.apps.core.forms import ClientSchemaForm, SchemaVersionForm, VersionFileForm
 
 
 def user_is_staff(user):
