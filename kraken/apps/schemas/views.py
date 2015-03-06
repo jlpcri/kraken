@@ -58,6 +58,7 @@ def create_file(request, client_id, schema_id, version_id):
         return render(request, "schemas/file_editor.html", context)
     if request.method == "POST":
         if 'save_file' in request.POST:
+            save_state = request.POST.get('state', '')
             client = get_object_or_404(Client, pk=client_id)
             schema = get_object_or_404(ClientSchema, pk=schema_id)
             version = get_object_or_404(SchemaVersion, pk=version_id)
@@ -65,23 +66,38 @@ def create_file(request, client_id, schema_id, version_id):
             file_form = VersionFileForm(request.POST)
             payloads = request.POST.get('payloads')
 
-            try:
-                if file_form.is_valid():
-                    file = file_form.save(commit=False)
-                    file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
-                    if not request.POST.get('textareaViewer', ''):
-                        messages.danger(request, 'No input of contents')
+            if save_state == 'create':
+                try:
+                    if file_form.is_valid():
+                        file = file_form.save(commit=False)
+                        file.schema_version = get_object_or_404(SchemaVersion, pk=version_id)
+                        if not request.POST.get('textareaViewer', ''):
+                            messages.danger(request, 'No input of contents')
+                            return redirect('core:home')
+                        file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
+                        file.save()
+                        messages.success(request, 'File \"{0}\" has been created'.format(file.name))
                         return redirect('core:home')
-                    file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
-                    file.save()
-                    messages.success(request, 'File \"{0}\" has been created'.format(file.name))
-                    return redirect('core:home')
-                else:
-                    if file_form['name'].errors:
-                        error_message = file_form['name'].errors
                     else:
-                        error_message = 'Something went wrong'
-                    messages.danger(request, error_message)
+                        if file_form['name'].errors:
+                            error_message = file_form['name'].errors
+                        else:
+                            error_message = 'Something went wrong'
+                        messages.danger(request, error_message)
+                        context = {
+                            'client': client,
+                            'schema': schema,
+                            'version': version,
+                            'fields': fields,
+                            'field_number': len(fields),
+                            'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+                            'state': 'create',
+                            'file_form': VersionFileForm,
+                            'payloads': payloads
+                        }
+                        return render(request, "schemas/file_editor.html", context)
+                except Exception as e:
+                    messages.danger(request, e.message)
                     context = {
                         'client': client,
                         'schema': schema,
@@ -94,20 +110,25 @@ def create_file(request, client_id, schema_id, version_id):
                         'payloads': payloads
                     }
                     return render(request, "schemas/file_editor.html", context)
+            if save_state == 'save':
+                file_id = request.POST.get('file_id', '')
+                file = get_object_or_404(VersionFile, pk=file_id)
+                file.name = request.POST.get('name', '')
+                file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
+                file.save()
+                messages.success(request, 'File \"{0}\" has been saved.'.format(file.name))
+                return redirect('schemas:edit_file', client_id, schema_id, version_id, file_id)
+        if 'download_file' in request.POST:
+            file_id = request.POST.get('file_id', '')
+            try:
+                f = get_object_or_404(VersionFile, pk=file_id)
+                response = HttpResponse(f.contents, content_type='text/plain')
+                response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
+                #response.write(f.contents)
+                return response
             except Exception as e:
-                messages.danger(request, e.message)
-                context = {
-                    'client': client,
-                    'schema': schema,
-                    'version': version,
-                    'fields': fields,
-                    'field_number': len(fields),
-                    'field_types': [item[1] for item in FileColumn.GENERATOR_CHOICES],
-                    'state': 'create',
-                    'file_form': VersionFileForm,
-                    'payloads': payloads
-                }
-                return render(request, "schemas/file_editor.html", context)
+                messages.danger(request, e)
+                return redirect('core:home')
     return HttpResponseNotFound()
 
 
@@ -199,36 +220,42 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
         client = get_object_or_404(Client, pk=client_id)
         schema = get_object_or_404(ClientSchema, pk=schema_id)
         version = get_object_or_404(SchemaVersion, pk=version_id)
+        file = get_object_or_404(VersionFile, pk=file_id)
+
+        if file:
+            file_form = VersionFileForm({'name': file.name})
+        else:
+            file_form = VersionFileForm()
+
+        version_files_names = []
+        for item in version.files():
+            if not item.name == file.name:
+                version_files_names.append(item.name)
+
+        fields = SchemaColumn.objects.filter(schema_version=version).order_by('position')
+
+        column_parameters = {
+            'text': settings.TEXT_PARAS,
+            'number': settings.NUMBER_PARAS,
+            'custom_list': settings.CUSTOM_LIST_PARAS,
+            'others': settings.OTHER_PARAS,
+        }
+
         context = {
             'client': client,
             'schema': schema,
             'version': version,
-            'state': 'edit',
-            'file_form': VersionFileForm
+            'file': file,
+            'fields': fields,
+            'field_number': len(fields),
+            'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'column_parameters': column_parameters,
+            'state': 'save',
+            'file_form': file_form,
+            'version_files_names': json.dumps(version_files_names)
         }
         return render(request, "schemas/file_editor.html", context)
-    return HttpResponseNotFound()
 
-
-@login_required
-def download_file(request, client_id, schema_id, version_id, file_id):
-    """
-    Handles GET requests to download file to client computer
-            returns 200 or 404
-    """
-    if request.method == "GET":
-        # client = get_object_or_404(Client, pk=client_id)
-        # schema = get_object_or_404(ClientSchema, pk=schema_id)
-        # version = get_object_or_404(SchemaVersion, pk=version_id)
-        try:
-            f = get_object_or_404(VersionFile, pk=file_id)
-            response = HttpResponse(f.contents, content_type='text/plain')
-            response['Content-Disposition'] = 'attachment; filename="{0}.txt"'.format(f.name)
-            #response.write(f.contents)
-            return response
-        except Exception as e:
-            messages.danger(request, e)
-            return redirect('core:home')
     return HttpResponseNotFound()
 
 

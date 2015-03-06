@@ -4,7 +4,7 @@ from django.test import TestCase, Client
 from django.core.urlresolvers import reverse, resolve
 
 from kraken.apps.core.models import Client as KrakenClient, ClientSchema, SchemaVersion, VersionFile
-from kraken.apps.schemas.views import create_file, download_file
+from kraken.apps.schemas.views import create_file
 
 
 class TestCreateVersionFiles(TestCase):
@@ -21,16 +21,19 @@ class TestCreateVersionFiles(TestCase):
         self.new_file_valid = {
             'name': 'File A',
             'save_file': '',
+            'state': 'create',
             'textareaViewer': 'aaaaabbbbb'
         }
         self.new_file_empty_contents = {
             'name': 'File A',
             'save_file': '',
+            'state': 'create',
             'textareaViewer': ''
         }
         self.new_file_empty_filename = {
             'name': '',
             'save_file': '',
+            'state': 'create',
             'textareaViewer': 'aaaaabbbbb'
         }
         self.user_account = {
@@ -85,8 +88,8 @@ class TestDownloadVersionFiles(TestCase):
         self.kraken_file.contents.save(self.kraken_file.name, ContentFile(self.file_contents['contents']))
 
         self.url_download_file = reverse(
-            'schemas:download_file',
-            args=[self.kraken_client.id, self.kraken_schema.id, self.kraken_version.id, self.kraken_file.id]
+            'schemas:create_file',
+            args=[self.kraken_client.id, self.kraken_schema.id, self.kraken_version.id]
         )
         self.user_account = {
             'username': 'Test Username',
@@ -103,13 +106,13 @@ class TestDownloadVersionFiles(TestCase):
 
     def test_download_files_url_resolve_to_view(self):
         found = resolve(self.url_download_file)
-        self.assertEqual(found.func, download_file)
+        self.assertEqual(found.func, create_file)
 
     def test_download_files_url_get_return_status_200(self):
-        response = self.client.get(self.url_download_file, follow=True)
+        response = self.client.post(self.url_download_file, {'download_file': '', 'file_id': self.kraken_file.id}, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_download_file_contains_file_contents(self):
-        response = self.client.get(self.url_download_file, follow=True)
+        response = self.client.post(self.url_download_file, {'download_file': 'save', 'file_id': self.kraken_file.id}, follow=True)
 
         self.assertContains(response, self.file_contents['contents'])

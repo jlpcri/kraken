@@ -324,55 +324,6 @@
                 }
             });
 
-
-{#            $('#text1-modal').on('show.bs.modal', function (event) {#}
-{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
-{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);#}
-{#                $(this).find("input[name='inputFill']").val('');#}
-{#                for (var i = 0; i < p.length; i++) {#}
-{#                    if (p[i]['name'] == "radiosGenerate") {#}
-{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
-{#                    } else if (p[i]['name'] == "inputFill") {#}
-{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    }#}
-{#                }#}
-{#            });#}
-{##}
-{#            $('#number1-modal').on('show.bs.modal', function () {#}
-{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
-{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="manual"]').prop('checked', true);#}
-{#                $(this).find("input[name='inputFill']").val('');#}
-{#                $(this).find("input[name='inputIncrement']").val('');#}
-{#                $(this).find("input[name='min']").val('');#}
-{#                $(this).find("input[name='max']").val('');#}
-{#                for (var i = 0; i < p.length; i++) {#}
-{#                    if (p[i]['name'] == "radiosGenerate") {#}
-{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
-{#                    } else if (p[i]['name'] == "inputFill") {#}
-{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    } else if (p[i]['name'] == "inputIncrement") {#}
-{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    } else if (p[i]['name'] == "min") {#}
-{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    } else if (p[i]['name'] == "max") {#}
-{#                        $(this).find("input[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    }#}
-{#                }#}
-{#            });#}
-{##}
-{#            $('#custom1-list-modal').on('show.bs.modal', function () {#}
-{#                var p = $.parseJSON(window.currentRow.find("select option:selected")[0].getAttribute("data-payload"));#}
-{#                $(this).find('input:radio[name="radiosGenerate"]').filter('[value="inorder"]').prop('checked', true);#}
-{#                $(this).find("textarea[name='list']").val('');#}
-{#                for (var i = 0; i < p.length; i++) {#}
-{#                    if (p[i]['name'] == "radiosGenerate") {#}
-{#                        $(this).find('input:radio[name="radiosGenerate"]').filter('[value="' + p[i]['value'] + '"]').prop('checked', true);#}
-{#                    } else if (p[i]['name'] == "list") {#}
-{#                        $(this).find("textarea[name='" + p[i]['name'] + "']").val(p[i]['value']);#}
-{#                    }#}
-{#                }#}
-{#            });#}
-
             try {
                 var payloads = $.parseJSON('{{ payloads|safe }}');
             } catch (e) {
@@ -388,6 +339,9 @@
         <input type="hidden" name="client_id" value="{{ client.id }}">
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
         <input type="hidden" name="version_id" value="{{ version.id }}">
+        {% if file %}
+            <input type="hidden" name="file_id" value="{{ file.id }}">
+        {% endif %}
         <input type="hidden" name="state" value="{{ state }}">
         <input type="hidden" name="payloads" value="">
         <input type="hidden" name="fields_total_length" id="fields_total_length" value="{{ version.schema_fields_total_length }}">
@@ -397,21 +351,27 @@
             </div>
             <div class="col-xs-4" id="errMsg"></div>
             <div class="col-xs-1">
-                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 100%;" title="Generate Schema based on Input">Validate</button>
+                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 100%;" title="Validate Inputs">Validate</button>
             </div>
             <div class="col-xs-1">
-                <button type="submit" name="save_file" class="btn btn-primary btn-sm" style="width: 100%;">
+                <button type="submit" name="save_file" class="btn btn-primary btn-sm" style="width: 100%;" {% if file %}title="Save to file" {% else %} title="Create new file" {% endif %}>
                     <i class="fa fa-floppy-o"></i>&nbsp;Save
                 </button>
             </div>
-            <div class="col-xs-1"></div>
+            <div class="col-xs-1">
+                {% if file %}
+                <button type="submit" name="download_file" class="btn btn-primary btn-sm" style="width: 100%;" title="Export file">
+                    Export
+                </button>
+                {% endif %}
+            </div>
         </div>
         <br>
 
         <div class="row">
             <div class="col-xs-12">
                 <textarea class="form-control" rows="5" id="textareaViewer" name="textareaViewer"
-                          style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;"></textarea>
+                          style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;">{% if file %}{{ file.file_contents }}{% endif %}</textarea>
             </div>
         </div>
         <br>
@@ -450,7 +410,7 @@
                 <input id="inputRecordNumber" type="text" class="form-control input-sm" style="width: 50px; display: inline; text-align: center;">
             </div>
             <div class="col-xs-2">
-                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
+                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;" title="Generate data to inputs">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
             </div>
@@ -518,264 +478,7 @@
 
     {% include 'schemas/modal_columns_config.html' %}
 
-{#    <div class="modal fade" id="text-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">Text Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body"><div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-10" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="manual" checked="">#}
-{#                                    Manual#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="fill">#}
-{#                                    Fill#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-7">#}
-{#                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="random">#}
-{#                                    Random#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-8">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="number-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">Number Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-10" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="manual" checked="">#}
-{#                                    Manual#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="fill">#}
-{#                                    Fill#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-7">#}
-{#                                <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="increment">#}
-{#                                    Increment#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-7">#}
-{#                                <input type="text" class="form-control input-sm" name="inputIncrement" placeholder="Beginning value">#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="random">#}
-{#                                    Random#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-3">#}
-{#                                <input class="form-control input-sm" name="min" placeholder="Minimum">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3">#}
-{#                                <input class="form-control input-sm" name="max" placeholder="Maximum">#}
-{#                            </div>#}
-{#                            <div class="col-xs-2">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="custom-list-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">Custom List Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{##}
-{#                            </div>#}
-{#                            <div class="col-xs-10">#}
-{#                                <label class="control-label">List</label>#}
-{#                                <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>#}
-{#                            </div>#}
-{#                            <div class="col-xs-1">#}
-{##}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="row">#}
-{#                            <div class="col-xs-1">#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="inorder" checked="">#}
-{#                                    In Order#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-3" style="line-height: 30px;">#}
-{#                                <label>#}
-{#                                    <input type="radio" name="radiosGenerate" value="random">#}
-{#                                    Random#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="col-xs-5">#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="first-name-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">First Name Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <p>No options are currently available for this data generator.</p>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="last-name-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">Last Name Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <p>No options are currently available for this data generator.</p>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="address-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">Address Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <p>No options are currently available for this data generator.</p>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="modal fade" id="zip-code-modal">#}
-{#        <div class="modal-dialog">#}
-{#            <div class="modal-content">#}
-{#                <form class="data-generator-form">#}
-{#                    <div class="modal-header">#}
-{#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
-{#                        <h4 class="modal-title">ZIP Code Parameters</h4>#}
-{#                    </div>#}
-{#                    <div class="modal-body">#}
-{#                        <p>No options are currently available for this data generator.</p>#}
-{#                    </div>#}
-{#                    <div class="modal-footer">#}
-{#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-{#                        <button type="submit" class="btn btn-primary param-save">Save changes</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
+
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
