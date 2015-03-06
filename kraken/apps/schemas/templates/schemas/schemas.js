@@ -25,7 +25,7 @@ $("button[name='save_file']").on('click', function () {
     } else if ( !$("#id_name").val() ){   //check file name empty
         showErrMsg('No input of file name');
         return false;
-    } else if (file_names.indexOf($('#id_name').val()) > -1 ) {
+    } else if ($.inArray($('#id_name').val(), file_names) > -1) {
         showErrMsg('File Name is duplicated');
         return false;
     }
