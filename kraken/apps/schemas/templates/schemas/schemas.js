@@ -359,6 +359,7 @@ function showSuccessMsg(message) {
 }
 
 function generateRecords(record_number) {
+    $('#errMsg').html('');
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
@@ -383,7 +384,11 @@ function generateRecords(record_number) {
                     }
                 }
             } catch (e) {
-                ;
+                if (generate != 'random') {
+                    var rowindex = $(this).closest('tr').index() + 1;
+                    showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                    return false;
+                }
             }
 
             if (generate == "manual") {
@@ -482,13 +487,17 @@ function generateRecords(record_number) {
             generate = generate.substr(7);
             //var generate = "inorder";
             var list = [];
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "list") {
-                    list = p[i]['value'].split('\n');
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "list") {
+                        list = p[i]['value'].split('\n');
+                    }
                 }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
             }
 
             if (generate == "inorder") {
@@ -615,26 +624,28 @@ function generateRecords(record_number) {
         data.push(d);
     });
 
-    var contents_body = '';
-    for (i = 0; i < field_number; i++) {
-        var contents_body_row = '<tr>';
-        for (var j = 0; j < Number(record_number); j++) {
-            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value={1}></td>".format('record' + i + j, data[i][j]);
+    if (data.length == field_number) {
+        var contents_body = '';
+        for (i = 0; i < field_number; i++) {
+            var contents_body_row = '<tr>';
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record' + i + j, data[i][j]);
+            }
+            contents_body_row += '</tr>';
+
+            contents_body += contents_body_row;
         }
-        contents_body_row += '</tr>';
 
-        contents_body += contents_body_row;
+        var add_records_contents = "<table id='tableData' class='table'>" +
+            " <thead>" +
+            contents_head +
+            "</thead>" +
+            "<tbody>" +
+            "</tbody>" +
+            contents_body +
+            "</table> ";
+        $('#add_records').html(add_records_contents);
     }
-
-    var add_records_contents = "<table id='tableData' class='table'>" +
-        " <thead>" +
-        contents_head +
-        "</thead>" +
-        "<tbody>" +
-        "</tbody>" +
-        contents_body +
-        "</table> ";
-    $('#add_records').html(add_records_contents);
 }
 
 function generate_empty_records_modal(record_number, location) {
