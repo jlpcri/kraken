@@ -484,9 +484,7 @@ function generateRecords(record_number) {
             var list = [];
             var p = $.parseJSON(payload);
             for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "list") {
+                if (p[i]['name'] == "list") {
                     list = p[i]['value'].split('\n');
                 }
             }
@@ -619,7 +617,7 @@ function generateRecords(record_number) {
     for (i = 0; i < field_number; i++) {
         var contents_body_row = '<tr>';
         for (var j = 0; j < Number(record_number); j++) {
-            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value={1}></td>".format('record' + i + j, data[i][j]);
+            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record' + i + j, data[i][j]);
         }
         contents_body_row += '</tr>';
 
