@@ -429,17 +429,23 @@ function generateRecords(record_number) {
             //var generate = "manual";
             var fill = "";
             var increment = 0;
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "min") {
-                    min = p[i]['value'];
-                } else if (p[i]['name'] == "max") {
-                    max = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
-                } else if (p[i]['name'] == "inputIncrement") {
-                    increment = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "min") {
+                        min = p[i]['value'];
+                    } else if (p[i]['name'] == "max") {
+                        max = p[i]['value'];
+                    } else if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        increment = p[i]['value'];
+                    }
                 }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
             }
 
             if (generate == "manual") {
@@ -576,12 +582,20 @@ function generateRecords(record_number) {
                 alert('Invalid JSON');
             }
         } else if (type == "Address") {
+            // Adding the @US_STATE keywork
+            $.mockJSON.data.US_STATE = [
+                'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+                'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+                'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+                'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+                'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+            ];
             // use mockjson to get random addresses for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
             var textTemplate = {};
             textTemplate[s] = [
-                { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
+                { "address": "@NUMBER@NUMBER@NUMBER @LOREM @US_STATE" }
             ];
 
             try {
