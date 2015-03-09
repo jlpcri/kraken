@@ -39,6 +39,12 @@ $("button[name='save_file']").on('click', function () {
     $('input[name="payloads"]').val(JSON.stringify(payloads));
 });
 
+$("button[name='download_file']").on('click', function() {
+    $('#textareaViewer').bind('input propertychange',function (){
+        alert('Contents Changed, save first');
+        return false;
+    });
+});
 
 $('#buttonGenerate').click(function () {
     // initialize errMsg
