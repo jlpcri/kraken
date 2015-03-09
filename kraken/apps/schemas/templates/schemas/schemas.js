@@ -37,13 +37,20 @@ $("button[name='save_file']").on('click', function () {
         payloads.push({"type": type, "payload": payload});
     });
     $('input[name="payloads"]').val(JSON.stringify(payloads));
+    window.content_change = false;
+});
+
+//check textarea contents changed or not
+window.content_change = false;
+$('#textareaViewer').change(function (){
+    window.content_change = true;
 });
 
 $("button[name='download_file']").on('click', function() {
-    $('#textareaViewer').bind('input propertychange',function (){
+    if (window.content_change) {
         alert('Contents Changed, save first');
         return false;
-    });
+    }
 });
 
 $('#buttonGenerate').click(function () {

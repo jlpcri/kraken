@@ -49,9 +49,10 @@
             });
         }
 
-        function openParamsModal(element, field_type, field_length) {
+        function openParamsModal(element, field_type, field_length, version_delimiter) {
             $('#field_type').val(field_type);
             $('#field_length').val(field_length);
+            $('#version_delimiter').val(version_delimiter);
             window.currentRow = $(element).closest('tr');
 
             var value = element.value;
@@ -99,6 +100,7 @@
             var form = $(event.target);
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
+            var version_delimiter = $('#version_delimiter').val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
@@ -114,6 +116,9 @@
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number') {
                         showModalErrMsg('#textFillErrMessage', 'Input should be Number');
+                        return false;
+                    } else if (version_delimiter == 'Comma' && ($.inArray(input, ',') > -1 )) {
+                        showModalErrMsg('#textFillErrMessage', 'Input cannot include comma\',\'');
                         return false;
                     }
                 }
@@ -450,7 +455,7 @@
 {#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
 {#                                </td>#}
                                 <td class="data-generator-params">
-                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
+                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}', '{{ version.delimiter }}')">
                                         <option value="specify">Specify</option>
                                         {% for key in column_parameters.text %}
                                             <option value="text_{{ key|lower }}">{{ key }}</option>
