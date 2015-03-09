@@ -429,17 +429,23 @@ function generateRecords(record_number) {
             //var generate = "manual";
             var fill = "";
             var increment = 0;
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "min") {
-                    min = p[i]['value'];
-                } else if (p[i]['name'] == "max") {
-                    max = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
-                } else if (p[i]['name'] == "inputIncrement") {
-                    increment = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "min") {
+                        min = p[i]['value'];
+                    } else if (p[i]['name'] == "max") {
+                        max = p[i]['value'];
+                    } else if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        increment = p[i]['value'];
+                    }
                 }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
             }
 
             if (generate == "manual") {
