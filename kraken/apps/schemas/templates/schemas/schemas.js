@@ -48,7 +48,7 @@ $('#textareaViewer').change(function (){
 
 $("button[name='download_file']").on('click', function() {
     if (window.content_change) {
-        alert('Contents Changed, save first');
+        showErrMsg('Contents Changed, save first');
         return false;
     }
 });
@@ -203,7 +203,7 @@ function parse_input_fixed(rows) {
     for (var i = 0; i < rows.length; i++) {
         if (rows[i].length > total_length) {
             field_length_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed total length of fields.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds total length of fields.');
             break;
         }
     }
@@ -265,7 +265,7 @@ function parse_input(rows, delimiter) {
 
         if (columns.length > field_number) {
             field_number_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed field number.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds field number.');
             break;
         }
     }
@@ -280,7 +280,7 @@ function parse_input(rows, delimiter) {
                 // check length
                 if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                     break;
                 }
                 // check type
@@ -318,14 +318,16 @@ function parse_schema(record_number, delimiter) {
             // check length
             if ($('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
-                showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
+                showErrMsg('Generated data length error');
                 break;
             }
 
             // check type
             if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())) {
                 field_type_error_found = true;
-                showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                showErrMsg('Generated data type  error');
                 break;
             }
         }
