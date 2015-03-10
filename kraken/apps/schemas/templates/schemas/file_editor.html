@@ -111,10 +111,10 @@
                         showModalErrMsg('#textFillErrMessage', 'No inputs');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#textFillErrMessage', 'Length exceed limitation.');
+                        showModalErrMsg('#textFillErrMessage', input + ' exceeds length limit of ' + field_length.toString());
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number') {
-                        showModalErrMsg('#textFillErrMessage', 'Input should be Number');
+                        showModalErrMsg('#textFillErrMessage', input + 'violates numeric constraint');
                         return false;
                     } else if (version_delimiter == 'Comma' && ($.inArray(',', input) > -1 )) {
                         showModalErrMsg('#textFillErrMessage', 'Input cannot include comma \',\'');
@@ -128,42 +128,39 @@
                     var min = $(this).find("input[name='min']").val();
                     var max = $(this).find("input[name='max']").val();
                     if (!min || !max) {
-                        showModalErrMsg('#numberRandomErrMessage', 'No input of minimum or maximum');
+                        showModalErrMsg('#numberRandomErrMessage', 'Both minimum and maximum are required fields.');
                         return false;
                     } else if (!$.isNumeric(min) || !$.isNumeric(max)) {
-                        showModalErrMsg('#numberRandomErrMessage', 'Input of minimum or maximum is not a Number');
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum and maximum must both be numbers');
                         return false;
                     } else if (min.length > field_length || max.length > field_length){
-                        showModalErrMsg('#numberRandomErrMessage', 'Length of minimum or maximum exceed limitation');
+                        showModalErrMsg('#numberRandomErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
                         return false;
                     } else if (Number(min) > Number(max)) {
-                        showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than Maximum');
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than maximum');
                         return false;
                     }
                 } else if (column_config == 'number_increment') {
                     $('#numberIncrementErrMessage').html('');
                     var input = $(this).find("input[name='inputIncrement']").val();
                     if (!input) {
-                        showModalErrMsg('#numberIncrementErrMessage', 'No input of beginning value.');
+                        showModalErrMsg('#numberIncrementErrMessage', 'Please enter an initial value.');
                         return false;
                     } else if (!$.isNumeric(input)) {
-                        showModalErrMsg('#numberIncrementErrMessage', 'Beginning value is not a number.');
+                        showModalErrMsg('#numberIncrementErrMessage', 'Initial value is not a number.');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#numberIncrementErrMessage', 'Length of inc value exceed limitation.');
+                        showModalErrMsg('#numberIncrementErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
                         return false;
                     }
                 } else if (column_config == 'number_fill') {
                     $('#numberFillErrMessage').html('');
                     var input = $(this).find("input[name='inputFill']").val();
-                    if (!input) {
-                        showModalErrMsg('#numberFillErrMessage', 'No input of fill value.');
-                        return false;
-                    } else if (!$.isNumeric(input)) {
-                        showModalErrMsg('#numberFillErrMessage', 'Fill value is not a number.');
+                    if (!input || !$.isNumeric(input)) {
+                        showModalErrMsg('#numberFillErrMessage', 'Input must be numeric.');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#numberFillErrMessage', 'Length of begin value exceed limitation.');
+                        showModalErrMsg('#numberFillErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
                         return false;
                     }
                 }
@@ -173,16 +170,16 @@
                 if (column_config == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customRandomErrMessage', 'No inputs of custom list');
+                        showModalErrMsg('#customRandomErrMessage', 'List cannot be blank');
                         return false;
                     } else {
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                showModalErrMsg('#customRandomErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                showModalErrMsg('#customRandomErrMessage', 'Option {0} should be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
@@ -193,16 +190,16 @@
                 } else if (column_config == 'custom_inorder'){
                     $('#customInorderErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customInorderErrMessage', 'No inputs of custom list');
+                        showModalErrMsg('#customInorderErrMessage', 'List cannot be blank');
                         return false;
                     } else {
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                showModalErrMsg('#customRandomErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                showModalErrMsg('#customRandomErrMessage', 'Option {0} should be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
                                 showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
@@ -435,8 +432,8 @@
                                 <th class="col-xs-3">Field Name</th>
                                 <th class="col-xs-2">Field Length</th>
                                 <th class="col-xs-2">Field Type</th>
-                                <th class="col-xs-2">File Column</th>
-                                <th class="col-xs-2">Column Configuration</th>
+                                <th class="col-xs-2">Data Generator</th>
+                                <th class="col-xs-2">Generator Options</th>
                             </tr>
                         </thead>
                         <tbody>
