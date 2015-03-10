@@ -380,7 +380,7 @@ function parse_schema(record_number, delimiter) {
 
 function showErrMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'blue'
     });
@@ -389,7 +389,7 @@ function showErrMsg(message) {
 
 function showSuccessMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'green'
     });
@@ -648,18 +648,43 @@ function generateRecords(record_number) {
                 alert('Invalid JSON');
             }
         } else if (type == "Zip Code") {
-            // use mockjson to get random zip codes for generating fields
-            var min = 10000;
-            var max = 99999;
+            var field_type = $(this).find("input[name^='field_type_']").val();
+            var field_length = $(this).find("input[name^='field_length_']").val();
+            var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);
-            var n = "zipcode|{0}-{1}".format(min, max);
-            var o = {};
-            o[n] = 0;
+            if (field_type == 'Number') {
+                if (Number(field_length) < 9) {
+                    min = 10000;
+                    max = 99951;
+                } else {
+                    min = 100000000;
+                    max = 999519999;
+                }
 
-            var textTemplate = {};
-            textTemplate[s] = [
-                o
-            ];
+                n = "zipcode|{0}-{1}".format(min, max);
+
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+
+            } else if (field_type == 'Text') {
+                if (Number(field_length) < 10) {
+                    min = 10000;
+                    max = 99951;
+                    n = "zipcode|{0}-{1}".format(min, max);
+
+                    o[n] = 0;
+                    textTemplate[s] = [
+                        o
+                    ];
+                } else {
+                    //n = "zipcode|{0}-{1}".format(second_min, second_max);
+                    textTemplate[s] = [{
+                        "zipcode": "@NUMBER@NUMBER@NUMBER@NUMBER@NUMBER-@NUMBER@NUMBER@NUMBER@NUMBER"
+                    }];
+                }
+            }
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
