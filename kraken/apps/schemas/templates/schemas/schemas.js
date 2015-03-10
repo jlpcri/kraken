@@ -37,10 +37,31 @@ $("button[name='save_file']").on('click', function () {
         payloads.push({"type": type, "payload": payload});
     });
     $('input[name="payloads"]').val(JSON.stringify(payloads));
+    window.content_change = false;
 });
 
+//check textarea contents changed or not
+window.content_change = false;
+$('#textareaViewer').change(function (){
+    window.content_change = true;
+});
+
+$("button[name='download_file']").on('click', function() {
+    if (window.content_change) {
+        showErrMsg('Contents Changed, save first');
+        return false;
+    }
+});
+
+// Total fail generate data no more than X times
+var fail_generate = 0;
 
 $('#buttonGenerate').click(function () {
+    if (fail_generate > 19) {
+        showErrMsg('Retry data generation up to 20 times');
+        return false;
+    }
+
     // initialize errMsg
     $('#errMsg').html('');
     var record_number = $('#inputRecordNumber').val();
@@ -51,6 +72,7 @@ $('#buttonGenerate').click(function () {
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
+        // check column configuration error
         var error_found = false;
         $("#tableDefinitions tbody tr").each(function() {
             var column_config = $(this).find(".data-generator-params > select").val();
@@ -190,7 +212,7 @@ function parse_input_fixed(rows) {
     for (var i = 0; i < rows.length; i++) {
         if (rows[i].length > total_length) {
             field_length_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed total length of fields.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds total length of fields.');
             break;
         }
     }
@@ -252,7 +274,7 @@ function parse_input(rows, delimiter) {
 
         if (columns.length > field_number) {
             field_number_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed field number.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds field number.');
             break;
         }
     }
@@ -267,15 +289,19 @@ function parse_input(rows, delimiter) {
                 // check length
                 if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\'' + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    showErrMsg('Contents of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\''+ ' Field ' + Number(j + 1) + ' is not Number.');
                     break;
                 }
+            }
+
+            if (field_length_error_found || field_type_error_found) {
+                break;
             }
         }
     }
@@ -305,14 +331,16 @@ function parse_schema(record_number, delimiter) {
             // check length
             if ($('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
-                showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
+                showErrMsg('Generated data length error');
                 break;
             }
 
             // check type
             if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())) {
                 field_type_error_found = true;
-                showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                showErrMsg('Generated data type  error');
                 break;
             }
         }
@@ -335,6 +363,13 @@ function parse_schema(record_number, delimiter) {
 
             schema_string += '\n';
         }
+
+        //reset total fail generate times
+        fail_generate = 0;
+
+    } else {
+        // fail generate times add 1
+        fail_generate += 1;
     }
 
     $('#textareaViewer').val(schema_string);

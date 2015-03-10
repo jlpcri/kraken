@@ -42,7 +42,7 @@
                         attr({
                             selected: "selected",
                             value: "specify"
-                        }).text("Specify"));
+                        }).text("- Select -"));
             }
             $.each(options, function(k, v){
                 select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
@@ -106,6 +106,7 @@
             if (file_column == 'Text') {
                 if (column_config == 'text_fill') {
                     var input = $(this).find("input[name='inputFill']").val();
+
                     if (!input) {
                         showModalErrMsg('#textFillErrMessage', 'No inputs');
                         return false;
@@ -114,6 +115,9 @@
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number') {
                         showModalErrMsg('#textFillErrMessage', 'Input should be Number');
+                        return false;
+                    } else if (version_delimiter == 'Comma' && ($.inArray(',', input) > -1 )) {
+                        showModalErrMsg('#textFillErrMessage', 'Input cannot include comma \',\'');
                         return false;
                     }
                 }
@@ -180,6 +184,9 @@
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} should be number'.format(i+1));
                                 return false;
+                            } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
+                                return false;
                             }
                         }
                     }
@@ -196,6 +203,9 @@
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                return false;
+                            } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
                                 return false;
                             }
                         }
@@ -451,7 +461,7 @@
 {#                                </td>#}
                                 <td class="data-generator-params">
                                     <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
-                                        <option value="specify">Specify</option>
+                                        <option value="specify">- Select -</option>
                                         {% for key in column_parameters.text %}
                                             <option value="text_{{ key|lower }}">{{ key }}</option>
                                         {% endfor %}
@@ -482,6 +492,7 @@
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
+        var version_delimiter = '{{ version.delimiter }}';
         {% include 'schemas/schemas.js' %}
     </script>
 {% endblock %}

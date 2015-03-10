@@ -86,14 +86,14 @@
                             <th class="col-xs-2">
                                 Type
                             </th>
-                            <th class="col-xs-1 text-center">
-                                Unique
-                            </th>
+{#                            <th class="col-xs-1 text-center">#}
+{#                                Unique#}
+{#                            </th>#}
                             <th class="col-xs-1">
 
                             </th>
                             <th class="col-xs-1">
-                                <button id="buttonAddField" class="btn btn-success btn-xs" style="width: 100%;"><i class="fa fa-plus"></i>&nbsp;Field
+                                <button id="buttonAddField" class="btn btn-success btn-xs" style="width: 100%;">Add Field
                                 </button>
                             </th>
                         </tr>
@@ -206,9 +206,9 @@
                     '<option{% if f.type == "Number" %} selected{% endif %}>Number</option>' +
                     '</select>' +
                     '</td>' +
-                    '<td class="text-center" style="line-height: 38px;">' +
-                    '<input type="checkbox" name="checkFieldUnique_' + counter + '"{% if f.unique %} checked{% endif %}>' +
-                    '</td>' +
+{#                    '<td class="text-center" style="line-height: 38px;">' +#}
+{#                    '<input type="checkbox" name="checkFieldUnique_' + counter + '"{% if f.unique %} checked{% endif %}>' +#}
+{#                    '</td>' +#}
                     '<td class="text-center" style="line-height: 38px;">' +
                     '<i class="fa fa-arrows fa-lg" style="cursor: move;"></i>' +
                     '</td>' +
