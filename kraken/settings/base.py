@@ -46,6 +46,11 @@ MEDIA_URL = '/kraken/media/'
 
 LOGIN_URL = '/kraken/'
 
+# Age of session cookies, in seconds
+SESSION_COOKIE_AGE = 28800   # 8 hours
+# Save the session data on every request
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
