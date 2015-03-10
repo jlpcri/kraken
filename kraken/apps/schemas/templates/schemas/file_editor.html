@@ -448,9 +448,15 @@
                                 <td>{{ field.type }}</td>
                                 <td class="data-generator-select">
                                     <select class="form-control" onchange="specifyModal(this)">
-                                        {% for column in file_columns %}
-                                            <option data-payload="{}">{{ column }}</option>
-                                        {% endfor %}
+                                        {% if field.type == 'Number' %}
+                                            {% for column in number_columns %}
+                                                <option data-payload="{}">{{ column }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for column in file_columns %}
+                                                <option data-payload="{}">{{ column }}</option>
+                                            {% endfor %}
+                                        {% endif %}
                                     </select>
                                 </td>
 {#                                <td class="data-generator-params" style="line-height: 38px;">#}

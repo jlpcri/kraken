@@ -193,6 +193,11 @@ class FileColumn(models.Model):
         (ADDRESS, 'Address'),
         (ZIP_CODE, 'Zip Code')
     )
+    NUMBER_GENERATOR_CHOICES = (
+        (NUMBER, 'Number'),
+        (CUSTOM_LIST, 'Custom List'),
+        (ZIP_CODE, 'Zip Code')
+    )
 
     version_file = models.ForeignKey('VersionFile')
     schema_column = models.ForeignKey('SchemaColumn')

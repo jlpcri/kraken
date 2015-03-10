@@ -50,6 +50,7 @@ def create_file(request, client_id, schema_id, version_id):
             'fields': fields,
             'field_number': len(fields),
             'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'number_columns': [item[1] for item in FileColumn.NUMBER_GENERATOR_CHOICES],
             'column_parameters': column_parameters,
             'state': 'create',
             'file_form': VersionFileForm,
