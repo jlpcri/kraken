@@ -7,6 +7,9 @@
 <div class="container">
     <div class="col-xs-3"></div>
     <div class="col-xs-6">
+{#        <div class="row text-center">#}
+{#            <img src="{{ STATIC_URL }}kraken/Kraken_logo.jpg" style="width:256px;height: 220px">#}
+{#        </div>#}
         <div class="well" id="landing-well" style="margin-top: 25px;">
             <h3 class="text-center text-muted">
                 <span class="fa-stack fa-lg">
@@ -16,7 +19,6 @@
                 <br><br>
                 Sign into <span style="color: #ef0000;">Kraken</span>
             </h3>
-            <p align="center">CVS Helper Tool</p>
             <hr>
             <div>
                 <form class="form" role="form" method=POST action="{% url 'core:sign_in' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">

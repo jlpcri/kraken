@@ -105,6 +105,9 @@
             </div>
         </form>
     </div>
+
+    {% include 'schemas/modal_version.html' %}
+
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">
@@ -130,7 +133,7 @@
 
         function updateViewer() {
             var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
-            delimiter = '' // for Fixed
+            delimiter = ''; // for Fixed
             if (delimiterType == 'Pipe') {
                 delimiter = '|';
             } else if (delimiterType == 'Comma') {
@@ -138,20 +141,24 @@
             }
             var s = "";
             $("#tableFields tbody tr").each(function() {
-                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();
-                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
-                if (fieldType == 'Number') {
-                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + '#';
-                    }
-                } else if (fieldType == 'Text') {
-                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + 'x';
-                    }
-                }
+{#                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();#}
+{#                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();#}
+{#                if (fieldType == 'Number') {#}
+{#                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }#}
+{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
+{#                        s = s + '#';#}
+{#                    }#}
+{#                } else if (fieldType == 'Text') {#}
+{#                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }#}
+{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
+{#                        s = s + 'x';#}
+{#                    }#}
+{#                }#}
+                var fieldName = $(this).find("input[name^='inputFieldName']").val();
+                s += fieldName + delimiter;
             });
+            var len = delimiter.length;
+            s = s.substring(0, s.length - len);
             $('#textareaViewer').val(s);
         }
 
@@ -166,6 +173,18 @@
                 s = s + this.id + " ";
             });
             $('input[name="row_order"]').val(s);
+
+            var version_name_new = $("input[name='identifier']").val();
+            var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
+
+            if (( '{{ version.identifier }}' != version_name_new ) &&
+                    ( '{{ schema.name }}' == $("input[name='name']").val()) &&
+                    ( delimiterType == '{{ version.delimiter }}')) {
+                event.preventDefault();
+                $('#modal_version_name_new_display').html(version_name_new);
+                $('#modal_version_name').val(version_name_new);
+                $('#modal_create_version').modal('show');
+            }
             unsavedChanges = false;
         });
 
@@ -183,8 +202,8 @@
                     '</td>' +
                     '<td>' +
                     '<select onchange="formChangeHandler();" class="form-control" name="selectFieldType_' + counter + '">' +
-                    '<option{% if f.type == "Number" %} selected{% endif %}>Number</option>' +
                     '<option{% if f.type == "Text" %} selected{% endif %}>Text</option>' +
+                    '<option{% if f.type == "Number" %} selected{% endif %}>Number</option>' +
                     '</select>' +
                     '</td>' +
                     '<td class="text-center" style="line-height: 38px;">' +
@@ -225,12 +244,12 @@
                             '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name">' +
                             '</td>' +
                             '<td>' +
-                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="10">' +
+                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="Example: 10 digits">' +
                             '</td>' +
                             '<td>' +
                             '<select onchange="formChangeHandler();" class="form-control" name="selectFieldType_' + counter + '">' +
-                            '<option>Number</option>' +
                             '<option>Text</option>' +
+                            '<option>Number</option>' +
                             '</select>' +
                             '</td>' +
                             '<td class="text-center" style="line-height: 38px;">' +

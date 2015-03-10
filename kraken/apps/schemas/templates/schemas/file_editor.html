@@ -19,45 +19,351 @@
     <script type="text/javascript">
         function specifyModal(element) {
             var value = element.value;
-            var modalButton = $(element).closest('tr').find('.data-generator-params > a')[0];
-            modalButton.setAttribute("data-target", "#" + value.replace(/ /g, "-").toLowerCase() + "-modal");
-        };
-        function openModal(event) {
-            window.currentRow = $(event.toElement).closest('tr');
+            var columns_params = {{ column_parameters | safe }};
+            var select = $(element).closest('tr').find('.data-generator-params > select');
+            switch (value) {
+                case 'Text':
+                    updateColumnParams(select, columns_params['text'], 'text');
+                    break;
+                case 'Number':
+                    updateColumnParams(select, columns_params['number'], 'number');
+                    break;
+                case 'Custom List':
+                    updateColumnParams(select, columns_params['custom_list'], 'custom');
+                    break;
+                default:
+                    updateColumnParams(select, columns_params['others'], 'others');
+            }
         }
+        function updateColumnParams(select, options, prefix){
+            select.empty();
+            if (prefix != 'others'){
+                select.append($("<option></option").
+                        attr({
+                            selected: "selected",
+                            value: "specify"
+                        }).text("Specify"));
+            }
+            $.each(options, function(k, v){
+                select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
+            });
+        }
+
+        function openParamsModal(element, field_type, field_length) {
+            $('#field_type').val(field_type);
+            $('#field_length').val(field_length);
+            window.currentRow = $(element).closest('tr');
+
+            var value = element.value;
+            var record_number = $('#inputRecordNumber').val();
+            switch (value) {
+                case 'text_manual':
+                    $('#textErrMessage').html('');
+                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
+                        showModalErrMsg('#textErrMessage', 'No records generated');
+                    }
+                    $('#text-manual-modal').modal('show');
+                    break;
+                case 'text_fill':
+                    $('#text-fill-modal').modal('show');
+                    break;
+                case 'number_fill':
+                    $('#number-fill-modal').modal('show');
+                    break;
+                case 'number_increment':
+                    $('#number-increment-modal').modal('show');
+                    break;
+                case 'number_manual':
+                    $('#numberErrMessage').html('');
+                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'No records generated');
+                    }
+                    $('#number-manual-modal').modal('show');
+                    break;
+                case 'number_random':
+                    $('#number-random-modal').modal('show');
+                    break;
+                case 'custom_inorder':
+                    $('#custom-inorder-modal').modal('show');
+                    break;
+                case 'custom_random':
+                    $('#custom-random-modal').modal('show');
+                    break;
+                default:
+                    break;
+            }
+        }
+
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
-            window.currentRow.find("select option:selected")[0].setAttribute("data-payload",
-                    JSON.stringify(form.serializeArray()));
-            form.closest(".modal").modal('hide');
-        };
-        $(function() {
-            $(".fa-pencil-square-o").on('click', openModal);
-            $(".data-generator-form").on('submit', saveDataPayload);
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+            var file_column = window.currentRow.find('.data-generator-select > select').val();
+            var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            
+            //console.log(field_type, field_length, file_column, column_config);
+            if (file_column == 'Text') {
+                if (column_config == 'text_fill') {
+                    var input = $(this).find("input[name='inputFill']").val();
+                    if (!input) {
+                        showModalErrMsg('#textFillErrMessage', 'No inputs');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#textFillErrMessage', 'Length exceed limitation.');
+                        return false;
+                    } else if (!$.isNumeric(input) && field_type == 'Number') {
+                        showModalErrMsg('#textFillErrMessage', 'Input should be Number');
+                        return false;
+                    }
+                }
+
+            } else if (file_column == 'Number') {
+                if (column_config == 'number_random') {
+                    $("#numberRandomErrMessage").html('');
+                    var min = $(this).find("input[name='min']").val();
+                    var max = $(this).find("input[name='max']").val();
+                    if (!min || !max) {
+                        showModalErrMsg('#numberRandomErrMessage', 'No input of minimum or maximum');
+                        return false;
+                    } else if (!$.isNumeric(min) || !$.isNumeric(max)) {
+                        showModalErrMsg('#numberRandomErrMessage', 'Input of minimum or maximum is not a Number');
+                        return false;
+                    } else if (min.length > field_length || max.length > field_length){
+                        showModalErrMsg('#numberRandomErrMessage', 'Length of minimum or maximum exceed limitation');
+                        return false;
+                    } else if (Number(min) > Number(max)) {
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than Maximum');
+                        return false;
+                    }
+                } else if (column_config == 'number_increment') {
+                    $('#numberIncrementErrMessage').html('');
+                    var input = $(this).find("input[name='inputIncrement']").val();
+                    if (!input) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'No input of beginning value.');
+                        return false;
+                    } else if (!$.isNumeric(input)) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'Beginning value is not a number.');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#numberIncrementErrMessage', 'Length of inc value exceed limitation.');
+                        return false;
+                    }
+                } else if (column_config == 'number_fill') {
+                    $('#numberFillErrMessage').html('');
+                    var input = $(this).find("input[name='inputFill']").val();
+                    if (!input) {
+                        showModalErrMsg('#numberFillErrMessage', 'No input of fill value.');
+                        return false;
+                    } else if (!$.isNumeric(input)) {
+                        showModalErrMsg('#numberFillErrMessage', 'Fill value is not a number.');
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#numberFillErrMessage', 'Length of begin value exceed limitation.');
+                        return false;
+                    }
+                }
+
+            } else if (file_column == 'Custom List') {
+                var input = $(this).find("textarea[name='list']").val();
+                if (column_config == 'custom_random') {
+                    $('#customeRandomErrMessage').html('');
+                    if (!input) {
+                        showModalErrMsg('#customRandomErrMessage', 'No inputs of custom list');
+                        return false;
+                    } else {
+                        var lines = input.split('\n');
+                        for (var i = 0; i < lines.length; i++) {
+                            if (lines[i].length > field_length) {
+                                showModalErrMsg('#customRandomErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                return false;
+                            } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                return false;
+                            }
+                        }
+                    }
+                } else if (column_config == 'custom_inorder'){
+                    $('#customInorderErrMessage').html('');
+                    if (!input) {
+                        showModalErrMsg('#customInorderErrMessage', 'No inputs of custom list');
+                        return false;
+                    } else {
+                        var lines = input.split('\n');
+                        for (var i = 0; i < lines.length; i++) {
+                            if (lines[i].length > field_length) {
+                                showModalErrMsg('#customInorderErrMessage', 'Length of Line {0} exceed limitation'.format(i+1));
+                                return false;
+                            } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} should be number'.format(i+1));
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+                JSON.stringify(form.serializeArray()));
+            form.closest(".modal").modal('hide');
+        }
+
+        function saveManualTextData(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            var record_number = $('#inputRecordNumber').val();
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+            //var file_column = window.currentRow.find('.data-generator-select > select').val();
+            //var column_config = window.currentRow.find('.data-generator-params > select').val();
+
+            //console.log(field_type, field_length, file_column, column_config);
+
+            var error_found = false;
+            var manual_text = $("#text-manual-modal form input");
+            $.each(manual_text, function (index, value) {
+                var input = $(value).val();
+                if (input == '') {
+                    showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (input.length > field_length) {
+                    showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
+                    showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                    error_found = true;
+                    return false;
+                }
+            });
+            if (error_found) {
+                return false;
+            }
+
+            var data = [];
+            $.each(manual_text, function(index, value) {
+                data.push($(value).val());
+            });
+            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+                JSON.stringify(data));
+            form.closest(".modal").modal('hide');
+        }
+
+        function saveManualNumberData(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            var record_number = $('#inputRecordNumber').val();
+            var field_type = $('#field_type').val();
+            var field_length = $('#field_length').val();
+
+            var manual_text = $("#number-manual-modal form input");
+            var error_found = false;
+            $.each(manual_text, function (index, value) {
+                var input = $(value).val();
+                if (input == '' && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (input.length > field_length && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                    error_found = true;
+                    return false;
+                } else if (!$.isNumeric(input) && index < Number(record_number)) {
+                    showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                    error_found = true;
+                    return false;
+                }
+            });
+            if (error_found) {
+                return false;
+            }
+
+            var data = [];
+            $.each(manual_text, function(index, value) {
+                data.push($(value).val());
+            });
+            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+                JSON.stringify(data));
+            form.closest(".modal").modal('hide');
+        }
+
+        $(function() {
+            //$(".fa-pencil-square-o").on('click', openModal);
+            $(".data-generator-form").on('submit', saveDataPayload);
+            $(".data-generator-form-text").on('submit', saveManualTextData);
+            $(".data-generator-form-number").on('submit', saveManualNumberData);
+
+            $('#text-manual-modal').on('show.bs.modal', function(event){
+                var record_number = $('#inputRecordNumber').val();
+                // generate empty cell for user manully input
+                generate_empty_records_modal(record_number, '#text-manual-input');
+
+                try {
+                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
+                    for (var i = 0; i < p.length; i++) {
+                        $('#text' + i).val(p[i]);
+                    }
+                } catch (e) {
+                    ;
+                }
+            });
+
+            $('#number-manual-modal').on('show.bs.modal', function(event){
+                var record_number = $('#inputRecordNumber').val();
+                // generate empty cell for user manully input
+                generate_empty_records_modal(record_number, '#number-manual-input');
+
+                try {
+                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
+                    for (var i = 0; i < p.length; i++) {
+                        $('#number' + i).val(p[i]);
+                    }
+                } catch (e) {
+                    ;
+                }
+            });
+
+            try {
+                var payloads = $.parseJSON('{{ payloads|safe }}');
+            } catch (e) {
+                ;
+            }
         });
     </script>
 {% endblock %}
 {% block content %}
     <div class="container">
-    <form action="{% url 'schemas:save_file' client.id schema.id version.id %}" method="POST">
+    <form action="{% url 'schemas:create_file' client.id schema.id version.id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="client_id" value="{{ client.id }}">
         <input type="hidden" name="schema_id" value="{{ schema.id }}">
         <input type="hidden" name="version_id" value="{{ version.id }}">
+        {% if file %}
+            <input type="hidden" name="file_id" value="{{ file.id }}">
+        {% endif %}
         <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="payloads" value="">
         <input type="hidden" name="fields_total_length" id="fields_total_length" value="{{ version.schema_fields_total_length }}">
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-5">
                 <h3>{{ client.name }}</h3>
             </div>
             <div class="col-xs-4" id="errMsg"></div>
-            <div class="col-xs-2">
-                <button type="submit" name="save_file" class="btn btn-primary" style="width: 100%;">
+            <div class="col-xs-1">
+                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 100%;" title="Validate Inputs">Validate</button>
+            </div>
+            <div class="col-xs-1">
+                <button type="submit" name="save_file" class="btn btn-primary btn-sm" style="width: 100%;" {% if file %}title="Save to file" {% else %} title="Create new file" {% endif %}>
                     <i class="fa fa-floppy-o"></i>&nbsp;Save
                 </button>
+            </div>
+            <div class="col-xs-1">
+                {% if file %}
+                <button type="submit" name="download_file" class="btn btn-primary btn-sm" style="width: 100%;" title="Export file">
+                    Export
+                </button>
+                {% endif %}
             </div>
         </div>
         <br>
@@ -65,13 +371,13 @@
         <div class="row">
             <div class="col-xs-12">
                 <textarea class="form-control" rows="5" id="textareaViewer" name="textareaViewer"
-                          style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;"></textarea>
+                          style="font-family: 'courier new', monospace; background-color: #ffffff; cursor: auto;">{% if file %}{{ file.file_contents }}{% endif %}</textarea>
             </div>
         </div>
         <br>
 
         <div class="row">
-            <div class="col-xs-5">
+            <div class="col-xs-6">
                 <div class="form-group">
                     <label class="control-label" for="id_name">File Name</label>
                     {{ file_form.name }}
@@ -81,7 +387,7 @@
                 <label class="control-label">Schema Name</label><br>
                 <div style="line-height: 38px;">{{ schema.name }}</div>
             </div>
-            <div class="col-xs-1">
+            <div class="col-xs-2">
                 <label class="control-label">Version</label><br>
                 <div style="line-height: 38px;">{{ version.identifier }}</div>
             </div>
@@ -89,11 +395,11 @@
                 <label class="control-label">Delimiter</label><br>
                 <div style="line-height: 38px;">{{ version.delimiter }}</div>
             </div>
-            <div class="col-xs-2">
-                <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;Validation</label><br>
-                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%;" title="Generate Schema based on Input">Input</button>
-                <button type="button" name="validation_input_to_schema" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%" title="Generate Input based on Schema">Schema</button>
-            </div>
+{#            <div class="col-xs-2">#}
+{#                <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;Validation</label><br>#}
+{#                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%;" title="Generate Schema based on Input">Input</button>#}
+{#                <button type="button" name="validation_input_to_schema" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%" title="Generate Input based on Schema">Schema</button>#}
+{#            </div>#}
         </div>
 
         <hr>
@@ -104,26 +410,23 @@
                 <input id="inputRecordNumber" type="text" class="form-control input-sm" style="width: 50px; display: inline; text-align: center;">
             </div>
             <div class="col-xs-2">
-                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
+                <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;" title="Generate data to inputs">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
             <div class="col-xs-6">
-{#                <div class="btn-group btn-group-justified">#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-left"></i></a>#}
-{#                    <a href="#" class="btn btn-default btn-sm"><i class="fa fa-angle-double-right"></i></a>#}
-{#                </div>#}
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-11">
                 {% if fields %}
-                    <table id="" class="table">
+                    <table id="tableDefinitions" class="table">
                         <thead>
                             <tr>
-                                <th class="col-xs-6">Field Name</th>
-                                <th class="col-xs-3">Field Type</th>
-                                <th class="col-xs-2">Parameters</th>
-                                <th class="col-xs-1"></th>
+                                <th class="col-xs-3">Field Name</th>
+                                <th class="col-xs-2">Field Length</th>
+                                <th class="col-xs-2">Field Type</th>
+                                <th class="col-xs-2">Data Generator</th>
+                                <th class="col-xs-2">Generator Options</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,18 +437,25 @@
                                 <input type="hidden" id="field_type_{{ field.position|add:-1 }}" name="field_type_{{ field.position|add:-1 }}" value="{{ field.type }}">
                                 <input type="hidden" id="field_length_{{ field.position|add:-1 }}" name="field_length_{{ field.position|add:-1 }}" value="{{ field.length }}">
                                 </td>
+                                <td>{{ field.length }}</td>
+                                <td>{{ field.type }}</td>
                                 <td class="data-generator-select">
                                     <select class="form-control" onchange="specifyModal(this)">
-                                        {% for type in field_types %}
-                                            <option data-payload="{}">{{ type }}</option>
+                                        {% for column in file_columns %}
+                                            <option data-payload="{}">{{ column }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
-                                <td class="text-center data-generator-params" style="line-height: 38px;">
-                                    <a href="#" data-toggle="modal" data-target="#random-text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>
-                                </td>
-                                <td class="text-right" style="line-height: 38px;">
-                                    <a href="#"><i class="fa fa-arrow-circle-o-right fa-lg"></i></a>
+{#                                <td class="data-generator-params" style="line-height: 38px;">#}
+{#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
+{#                                </td>#}
+                                <td class="data-generator-params">
+                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
+                                        <option value="specify">Specify</option>
+                                        {% for key in column_parameters.text %}
+                                            <option value="text_{{ key|lower }}">{{ key }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -156,7 +466,7 @@
                 <p> No fields have been added to this schema version.</p>
             {% endif %}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" hidden>
                 <div class="table-responsive" id="add_records" style="overflow: auto;">
 
                 </div>
@@ -165,141 +475,10 @@
     </form>
 
     </div>
-    <div class="modal fade" id="random-text-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Random text</h4>
-                    </div>
-                    <div class="modal-body">
-                        <label class="control-label">Minimum length</label><input class="form-control" name="min-length" />
-                        <label class="control-label">Maximum length</label><input class="form-control" name="max-length" />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="number-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Number</h4>
-                    </div>
-                    <div class="modal-body">
-                        <label class="control-label">Minimum</label><input class="form-control" name="min" />
-                        <label class="control-label">Maximum</label><input class="form-control" name="max" />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="user-defined-list-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">User Defined List</h4>
-                    </div>
-                    <div class="modal-body">
-                        <label class="control-label">List</label><textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="first-name-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">First Name</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>No options are currently available for this data generator.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="last-name-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Last Name</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>No options are currently available for this data generator.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="address-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Address</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>No options are currently available for this data generator.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="zip-code-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="data-generator-form">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">ZIP Code</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>No options are currently available for this data generator.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
+    {% include 'schemas/modal_columns_config.html' %}
+
+
 {% endblock %}
 {% block endscript %}
     <script type="text/javascript">

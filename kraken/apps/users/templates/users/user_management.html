@@ -20,6 +20,8 @@
                             <strong>Username</strong></a>&nbsp;<i class="fa fa-sort"></i>
                         {% endif %}
                     </th>
+                    <th class="col-xs-2">First Name</th>
+                    <th class="col-xs-2">Last Name</th>
                     <th class="col-xs-2">
                         {% if sort == 'last_login' %}
                             <a href="{% url 'users:user_management' %}?sort=-last_login">
@@ -32,17 +34,19 @@
                             <strong>Last Login</strong></a>&nbsp;<i class="fa fa-sort"></i>
                         {% endif %}
                     </th>
-                    <th class="col-xs-2" style="text-align: center;"><strong>Active</strong></th>
-                    <th class="col-xs-2" style="text-align: center;"><strong>Staff</strong></th>
-                    <th class="col-xs-2" style="text-align: center;"><strong>Superuser</strong></th>
+                    <th class="col-xs-1" style="text-align: center;"><strong>Active</strong></th>
+                    <th class="col-xs-1" style="text-align: center;"><strong>Staff</strong></th>
+                    <th class="col-xs-1" style="text-align: center;"><strong>Superuser</strong></th>
                     <th class="col-xs-1" style="text-align: center;"><strong>Update</strong></th>
-                    <th class="col-xs-1" style="text-align: center;"><strong>Delete</strong></th>
                 </tr>
             </thead>
             {% for user in users %}
+                {% if user.last_name %}
                 <form method="post" action="{% url 'users:user_update' user.id %}">
                     <tr>
                         <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
                         <td>{{ user.last_login }}</td>
                         <td style="text-align: center;">
                             <input type="checkbox" name="is_active" {% if user.is_active %}checked{% endif %}>
@@ -58,13 +62,14 @@
                             <button class="btn btn-primary btn-xs" type="submit">
                                 <i class="fa fa-refresh"></i>
                             </button>
-                        </td>
-                        <td style="text-align: center;">
+
                             <a href="#" class="btn btn-danger btn-xs" onclick="deleteModal('{{ user.username }}', {{ user.id }})">
                                 <i class="fa fa-trash-o"></i>
                             </a>
+                        </td>
                     </tr>
                 </form>
+                {% endif %}
             {% endfor %}
         </table>
     </div>

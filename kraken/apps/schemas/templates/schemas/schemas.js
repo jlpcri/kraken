@@ -3,9 +3,9 @@
  */
 
 // String format custom method
-String.prototype.format = function(){
+String.prototype.format = function () {
     var s = this,
-            i = arguments.length;
+        i = arguments.length;
 
     while (i--) {
         s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
@@ -16,51 +16,105 @@ String.prototype.format = function(){
 // get number of fields
 var field_number = Number('{{field_number}}');
 
+var file_names = '{{version_files_names | safe}}';
+
+$("button[name='save_file']").on('click', function () {
+    if ( !$.trim($("#textareaViewer").val()) ) {   // check file contents empty
+        showErrMsg('No input of contents');
+        return false;
+    } else if ( !$("#id_name").val() ){   //check file name empty
+        showErrMsg('No input of file name');
+        return false;
+    } else if ($.inArray($('#id_name').val(), file_names) > -1) {
+        showErrMsg('File Name is duplicated');
+        return false;
+    }
+
+    var payloads = [];
+    $("#tableDefinitions tbody tr").each(function () {
+        var type = $(this).find("select option:selected").val();
+        var payload = $(this).find("select option:selected").attr('data-payload');
+        payloads.push({"type": type, "payload": payload});
+    });
+    $('input[name="payloads"]').val(JSON.stringify(payloads));
+});
 
 
-$('#buttonGenerate').click(function(){
+$('#buttonGenerate').click(function () {
     // initialize errMsg
     $('#errMsg').html('');
     var record_number = $('#inputRecordNumber').val();
 
-    if (! $.isNumeric(record_number)) {
+    if (!$.isNumeric(record_number)) {
         showErrMsg('Input \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    }
-    else if (field_number == 0){
+    } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
-    }
-    else {
+    } else {
+        var error_found = false;
+        $("#tableDefinitions tbody tr").each(function() {
+            var column_config = $(this).find(".data-generator-params > select").val();
+            if (column_config == 'specify') {
+                showErrMsg('Please select column configuration');
+                error_found = true;
+                return false;
+            }
+        });
+        if (error_found) {
+            return false;
+        }
+
         generateRecords(record_number);
+
+        var delimiter = '{{version.delimiter}}';
+
+        // calculate record number which has value
+        var found = true, record_number = 0;
+        while (found) {
+            if (!$('#record0{0}'.format(record_number)).val()) {
+                found = false;
+            } else {
+                record_number++;
+            }
+        }
+
+        if (delimiter == 'Fixed') {
+            parse_schema(record_number, '');
+        } else if (delimiter == 'Pipe') {
+            parse_schema(record_number, '|');
+
+        } else if (delimiter == 'Comma') {
+            parse_schema(record_number, ',');
+        }
     }
 });
 
 
-$('#validation_input_to_schema').click(function(){
+$('#validation_input_to_schema').click(function () {
     // initialize errMsg
     $('#errMsg').html('');
 
     var input = $('#textareaViewer').val();
 
-    if (! input) {
+    if (!input) {
         showErrMsg('No input from Input');
     } else {
         var delimiter = '{{version.delimiter}}';
         var rows = input.split('\n');
 
         // remove empty line at end
-        while (! rows[Number(rows.length) - 1] ) {
+        while (!rows[Number(rows.length) - 1]) {
             rows.splice(-1, 1);
         }
 
-        if (field_number == 0){
+        if (field_number == 0) {
             showErrMsg('No schema field is added, Cannot generate records');
         }
         else {
             // calculate record number which exists
             var found = true, record_number = 0;
             while (found) {
-                if ( $('#record0{0}'.format(record_number)).length <= 0 ) {
+                if ($('#record0{0}'.format(record_number)).length <= 0) {
                     found = false;
                 } else {
                     record_number++;
@@ -86,17 +140,19 @@ $('#validation_input_to_schema').click(function(){
             } else if (delimiter == 'Comma') {
                 parse_input(rows, ',');
             }
+
+            //showSuccessMsg('No errors found');
         }
     }
 });
 
 
-$('#validation_schema_to_input').click(function(){
+$('#validation_schema_to_input').click(function () {
     // initialize errMsg
     $('#errMsg').html('');
 
-    if ( $('#record00').length > 0 ){
-        if (!$('#record00').val()){
+    if ($('#record00').length > 0) {
+        if (!$('#record00').val()) {
             showErrMsg('No input from Schema');
         } else {
             //var field_number = 5;
@@ -105,19 +161,19 @@ $('#validation_schema_to_input').click(function(){
             // calculate record number which has value
             var found = true, record_number = 0;
             while (found) {
-                if (! $('#record0{0}'.format(record_number)).val()) {
+                if (!$('#record0{0}'.format(record_number)).val()) {
                     found = false;
                 } else {
                     record_number++;
                 }
             }
 
-            if (delimiter == 'Fixed'){
-                parse_schema(record_number,'');
+            if (delimiter == 'Fixed') {
+                parse_schema(record_number, '');
             } else if (delimiter == 'Pipe') {
                 parse_schema(record_number, '|');
 
-            } else if (delimiter == 'Comma'){
+            } else if (delimiter == 'Comma') {
                 parse_schema(record_number, ',');
             }
         }
@@ -139,7 +195,7 @@ function parse_input_fixed(rows) {
         }
     }
 
-    if (! field_length_error_found) {
+    if (!field_length_error_found) {
         for (var i = 0; i < rows.length; i++) {
             var field, position = 0;
             for (var j = 0; j < field_number; j++) {
@@ -150,7 +206,7 @@ function parse_input_fixed(rows) {
                 field = rows[i].substr(position, length);
                 if (field && type == 'Number' && isNaN(field)) {
                     field_type_error_found = true;
-                    showErrMsg('Row ' + Number(i + 1) + ' Field ' +Number(j + 1) + ' is not Number.');
+                    showErrMsg('Row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
                     break;
                 }
                 position += Number(length);
@@ -173,6 +229,7 @@ function parse_input_fixed(rows) {
                 position += Number(length);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
@@ -189,34 +246,34 @@ function parse_input(rows, delimiter) {
         if (columns == '') continue;
 
         //remove empty at end of each row
-        while (! columns[Number(columns.length) - 1] ) {
+        while (!columns[Number(columns.length) - 1]) {
             columns.splice(-1, 1);
         }
 
         if (columns.length > field_number) {
             field_number_error_found = true;
-            showErrMsg('Row ' + Number(i+1) + ' exceed field number.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceed field number.');
             break;
         }
     }
 
     // Check length and type of per field
-    if (! field_number_error_found) {
+    if (!field_number_error_found) {
         for (var i = 0; i < rows.length; i++) {
             var columns = rows[i].split(delimiter);
             for (var j = 0; j < field_number; j++) {
-                var type = $('#field_type_'+j).val();
+                var type = $('#field_type_' + j).val();
                 var length = $('#field_length_' + j).val();
                 // check length
-                if ( columns[j] && columns[j].length > length) {
+                if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('Length of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    showErrMsg('Contents of row '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                    showErrMsg('Contents of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
                     break;
                 }
             }
@@ -230,6 +287,7 @@ function parse_input(rows, delimiter) {
                 $('#record{0}{1}'.format(j, i)).val(columns[j]);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
@@ -241,20 +299,20 @@ function parse_schema(record_number, delimiter) {
     // Check length and type of per field
     for (var i = 0; i < record_number; i++) {
         for (var j = 0; j < field_number; j++) {
-            var type = $('#field_type_'+j).val();
+            var type = $('#field_type_' + j).val();
             var length = $('#field_length_' + j).val();
 
             // check length
-            if ( $('#record{0}{1}'.format(j, i)).val().length > length) {
+            if ($('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
-                showErrMsg('Length of Record '+Number(i+1) + ' Field ' + Number(j+1) + ' is exceed limitation.');
+                showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
                 break;
             }
 
             // check type
-            if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())){
+            if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())) {
                 field_type_error_found = true;
-                showErrMsg('Contents of Record '+Number(i+1) + ' Field ' + Number(j+1) + ' is not Number.');
+                showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
                 break;
             }
         }
@@ -266,7 +324,7 @@ function parse_schema(record_number, delimiter) {
                 var length = $('#field_length_' + j).val(),
                     content = $('#record{0}{1}'.format(j, i)).val();
 
-                while ( delimiter == '' && content.length < length) {
+                while (delimiter == '' && content.length < length) {
                     content += ' ';
                 }
                 schema_string += content;
@@ -291,19 +349,301 @@ function showErrMsg(message) {
     $('#errMsg').html('Error: ' + message);
 }
 
+function showSuccessMsg(message) {
+    $('#errMsg').css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'green'
+    });
+    $('#errMsg').html('Successful: ' + message);
+}
+
 function generateRecords(record_number) {
+    $('#errMsg').html('');
     var contents_head = '<tr>';
-        for (var i = 1; i < Number(record_number) + 1; i++) {
-            contents_head += '<th>Record ' + i + '</th>';
+    for (var i = 1; i < Number(record_number) + 1; i++) {
+        contents_head += '<th>Record ' + i + '</th>';
+    }
+    contents_head += '</tr>';
+
+    var data = [];
+    $("#tableDefinitions tbody tr").each(function () {
+        var type = $(this).find(".data-generator-select option:selected").val();
+        var generate = $(this).find(".data-generator-params option:selected").val();
+        var payload = $(this).find(".data-generator-params > select").attr('data-payload');
+        var d = [];
+        if (type == "Text") {
+            generate = generate.substring(5);
+            //var generate = "manual";
+            var fill = "";
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    }
+                }
+            } catch (e) {
+                if (generate != 'random') {
+                    var rowindex = $(this).closest('tr').index() + 1;
+                    showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                    return false;
+                }
+            }
+
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(p[i]);
+                }
+            } else if (generate == "fill") {
+                // use value from fill to generate fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(fill);
+                }
+            } else if (generate == "random") {
+                // use mockjson to get random text for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "text": "@LOREM" }
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['text']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "Number") {
+            generate = generate.substring(7);
+            var min = 0;
+            var max = 9;
+            //var generate = "manual";
+            var fill = "";
+            var increment = 0;
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "min") {
+                        min = p[i]['value'];
+                    } else if (p[i]['name'] == "max") {
+                        max = p[i]['value'];
+                    } else if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        increment = p[i]['value'];
+                    }
+                }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
+            }
+
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(p[i]);
+                }
+            } else if (generate == "fill") {
+                // use value from fill to generate fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(fill);
+                }
+            } else if (generate == "increment") {
+                // use value from increment as base value to begin generating fields
+                var inc = increment;
+                for (var i = 0; i < record_number; i++) {
+                    d.push(inc);
+                    inc++;
+                }
+            } else if (generate == "random") {
+                // use mockjson to get random numbers for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+                var n = "number|{0}-{1}".format(min, max);
+                var o = {};
+                o[n] = 0;
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    o
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['number']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "Custom List") {
+            generate = generate.substr(7);
+            //var generate = "inorder";
+            var list = [];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "list") {
+                        list = p[i]['value'].split('\n');
+                    }
+                }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
+            }
+
+            if (generate == "inorder") {
+                // use order of values from list to begin generating fields
+                var len = list.length;
+                var inc = 0;
+                if (len > 0) {
+                    for (var i = 0; i < record_number; i++) {
+                        if (inc >= len) {
+                            inc = 0;
+                        }
+                        d.push(list[inc]);
+                        inc++;
+                    }
+                }
+            } else if (generate == "random") {
+                // use mockjson to randomize list items for generating fields
+                var s = "result|{0}-{1}".format(record_number, record_number);
+                $.mockJSON.data.CUSTOM_LIST = list;
+
+                var textTemplate = {};
+                textTemplate[s] = [
+                    { "item": "@CUSTOM_LIST" }
+                ];
+
+                try {
+                    $.mockJSON(/mockme\.json/, textTemplate);
+
+                    $.getJSON('mockme.json', function(json) {
+                        for (var i = 0; i < json['result'].length; i++) {
+                            d.push(json['result'][i]['item']);
+                        }
+                    });
+                } catch(e) {
+                    alert('Invalid JSON');
+                }
+            }
+        } else if (type == "First Name") {
+            // use mockjson to get random first names for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "name": "@MALE_FIRST_NAME" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['name']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
+        } else if (type == "Last Name") {
+            // use mockjson to get random last names for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "name": "@LAST_NAME" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['name']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
+        } else if (type == "Address") {
+            // Adding the @US_STATE keywork
+            $.mockJSON.data.US_STATE = [
+                'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+                'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+                'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+                'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+                'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+            ];
+            // use mockjson to get random addresses for generating fields
+            var s = "result|{0}-{1}".format(record_number, record_number);
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                { "address": "@NUMBER@NUMBER@NUMBER @LOREM @US_STATE" }
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['address']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
+        } else if (type == "Zip Code") {
+            // use mockjson to get random zip codes for generating fields
+            var min = 10000;
+            var max = 99999;
+            var s = "result|{0}-{1}".format(record_number, record_number);
+            var n = "zipcode|{0}-{1}".format(min, max);
+            var o = {};
+            o[n] = 0;
+
+            var textTemplate = {};
+            textTemplate[s] = [
+                o
+            ];
+
+            try {
+                $.mockJSON(/mockme\.json/, textTemplate);
+
+                $.getJSON('mockme.json', function(json) {
+                    for (var i = 0; i < json['result'].length; i++) {
+                        d.push(json['result'][i]['zipcode']);
+                    }
+                });
+            } catch(e) {
+                alert('Invalid JSON');
+            }
         }
-        contents_head += '</tr>';
+        data.push(d);
+    });
 
+    if (data.length == field_number) {
         var contents_body = '';
-
-        for (i = 0; i < field_number; i++){
+        for (i = 0; i < field_number; i++) {
             var contents_body_row = '<tr>';
-            for (var j = 0; j < Number(record_number); j++){
-                contents_body_row += "<td><input id={0} name='' type='text' class='form-control'></td>".format('record'+i+j);
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record' + i + j, data[i][j]);
             }
             contents_body_row += '</tr>';
 
@@ -311,12 +651,52 @@ function generateRecords(record_number) {
         }
 
         var add_records_contents = "<table id='tableData' class='table'>" +
-                " <thead>" +
-                contents_head +
-                "</thead>" +
-                "<tbody>" +
-                "</tbody>" +
-                contents_body +
-                "</table> ";
+            " <thead>" +
+            contents_head +
+            "</thead>" +
+            "<tbody>" +
+            "</tbody>" +
+            contents_body +
+            "</table> ";
         $('#add_records').html(add_records_contents);
+    }
+}
+
+function generate_empty_records_modal(record_number, location) {
+    var cell_id = '';
+    if (location == '#text-manual-input') {
+        cell_id = 'text';
+    } else if (location == '#number-manual-input') {
+        cell_id = 'number';
+    }
+
+
+    var contents_head = '<tr>';
+    for (var i = 1; i < Number(record_number) + 1; i++) {
+        contents_head += '<th>Record ' + i + '</th>';
+    }
+    contents_head += '</tr>';
+
+    var contents_body = '';
+    for (var i = 0; i < Number(record_number); i++) {
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
+    }
+    var contents = "<table id='tableData' class='table'>" +
+        " <thead>" +
+        contents_head +
+        "</thead>" +
+        "<tbody>" +
+        contents_body +
+        "</tbody>" +
+        "</table> ";
+    $(location).html(contents);
+}
+
+function showModalErrMsg(location, message) {
+    $(location).css({
+        'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'blue'
+    });
+    $(location).html('Error: ' + message);
 }

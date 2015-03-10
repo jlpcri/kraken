@@ -12,8 +12,6 @@ import socket
 import ldap
 from django_auth_ldap.config import LDAPSearch
 
-LOGIN_URL = '/kraken/'
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
@@ -41,6 +39,12 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", 'media'))
+
+MEDIA_URL = '/kraken/media/'
+
+LOGIN_URL = '/kraken/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -153,3 +157,24 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+
+# Batch File Column Parameters
+TEXT_PARAS = {
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Random': 'random'
+}
+NUMBER_PARAS = {
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Increment': 'increment',
+    'Random': 'random'
+}
+CUSTOM_LIST_PARAS = {
+    'In Order': 'inorder',
+    'Random': 'random'
+}
+OTHER_PARAS = {
+    'System': 'system'
+}
