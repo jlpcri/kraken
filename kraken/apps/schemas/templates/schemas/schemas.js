@@ -53,7 +53,15 @@ $("button[name='download_file']").on('click', function() {
     }
 });
 
+// Total fail generate data no more than X times
+var fail_generate = 0;
+
 $('#buttonGenerate').click(function () {
+    if (fail_generate > 19) {
+        showErrMsg('Retry data generation up to 20 times');
+        return false;
+    }
+
     // initialize errMsg
     $('#errMsg').html('');
     var record_number = $('#inputRecordNumber').val();
@@ -64,6 +72,7 @@ $('#buttonGenerate').click(function () {
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
+        // check column configuration error
         var error_found = false;
         $("#tableDefinitions tbody tr").each(function() {
             var column_config = $(this).find(".data-generator-params > select").val();
@@ -350,6 +359,13 @@ function parse_schema(record_number, delimiter) {
 
             schema_string += '\n';
         }
+
+        //reset total fail generate times
+        fail_generate = 0;
+
+    } else {
+        // fail generate times add 1
+        fail_generate += 1;
     }
 
     $('#textareaViewer').val(schema_string);
