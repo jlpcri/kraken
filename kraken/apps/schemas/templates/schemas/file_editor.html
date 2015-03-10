@@ -465,9 +465,15 @@
                                 <td class="data-generator-params">
                                     <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
                                         <option value="specify">- Select -</option>
-                                        {% for key in column_parameters.text %}
-                                            <option value="text_{{ key|lower }}">{{ key }}</option>
-                                        {% endfor %}
+                                        {% if field.type == 'Number' %}
+                                            {% for key in column_parameters.number %}
+                                                <option value="number_{{ key|lower }}">{{ key }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for key in column_parameters.text %}
+                                                <option value="text_{{ key|lower }}">{{ key }}</option>
+                                            {% endfor %}
+                                        {% endif %}
                                     </select>
                                 </td>
                             </tr>
