@@ -289,15 +289,19 @@ function parse_input(rows, delimiter) {
                 // check length
                 if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\'' + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    showErrMsg('Contents of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\''+ ' Field ' + Number(j + 1) + ' is not Number.');
                     break;
                 }
+            }
+
+            if (field_length_error_found || field_type_error_found) {
+                break;
             }
         }
     }
