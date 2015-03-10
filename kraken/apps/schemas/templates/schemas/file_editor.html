@@ -42,7 +42,7 @@
                         attr({
                             selected: "selected",
                             value: "specify"
-                        }).text("Specify"));
+                        }).text("- Select -"));
             }
             $.each(options, function(k, v){
                 select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
@@ -461,7 +461,7 @@
 {#                                </td>#}
                                 <td class="data-generator-params">
                                     <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
-                                        <option value="specify">Specify</option>
+                                        <option value="specify">- Select -</option>
                                         {% for key in column_parameters.text %}
                                             <option value="text_{{ key|lower }}">{{ key }}</option>
                                         {% endfor %}
