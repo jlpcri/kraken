@@ -686,19 +686,6 @@ function generateRecords(record_number) {
                 }
             }
 
-            // use mockjson to get random zip codes for generating fields
-            //var min = 10000;
-            //var max = 99999;
-            //var s = "result|{0}-{1}".format(record_number, record_number);
-            //var n = "zipcode|{0}-{1}".format(min, max);
-//            var o = {};
-//            o[n] = 0;
-//
-//            var textTemplate = {};
-//            textTemplate[s] = [
-//                o
-//            ];
-
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
 
