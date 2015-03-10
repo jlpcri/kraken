@@ -380,7 +380,7 @@ function parse_schema(record_number, delimiter) {
 
 function showErrMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'blue'
     });
@@ -389,7 +389,7 @@ function showErrMsg(message) {
 
 function showSuccessMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'green'
     });
