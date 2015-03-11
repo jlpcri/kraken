@@ -21,6 +21,7 @@
             var value = element.value;
             var columns_params = {{ column_parameters | safe }};
             var select = $(element).closest('tr').find('.data-generator-params > select');
+            var field_type = $(element).closest('tr').find("input[name^='field_type_']").val();
             switch (value) {
                 case 'Text':
                     updateColumnParams(select, columns_params['text'], 'text');
@@ -30,6 +31,13 @@
                     break;
                 case 'Custom List':
                     updateColumnParams(select, columns_params['custom_list'], 'custom');
+                    break;
+                case 'Zip Code':
+                    if (field_type == 'Text'){
+                        updateColumnParams(select, columns_params['zipcode_text'], 'zipcode');
+                    } else if (field_type == 'Number') {
+                        updateColumnParams(select, columns_params['zipcode_number'], 'zipcode');
+                    }
                     break;
                 default:
                     updateColumnParams(select, columns_params['others'], 'others');

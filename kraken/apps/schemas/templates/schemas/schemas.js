@@ -655,40 +655,32 @@ function generateRecords(record_number) {
                 alert('Invalid JSON');
             }
         } else if (type == "Zip Code") {
+            generate = generate.substr(8);
             var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);
-            if (field_type == 'Number') {
-                if (Number(field_length) < 9) {
-                    min = 10000;
-                    max = 99951;
-                } else {
-                    min = 100000000;
-                    max = 999519999;
-                }
+            if (generate == '5digits') {
+                min = 10000;
+                max = 99951;
 
                 n = "zipcode|{0}-{1}".format(min, max);
-
                 o[n] = 0;
                 textTemplate[s] = [
                     o
                 ];
+            } else if (generate == '9digits') {
+                min = 100000000;
+                max = 999519999;
 
-            } else if (field_type == 'Text') {
-                if (Number(field_length) < 10) {
-                    min = 10000;
-                    max = 99951;
-                    n = "zipcode|{0}-{1}".format(min, max);
-
-                    o[n] = 0;
-                    textTemplate[s] = [
-                        o
-                    ];
-                } else {
-                    //n = "zipcode|{0}-{1}".format(second_min, second_max);
-                    textTemplate[s] = [{
-                        "zipcode": "@NUMBER@NUMBER@NUMBER@NUMBER@NUMBER-@NUMBER@NUMBER@NUMBER@NUMBER"
-                    }];
-                }
+                n = "zipcode|{0}-{1}".format(min, max);
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+            } else if (generate == '9digitshyphen') {
+                //n = "zipcode|{0}-{1}".format(second_min, second_max);
+                textTemplate[s] = [{
+                    "zipcode": "@NUMBER@NUMBER@NUMBER@NUMBER@NUMBER-@NUMBER@NUMBER@NUMBER@NUMBER"
+                }];
             }
 
             try {
