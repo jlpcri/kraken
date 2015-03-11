@@ -78,7 +78,7 @@ def create_file(request, client_id, schema_id, version_id):
                         file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
                         file.save()
                         messages.success(request, 'File \"{0}\" has been created'.format(file.name))
-                        return redirect('core:home')
+                        return redirect('schemas:edit_file', client_id, schema_id, version_id, file.id)
                     else:
                         if file_form['name'].errors:
                             error_message = file_form['name'].errors
