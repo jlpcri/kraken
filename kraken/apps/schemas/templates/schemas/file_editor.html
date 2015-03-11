@@ -21,6 +21,7 @@
             var value = element.value;
             var columns_params = {{ column_parameters | safe }};
             var select = $(element).closest('tr').find('.data-generator-params > select');
+            var field_type = $(element).closest('tr').find("input[name^='field_type_']").val();
             switch (value) {
                 case 'Text':
                     updateColumnParams(select, columns_params['text'], 'text');
@@ -30,6 +31,13 @@
                     break;
                 case 'Custom List':
                     updateColumnParams(select, columns_params['custom_list'], 'custom');
+                    break;
+                case 'Zip Code':
+                    if (field_type == 'Text'){
+                        updateColumnParams(select, columns_params['zipcode_text'], 'zipcode');
+                    } else if (field_type == 'Number') {
+                        updateColumnParams(select, columns_params['zipcode_number'], 'zipcode');
+                    }
                     break;
                 default:
                     updateColumnParams(select, columns_params['others'], 'others');
@@ -65,12 +73,15 @@
                     $('#text-manual-modal').modal('show');
                     break;
                 case 'text_fill':
+                    $('#textFillMessage').html('');
                     $('#text-fill-modal').modal('show');
                     break;
                 case 'number_fill':
+                    $('#numberFillErrMessage').html('');
                     $('#number-fill-modal').modal('show');
                     break;
                 case 'number_increment':
+                    $('#numberIncrementErrMessage').html('');
                     $('#number-increment-modal').modal('show');
                     break;
                 case 'number_manual':
@@ -81,12 +92,15 @@
                     $('#number-manual-modal').modal('show');
                     break;
                 case 'number_random':
+                    $('#numberRandomErrMessage').html('');
                     $('#number-random-modal').modal('show');
                     break;
                 case 'custom_inorder':
+                    $('#customInorderErrMessage').html('');
                     $('#custom-inorder-modal').modal('show');
                     break;
                 case 'custom_random':
+                    $('#customRandomErrMessage').html('');
                     $('#custom-random-modal').modal('show');
                     break;
                 default:
@@ -196,10 +210,10 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} should be a number'.format(lines[i]));
+                                showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
                                 showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));

@@ -40,6 +40,8 @@ def create_file(request, client_id, schema_id, version_id):
             'text': settings.TEXT_PARAS,
             'number': settings.NUMBER_PARAS,
             'custom_list': settings.CUSTOM_LIST_PARAS,
+            'zipcode_text': settings.ZIPCODE_TEXT_PARAS,
+            'zipcode_number': settings.ZIPCODE_NUMBER_PARAS,
             'others': settings.OTHER_PARAS,
         }
 
@@ -250,6 +252,7 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
             'fields': fields,
             'field_number': len(fields),
             'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'number_columns': [item[1] for item in FileColumn.NUMBER_GENERATOR_CHOICES],
             'column_parameters': column_parameters,
             'state': 'save',
             'file_form': file_form,
