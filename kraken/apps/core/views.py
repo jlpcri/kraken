@@ -12,7 +12,7 @@ from kraken.apps.core.forms import ClientForm
 
 @login_required
 def home(request):
-    clients = Client.objects.all()
+    clients = Client.objects.all().order_by('name')
     context = {
         'clients': clients,
         'form': ClientForm()

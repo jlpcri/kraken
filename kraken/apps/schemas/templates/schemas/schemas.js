@@ -25,6 +25,9 @@ $("button[name='save_file']").on('click', function () {
     } else if ( !$("#id_name").val() ){   //check file name empty
         showErrMsg('No input of file name');
         return false;
+    } else if ( $.inArray('\\', $("#id_name").val()) > -1 ) {
+        showErrMsg('File name cannot include \'\\\'');
+        return false;
     } else if ($.inArray($('#id_name').val(), file_names) > -1) {
         showErrMsg('File Name is duplicated');
         return false;
@@ -377,7 +380,7 @@ function parse_schema(record_number, delimiter) {
 
 function showErrMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'blue'
     });
@@ -386,7 +389,7 @@ function showErrMsg(message) {
 
 function showSuccessMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'green'
     });
@@ -403,8 +406,15 @@ function generateRecords(record_number) {
 
     var data = [];
     $("#tableDefinitions tbody tr").each(function () {
+        // Field Type
+        var field_type = $(this).find("input[name^='field_type_']").val();
+        // Field Length
+        var field_length = $(this).find("input[name^='field_length_']").val();
+        // Data Generator Type
         var type = $(this).find(".data-generator-select option:selected").val();
+        // Generator Options
         var generate = $(this).find(".data-generator-params option:selected").val();
+        // Generator Option Parameters
         var payload = $(this).find(".data-generator-params > select").attr('data-payload');
         var d = [];
         if (type == "Text") {
@@ -450,7 +460,7 @@ function generateRecords(record_number) {
 
                     $.getJSON('mockme.json', function(json) {
                         for (var i = 0; i < json['result'].length; i++) {
-                            d.push(json['result'][i]['text']);
+                            d.push(json['result'][i]['text'].substring(0, field_length));
                         }
                     });
                 } catch(e) {
@@ -569,7 +579,7 @@ function generateRecords(record_number) {
 
                     $.getJSON('mockme.json', function(json) {
                         for (var i = 0; i < json['result'].length; i++) {
-                            d.push(json['result'][i]['item']);
+                            d.push(json['result'][i]['item'].substring(0, field_length));
                         }
                     });
                 } catch(e) {
@@ -590,7 +600,7 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['name']);
+                        d.push(json['result'][i]['name'].substring(0, field_length));
                     }
                 });
             } catch(e) {
@@ -610,7 +620,7 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['name']);
+                        d.push(json['result'][i]['name'].substring(0, field_length));
                     }
                 });
             } catch(e) {
@@ -638,25 +648,40 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['address']);
+                        d.push(json['result'][i]['address'].substring(0, field_length));
                     }
                 });
             } catch(e) {
                 alert('Invalid JSON');
             }
         } else if (type == "Zip Code") {
-            // use mockjson to get random zip codes for generating fields
-            var min = 10000;
-            var max = 99999;
+            generate = generate.substr(8);
+            var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);
-            var n = "zipcode|{0}-{1}".format(min, max);
-            var o = {};
-            o[n] = 0;
+            if (generate == '5digits') {
+                min = 10000;
+                max = 99951;
 
-            var textTemplate = {};
-            textTemplate[s] = [
-                o
-            ];
+                n = "zipcode|{0}-{1}".format(min, max);
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+            } else if (generate == '9digits') {
+                min = 100000000;
+                max = 999519999;
+
+                n = "zipcode|{0}-{1}".format(min, max);
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+            } else if (generate == '9digitshyphen') {
+                //n = "zipcode|{0}-{1}".format(second_min, second_max);
+                textTemplate[s] = [{
+                    "zipcode": "@NUMBER@NUMBER@NUMBER@NUMBER@NUMBER-@NUMBER@NUMBER@NUMBER@NUMBER"
+                }];
+            }
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);

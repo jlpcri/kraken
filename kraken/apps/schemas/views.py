@@ -40,6 +40,8 @@ def create_file(request, client_id, schema_id, version_id):
             'text': settings.TEXT_PARAS,
             'number': settings.NUMBER_PARAS,
             'custom_list': settings.CUSTOM_LIST_PARAS,
+            'zipcode_text': settings.ZIPCODE_TEXT_PARAS,
+            'zipcode_number': settings.ZIPCODE_NUMBER_PARAS,
             'others': settings.OTHER_PARAS,
         }
 
@@ -50,6 +52,7 @@ def create_file(request, client_id, schema_id, version_id):
             'fields': fields,
             'field_number': len(fields),
             'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'number_columns': [item[1] for item in FileColumn.NUMBER_GENERATOR_CHOICES],
             'column_parameters': column_parameters,
             'state': 'create',
             'file_form': VersionFileForm,
@@ -77,7 +80,7 @@ def create_file(request, client_id, schema_id, version_id):
                         file.contents.save(file.name, ContentFile(request.POST.get('textareaViewer', '')))
                         file.save()
                         messages.success(request, 'File \"{0}\" has been created'.format(file.name))
-                        return redirect('core:home')
+                        return redirect('schemas:edit_file', client_id, schema_id, version_id, file.id)
                     else:
                         if file_form['name'].errors:
                             error_message = file_form['name'].errors
@@ -249,6 +252,7 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
             'fields': fields,
             'field_number': len(fields),
             'file_columns': [item[1] for item in FileColumn.GENERATOR_CHOICES],
+            'number_columns': [item[1] for item in FileColumn.NUMBER_GENERATOR_CHOICES],
             'column_parameters': column_parameters,
             'state': 'save',
             'file_form': file_form,

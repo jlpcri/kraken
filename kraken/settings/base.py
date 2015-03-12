@@ -180,6 +180,15 @@ CUSTOM_LIST_PARAS = {
     'In Order': 'inorder',
     'Random': 'random'
 }
+ZIPCODE_TEXT_PARAS = {
+    '5 Digits': '5digits',
+    '9 Digits': '9digits',
+    '9 Digits Hyphen': '9digitshyphen'
+}
+ZIPCODE_NUMBER_PARAS = {
+    '5 Digits': '5digits',
+    '9 Digits': '9digits'
+}
 OTHER_PARAS = {
     'System': 'system'
 }
