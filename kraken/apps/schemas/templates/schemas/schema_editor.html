@@ -141,19 +141,6 @@
             }
             var s = "";
             $("#tableFields tbody tr").each(function() {
-{#                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();#}
-{#                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();#}
-{#                if (fieldType == 'Number') {#}
-{#                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }#}
-{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
-{#                        s = s + '#';#}
-{#                    }#}
-{#                } else if (fieldType == 'Text') {#}
-{#                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }#}
-{#                    for (var i = 0; i < (fieldLength-1); i++ ) {#}
-{#                        s = s + 'x';#}
-{#                    }#}
-{#                }#}
                 var fieldName = $(this).find("input[name^='inputFieldName']").val();
                 s += fieldName + delimiter;
             });
@@ -162,12 +149,12 @@
             $('#textareaViewer').val(s);
         }
 
-        $("button[name='update_viewer']").on('click', function () {
+        $("button[name='update_viewer']").on('click', function (event) {
             event.preventDefault();
             updateViewer();
         })
 
-        $("button[name='save_schema']").on('click', function () {
+        $("button[name='save_schema']").on('click', function (event) {
             var s = "";
             $("#tableFields tbody tr").each(function() {
                 s = s + this.id + " ";
@@ -217,7 +204,21 @@
                     '</td>' +
                     '</tr>'
                 ));
+
             {% endfor %}
+
+            sortable_edit_ff();
+        }
+
+        // Jquery UI Sortable disableSelection Firefox issue
+        function sortable_edit_ff() {
+            $('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(event) {
+                event.stopImmediatePropagation();
+            });
+
+            $('select').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(event) {
+                event.stopImmediatePropagation();
+            });
         }
 
         $(function () {
@@ -263,6 +264,8 @@
                             '</td>' +
                             '</tr>');
                 $('table#tableFields').append(newRow);
+
+                sortable_edit_ff();
             });
 
             populateFields();
