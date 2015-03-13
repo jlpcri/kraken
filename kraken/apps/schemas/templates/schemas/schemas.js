@@ -662,7 +662,7 @@ function generateRecords(record_number) {
             } catch(e) {
                 alert('Invalid JSON');
             }
-        } else if (type == "Zip Code") {
+        } else if (type == "ZIP Code") {
             generate = generate.substr(8);
             var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);

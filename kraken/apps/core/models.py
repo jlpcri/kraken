@@ -183,7 +183,7 @@ class FileColumn(models.Model):
     FIRST_NAME = 'First Name'
     LAST_NAME = 'Last Name'
     ADDRESS = 'Address'
-    ZIP_CODE = 'Zip Code'
+    ZIP_CODE = 'ZIP Code'
     GENERATOR_CHOICES = (
         (TEXT, 'Text'),
         (NUMBER, 'Number'),
@@ -191,12 +191,12 @@ class FileColumn(models.Model):
         (FIRST_NAME, 'First Name'),
         (LAST_NAME, 'Last Name'),
         (ADDRESS, 'Address'),
-        (ZIP_CODE, 'Zip Code')
+        (ZIP_CODE, 'ZIP Code')
     )
     NUMBER_GENERATOR_CHOICES = (
         (NUMBER, 'Number'),
         (CUSTOM_LIST, 'Custom List'),
-        (ZIP_CODE, 'Zip Code')
+        (ZIP_CODE, 'ZIP Code')
     )
 
     version_file = models.ForeignKey('VersionFile')
