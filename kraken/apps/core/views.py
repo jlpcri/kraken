@@ -53,19 +53,6 @@ def sign_out(request):
     return redirect('core:landing')
 
 
-def clients_list(request):
-    """
-    :param request:
-    :return: JSON list of client names as string, ordered alphabetically
-    """
-    clients = Client.objects.all().order_by('name')
-    data = {}
-
-    data['client_name'] = [client.name for client in clients]
-
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-
 @login_required
 @csrf_exempt
 def create_client(request):

@@ -381,20 +381,6 @@ def edit_version(request, client_id, schema_id, version_id):
     return HttpResponseNotFound()
 
 
-def clients_list(request):
-    """
-    Handle fetch client list as json
-    :param request:
-    :return: json list of client names
-    """
-    clients = Client.objects.all().order_by('name')
-
-    data = {}
-    data['clients'] = [client.name for client in clients]
-
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-
 def client_schemas_list(request, client_name):
     """
     :param request:
