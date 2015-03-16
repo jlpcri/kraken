@@ -25,7 +25,10 @@ $("button[name='save_file']").on('click', function () {
     } else if ( !$("#id_name").val() ){   //check file name empty
         showErrMsg('No input of file name');
         return false;
-    } else if (file_names.indexOf($('#id_name').val()) > -1 ) {
+    } else if ( $.inArray('\\', $("#id_name").val()) > -1 ) {
+        showErrMsg('File name cannot include \'\\\'');
+        return false;
+    } else if ($.inArray($('#id_name').val(), file_names) > -1) {
         showErrMsg('File Name is duplicated');
         return false;
     }
@@ -37,10 +40,31 @@ $("button[name='save_file']").on('click', function () {
         payloads.push({"type": type, "payload": payload});
     });
     $('input[name="payloads"]').val(JSON.stringify(payloads));
+    window.content_change = false;
 });
 
+//check textarea contents changed or not
+window.content_change = false;
+$('#textareaViewer').change(function (){
+    window.content_change = true;
+});
+
+$("button[name='download_file']").on('click', function() {
+    if (window.content_change) {
+        showErrMsg('Contents Changed, save first');
+        return false;
+    }
+});
+
+// Total fail generate data no more than X times
+var fail_generate = 0;
 
 $('#buttonGenerate').click(function () {
+    if (fail_generate > 19) {
+        showErrMsg('Retry data generation up to 20 times');
+        return false;
+    }
+
     // initialize errMsg
     $('#errMsg').html('');
     var record_number = $('#inputRecordNumber').val();
@@ -48,12 +72,45 @@ $('#buttonGenerate').click(function () {
     if (!$.isNumeric(record_number)) {
         showErrMsg('Input \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    }
-    else if (field_number == 0) {
+    } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
-    }
-    else {
+    } else {
+        // check column configuration error
+        var error_found = false;
+        $("#tableDefinitions tbody tr").each(function() {
+            var column_config = $(this).find(".data-generator-params > select").val();
+            if (column_config == 'specify') {
+                showErrMsg('Please select column configuration');
+                error_found = true;
+                return false;
+            }
+        });
+        if (error_found) {
+            return false;
+        }
+
         generateRecords(record_number);
+
+        var delimiter = '{{version.delimiter}}';
+
+        // calculate record number which has value
+        var found = true, record_number = 0;
+        while (found) {
+            if (!$('#record0{0}'.format(record_number)).val()) {
+                found = false;
+            } else {
+                record_number++;
+            }
+        }
+
+        if (delimiter == 'Fixed') {
+            parse_schema(record_number, '');
+        } else if (delimiter == 'Pipe') {
+            parse_schema(record_number, '|');
+
+        } else if (delimiter == 'Comma') {
+            parse_schema(record_number, ',');
+        }
     }
 });
 
@@ -108,6 +165,8 @@ $('#validation_input_to_schema').click(function () {
             } else if (delimiter == 'Comma') {
                 parse_input(rows, ',');
             }
+
+            //showSuccessMsg('No errors found');
         }
     }
 });
@@ -156,7 +215,7 @@ function parse_input_fixed(rows) {
     for (var i = 0; i < rows.length; i++) {
         if (rows[i].length > total_length) {
             field_length_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed total length of fields.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds total length of fields.');
             break;
         }
     }
@@ -195,6 +254,7 @@ function parse_input_fixed(rows) {
                 position += Number(length);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
@@ -217,7 +277,7 @@ function parse_input(rows, delimiter) {
 
         if (columns.length > field_number) {
             field_number_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceed field number.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds field number.');
             break;
         }
     }
@@ -232,15 +292,19 @@ function parse_input(rows, delimiter) {
                 // check length
                 if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('Length of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\'' + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    showErrMsg('Contents of row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                    showErrMsg('\'' + rows[i].substring(0, 25) +'\''+ ' Field ' + Number(j + 1) + ' is not Number.');
                     break;
                 }
+            }
+
+            if (field_length_error_found || field_type_error_found) {
+                break;
             }
         }
     }
@@ -252,11 +316,13 @@ function parse_input(rows, delimiter) {
                 $('#record{0}{1}'.format(j, i)).val(columns[j]);
             }
         }
+        showSuccessMsg('No errors found');
     }
 }
 
 function parse_schema(record_number, delimiter) {
     var schema_string = '',
+        undefined_error_found = false,
         field_length_error_found = false,
         field_type_error_found = false;
 
@@ -266,23 +332,32 @@ function parse_schema(record_number, delimiter) {
             var type = $('#field_type_' + j).val();
             var length = $('#field_length_' + j).val();
 
+            // check undefined
+            if ($('#record{0}{1}'.format(j, i)).val() == 'undefined') {
+                undefined_error_found = true;
+                showErrMsg('Number of generated records increased for Manual Input');
+                break;
+            }
+
             // check length
             if ($('#record{0}{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
-                showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is exceed limitation.');
+                //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
+                showErrMsg('Generated data length error');
                 break;
             }
 
             // check type
             if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())) {
                 field_type_error_found = true;
-                showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                showErrMsg('Generated data type  error');
                 break;
             }
         }
     }
 
-    if (!field_length_error_found && !field_type_error_found) {
+    if (!undefined_error_found && !field_length_error_found && !field_type_error_found) {
         for (var i = 0; i < record_number; i++) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
@@ -299,6 +374,13 @@ function parse_schema(record_number, delimiter) {
 
             schema_string += '\n';
         }
+
+        //reset total fail generate times
+        fail_generate = 0;
+
+    } else {
+        // fail generate times add 1
+        fail_generate += 1;
     }
 
     $('#textareaViewer').val(schema_string);
@@ -306,14 +388,24 @@ function parse_schema(record_number, delimiter) {
 
 function showErrMsg(message) {
     $('#errMsg').css({
-        'font-family': 'Comic Sans MS',
+        //'font-family': 'Comic Sans MS',
         'font-size': 15,
         'color': 'blue'
     });
     $('#errMsg').html('Error: ' + message);
 }
 
+function showSuccessMsg(message) {
+    $('#errMsg').css({
+        //'font-family': 'Comic Sans MS',
+        'font-size': 15,
+        'color': 'green'
+    });
+    $('#errMsg').html('Successful: ' + message);
+}
+
 function generateRecords(record_number) {
+    $('#errMsg').html('');
     var contents_head = '<tr>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
@@ -322,25 +414,40 @@ function generateRecords(record_number) {
 
     var data = [];
     $("#tableDefinitions tbody tr").each(function () {
-        var type = $(this).find("select option:selected").val();
-        var payload = $(this).find("select option:selected").attr('data-payload');
-        var d = []
+        // Field Type
+        var field_type = $(this).find("input[name^='field_type_']").val();
+        // Field Length
+        var field_length = $(this).find("input[name^='field_length_']").val();
+        // Data Generator Type
+        var type = $(this).find(".data-generator-select option:selected").val();
+        // Generator Options
+        var generate = $(this).find(".data-generator-params option:selected").val();
+        // Generator Option Parameters
+        var payload = $(this).find(".data-generator-params > select").attr('data-payload');
+        var d = [];
         if (type == "Text") {
-            var generate = "manual";
+            generate = generate.substring(5);
+            //var generate = "manual";
             var fill = "";
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    }
+                }
+            } catch (e) {
+                if (generate != 'random') {
+                    var rowindex = $(this).closest('tr').index() + 1;
+                    showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                    return false;
                 }
             }
 
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
                 // use value from fill to generate fields
@@ -361,7 +468,7 @@ function generateRecords(record_number) {
 
                     $.getJSON('mockme.json', function(json) {
                         for (var i = 0; i < json['result'].length; i++) {
-                            d.push(json['result'][i]['text']);
+                            d.push(json['result'][i]['text'].substring(0, field_length));
                         }
                     });
                 } catch(e) {
@@ -369,30 +476,35 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Number") {
+            generate = generate.substring(7);
             var min = 0;
             var max = 9;
-            var generate = "manual";
+            //var generate = "manual";
             var fill = "";
             var increment = 0;
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "min") {
-                    min = p[i]['value'];
-                } else if (p[i]['name'] == "max") {
-                    max = p[i]['value'];
-                } else if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "inputFill") {
-                    fill = p[i]['value'];
-                } else if (p[i]['name'] == "inputIncrement") {
-                    increment = p[i]['value'];
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "min") {
+                        min = p[i]['value'];
+                    } else if (p[i]['name'] == "max") {
+                        max = p[i]['value'];
+                    } else if (p[i]['name'] == "inputFill") {
+                        fill = p[i]['value'];
+                    } else if (p[i]['name'] == "inputIncrement") {
+                        increment = p[i]['value'];
+                    }
                 }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
             }
 
             if (generate == "manual") {
                 // generate empty fields
                 for (var i = 0; i < record_number; i++) {
-                    d.push("");
+                    d.push(p[i]);
                 }
             } else if (generate == "fill") {
                 // use value from fill to generate fields
@@ -431,15 +543,20 @@ function generateRecords(record_number) {
                 }
             }
         } else if (type == "Custom List") {
-            var generate = "inorder";
+            generate = generate.substr(7);
+            //var generate = "inorder";
             var list = [];
-            var p = $.parseJSON(payload);
-            for (var i = 0; i < p.length; i++) {
-                if (p[i]['name'] == "radiosGenerate") {
-                    generate = p[i]['value'];
-                } else if (p[i]['name'] == "list") {
-                    list = p[i]['value'].split('\n');
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i < p.length; i++) {
+                    if (p[i]['name'] == "list") {
+                        list = p[i]['value'].split('\n');
+                    }
                 }
+            } catch (e) {
+                var rowindex = $(this).closest('tr').index() + 1;
+                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                return false;
             }
 
             if (generate == "inorder") {
@@ -470,7 +587,7 @@ function generateRecords(record_number) {
 
                     $.getJSON('mockme.json', function(json) {
                         for (var i = 0; i < json['result'].length; i++) {
-                            d.push(json['result'][i]['item']);
+                            d.push(json['result'][i]['item'].substring(0, field_length));
                         }
                     });
                 } catch(e) {
@@ -491,7 +608,7 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['name']);
+                        d.push(json['result'][i]['name'].substring(0, field_length));
                     }
                 });
             } catch(e) {
@@ -511,19 +628,27 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['name']);
+                        d.push(json['result'][i]['name'].substring(0, field_length));
                     }
                 });
             } catch(e) {
                 alert('Invalid JSON');
             }
         } else if (type == "Address") {
+            // Adding the @US_STATE keywork
+            $.mockJSON.data.US_STATE = [
+                'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+                'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+                'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+                'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+                'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+            ];
             // use mockjson to get random addresses for generating fields
             var s = "result|{0}-{1}".format(record_number, record_number);
 
             var textTemplate = {};
             textTemplate[s] = [
-                { "address": "@NUMBER@NUMBER@NUMBER @LAST_NAME" }
+                { "address": "@NUMBER@NUMBER@NUMBER @LOREM @US_STATE" }
             ];
 
             try {
@@ -531,25 +656,40 @@ function generateRecords(record_number) {
 
                 $.getJSON('mockme.json', function(json) {
                     for (var i = 0; i < json['result'].length; i++) {
-                        d.push(json['result'][i]['address']);
+                        d.push(json['result'][i]['address'].substring(0, field_length));
                     }
                 });
             } catch(e) {
                 alert('Invalid JSON');
             }
-        } else if (type == "Zip Code") {
-            // use mockjson to get random zip codes for generating fields
-            var min = 10000;
-            var max = 99999;
+        } else if (type == "ZIP Code") {
+            generate = generate.substr(8);
+            var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);
-            var n = "zipcode|{0}-{1}".format(min, max);
-            var o = {};
-            o[n] = 0;
+            if (generate == '5digits') {
+                min = 10000;
+                max = 99951;
 
-            var textTemplate = {};
-            textTemplate[s] = [
-                o
-            ];
+                n = "zipcode|{0}-{1}".format(min, max);
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+            } else if (generate == '9digits') {
+                min = 100000000;
+                max = 999519999;
+
+                n = "zipcode|{0}-{1}".format(min, max);
+                o[n] = 0;
+                textTemplate[s] = [
+                    o
+                ];
+            } else if (generate == '9digitshyphen') {
+                //n = "zipcode|{0}-{1}".format(second_min, second_max);
+                textTemplate[s] = [{
+                    "zipcode": "@NUMBER@NUMBER@NUMBER@NUMBER@NUMBER-@NUMBER@NUMBER@NUMBER@NUMBER"
+                }];
+            }
 
             try {
                 $.mockJSON(/mockme\.json/, textTemplate);
@@ -564,26 +704,66 @@ function generateRecords(record_number) {
             }
         }
         data.push(d);
-    })
+    });
 
-    var contents_body = '';
-    for (i = 0; i < field_number; i++) {
-        var contents_body_row = '<tr>';
-        for (var j = 0; j < Number(record_number); j++) {
-            contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value={1}></td>".format('record' + i + j, data[i][j]);
+    if (data.length == field_number) {
+        var contents_body = '';
+        for (i = 0; i < field_number; i++) {
+            var contents_body_row = '<tr>';
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record' + i + j, data[i][j]);
+            }
+            contents_body_row += '</tr>';
+
+            contents_body += contents_body_row;
         }
-        contents_body_row += '</tr>';
 
-        contents_body += contents_body_row;
+        var add_records_contents = "<table id='tableData' class='table'>" +
+            " <thead>" +
+            contents_head +
+            "</thead>" +
+            "<tbody>" +
+            "</tbody>" +
+            contents_body +
+            "</table> ";
+        $('#add_records').html(add_records_contents);
+    }
+}
+
+function generate_empty_records_modal(record_number, location) {
+    var cell_id = '';
+    if (location == '#text-manual-input') {
+        cell_id = 'text';
+    } else if (location == '#number-manual-input') {
+        cell_id = 'number';
     }
 
-    var add_records_contents = "<table id='tableData' class='table'>" +
+
+    var contents_head = '<tr>';
+    for (var i = 1; i < Number(record_number) + 1; i++) {
+        contents_head += '<th>Record ' + i + '</th>';
+    }
+    contents_head += '</tr>';
+
+    var contents_body = '';
+    for (var i = 0; i < Number(record_number); i++) {
+        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
+    }
+    var contents = "<table id='tableData' class='table'>" +
         " <thead>" +
         contents_head +
         "</thead>" +
         "<tbody>" +
-        "</tbody>" +
         contents_body +
+        "</tbody>" +
         "</table> ";
-    $('#add_records').html(add_records_contents);
+    $(location).html(contents);
+}
+
+function showModalErrMsg(location, message) {
+    $(location).css({
+        'font-size': 15,
+        'color': 'blue'
+    });
+    $(location).html('Error: ' + message);
 }

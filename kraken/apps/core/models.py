@@ -163,6 +163,18 @@ class VersionFile(models.Model):
     def batch_file_path(self):
         return ''
 
+    @property
+    def file_contents(self):
+        f = self.contents
+        f.open(mode='rb')
+        lines = f.readlines()
+        data = ''
+        for line in lines:
+            data += line
+        f.close()
+
+        return data
+
 
 class FileColumn(models.Model):
     NUMBER = 'Number'
@@ -171,7 +183,7 @@ class FileColumn(models.Model):
     FIRST_NAME = 'First Name'
     LAST_NAME = 'Last Name'
     ADDRESS = 'Address'
-    ZIP_CODE = 'Zip Code'
+    ZIP_CODE = 'ZIP Code'
     GENERATOR_CHOICES = (
         (TEXT, 'Text'),
         (NUMBER, 'Number'),
@@ -179,7 +191,12 @@ class FileColumn(models.Model):
         (FIRST_NAME, 'First Name'),
         (LAST_NAME, 'Last Name'),
         (ADDRESS, 'Address'),
-        (ZIP_CODE, 'Zip Code')
+        (ZIP_CODE, 'ZIP Code')
+    )
+    NUMBER_GENERATOR_CHOICES = (
+        (NUMBER, 'Number'),
+        (CUSTOM_LIST, 'Custom List'),
+        (ZIP_CODE, 'ZIP Code')
     )
 
     version_file = models.ForeignKey('VersionFile')

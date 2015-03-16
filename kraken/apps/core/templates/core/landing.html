@@ -19,7 +19,6 @@
                 <br><br>
                 Sign into <span style="color: #ef0000;">Kraken</span>
             </h3>
-            <p align="center">CVS Helper Tool</p>
             <hr>
             <div>
                 <form class="form" role="form" method=POST action="{% url 'core:sign_in' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">

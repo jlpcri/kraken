@@ -46,6 +46,11 @@ MEDIA_URL = '/kraken/media/'
 
 LOGIN_URL = '/kraken/'
 
+# Age of session cookies, in seconds
+SESSION_COOKIE_AGE = 28800   # 8 hours
+# Save the session data on every request
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -157,3 +162,33 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+
+# Batch File Column Parameters
+TEXT_PARAS = {
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Random': 'random'
+}
+NUMBER_PARAS = {
+    'Manual': 'manual',
+    'Fill': 'fill',
+    'Increment': 'increment',
+    'Random': 'random'
+}
+CUSTOM_LIST_PARAS = {
+    'In Order': 'inorder',
+    'Random': 'random'
+}
+ZIPCODE_TEXT_PARAS = {
+    '5 Digits': '5digits',
+    '9 Digits': '9digits',
+    '9 Digits Hyphen': '9digitshyphen'
+}
+ZIPCODE_NUMBER_PARAS = {
+    '5 Digits': '5digits',
+    '9 Digits': '9digits'
+}
+OTHER_PARAS = {
+    'System': 'system'
+}

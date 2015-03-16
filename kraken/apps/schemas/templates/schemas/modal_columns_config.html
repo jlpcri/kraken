@@ -1,0 +1,333 @@
+<!-- Text Manual Input Modal -->
+<div class="modal fade" id="text-manual-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form-text">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Text Manual Inputs</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="table-responsive" id="text-manual-input" style="overflow: auto;">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+{#                            <input type="hidden" id="field_type" name="field_type" value="">#}
+{#                            <input type="hidden" id="field_length" name="field_length" value="">#}
+{#                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">#}
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="textErrMessage"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Text Fill Input Modal -->
+<div class="modal fade" id="text-fill-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Text Fill Inputs</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-1" style="line-height: 30px;">
+                            <label>
+                                Fill
+                            </label>
+                        </div>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
+                        </div>
+                        <div class="col-xs-1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="textFillErrMessage"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Number Fill Input Modal -->
+<div class="modal fade" id="number-fill-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Number Fill Inputs</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-1" style="line-height: 30px;">
+                            <label>
+                                Fill
+                            </label>
+                        </div>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control input-sm" name="inputFill" placeholder="Value to fill">
+                        </div>
+                        <div class="col-xs-1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberFillErrMessage"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Number Increment Modal -->
+<div class="modal fade" id="number-increment-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Number Increment Parameters</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-2" style="line-height: 30px;">
+                            <label>
+                                Increment
+                            </label>
+                        </div>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control input-sm" name="inputIncrement" placeholder="Beginning value">
+                        </div>
+                        <div class="col-xs-1">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberIncrementErrMessage"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Number Manual Input Modal -->
+<div class="modal fade" id="number-manual-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form-number">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Number Manual Inputs</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive" id="number-manual-input" style="overflow: auto;">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1">
+{#                            <input type="hidden" id="field_type" name="field_type" value="">#}
+{#                            <input type="hidden" id="field_length" name="field_length" value="">#}
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberErrMessage"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Number Random Input Modal -->
+<div class="modal fade" id="number-random-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Number Random Inputs</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-3" style="line-height: 30px;">
+                            <label>
+                                Random
+                            </label>
+                        </div>
+                        <div class="col-xs-3">
+                            <input class="form-control input-sm" name="min" placeholder="Minimum">
+                        </div>
+                        <div class="col-xs-3">
+                            <input class="form-control input-sm" name="max" placeholder="Maximum">
+                        </div>
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="numberRandomErrMessage"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Custom List In Order Input Modal -->
+<div class="modal fade" id="custom-inorder-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Custom List In Order Inputs</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-10">
+                            <label class="control-label">List</label>
+                            <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                        </div>
+                        <div class="col-xs-1">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="customInorderErrMessage"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Custom List Random Input Modal -->
+<div class="modal fade" id="custom-random-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="data-generator-form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Custom List Random Inputs</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-10">
+                            <label class="control-label">List</label>
+                            <textarea name="list" class="form-control" rows=6 placeholder="Enter one per line"></textarea>
+                        </div>
+                        <div class="col-xs-1">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="hidden" id="field_type" name="field_type" value="">
+                            <input type="hidden" id="field_length" name="field_length" value="">
+                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">
+                        </div>
+                        <div class="col-xs-7">
+                            <div id="customRandomErrMessage"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

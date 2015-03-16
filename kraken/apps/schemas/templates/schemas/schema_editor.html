@@ -86,14 +86,14 @@
                             <th class="col-xs-2">
                                 Type
                             </th>
-                            <th class="col-xs-1 text-center">
-                                Unique
-                            </th>
+{#                            <th class="col-xs-1 text-center">#}
+{#                                Unique#}
+{#                            </th>#}
                             <th class="col-xs-1">
 
                             </th>
                             <th class="col-xs-1">
-                                <button id="buttonAddField" class="btn btn-success btn-xs" style="width: 100%;"><i class="fa fa-plus"></i>&nbsp;Field
+                                <button id="buttonAddField" class="btn btn-success btn-xs" style="width: 100%;">Add Field
                                 </button>
                             </th>
                         </tr>
@@ -126,14 +126,14 @@
         };
 
         function deleteRow(row) {
-            event.preventDefault();
+            //event.preventDefault();
             formChangeHandler();
             $(row).closest('tr').remove();
         }
 
         function updateViewer() {
             var delimiterType = $("#tableDelimiter input[type='radio']:checked").val();
-            delimiter = '' // for Fixed
+            delimiter = ''; // for Fixed
             if (delimiterType == 'Pipe') {
                 delimiter = '|';
             } else if (delimiterType == 'Comma') {
@@ -141,29 +141,20 @@
             }
             var s = "";
             $("#tableFields tbody tr").each(function() {
-                var fieldLength = $(this).find("input[name^='inputFieldLength']").val();
-                var fieldType = $(this).find("select[name^='selectFieldType'] option:selected").val();
-                if (fieldType == 'Number') {
-                    if (s == '') { s = s + "0"; } else { s = s + delimiter + '0' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + '#';
-                    }
-                } else if (fieldType == 'Text') {
-                    if (s == '') { s = s + "X"; } else { s = s + delimiter + 'X' }
-                    for (var i = 0; i < (fieldLength-1); i++ ) {
-                        s = s + 'x';
-                    }
-                }
+                var fieldName = $(this).find("input[name^='inputFieldName']").val();
+                s += fieldName + delimiter;
             });
+            var len = delimiter.length;
+            s = s.substring(0, s.length - len);
             $('#textareaViewer').val(s);
         }
 
-        $("button[name='update_viewer").on('click', function () {
+        $("button[name='update_viewer']").on('click', function (event) {
             event.preventDefault();
             updateViewer();
         })
 
-        $("button[name='save_schema']").on('click', function () {
+        $("button[name='save_schema']").on('click', function (event) {
             var s = "";
             $("#tableFields tbody tr").each(function() {
                 s = s + this.id + " ";
@@ -202,9 +193,9 @@
                     '<option{% if f.type == "Number" %} selected{% endif %}>Number</option>' +
                     '</select>' +
                     '</td>' +
-                    '<td class="text-center" style="line-height: 38px;">' +
-                    '<input type="checkbox" name="checkFieldUnique_' + counter + '"{% if f.unique %} checked{% endif %}>' +
-                    '</td>' +
+{#                    '<td class="text-center" style="line-height: 38px;">' +#}
+{#                    '<input type="checkbox" name="checkFieldUnique_' + counter + '"{% if f.unique %} checked{% endif %}>' +#}
+{#                    '</td>' +#}
                     '<td class="text-center" style="line-height: 38px;">' +
                     '<i class="fa fa-arrows fa-lg" style="cursor: move;"></i>' +
                     '</td>' +
@@ -213,7 +204,21 @@
                     '</td>' +
                     '</tr>'
                 ));
+
             {% endfor %}
+
+            sortable_edit_ff();
+        }
+
+        // Jquery UI Sortable disableSelection Firefox issue
+        function sortable_edit_ff() {
+            $('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(event) {
+                event.stopImmediatePropagation();
+            });
+
+            $('select').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(event) {
+                event.stopImmediatePropagation();
+            });
         }
 
         $(function () {
@@ -240,7 +245,7 @@
                             '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldName_' + counter + '" placeholder="Field Name">' +
                             '</td>' +
                             '<td>' +
-                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="10">' +
+                            '<input type="text" onchange="formChangeHandler();" class="form-control" name="inputFieldLength_' + counter + '" placeholder="Example: 10 digits">' +
                             '</td>' +
                             '<td>' +
                             '<select onchange="formChangeHandler();" class="form-control" name="selectFieldType_' + counter + '">' +
@@ -248,9 +253,9 @@
                             '<option>Number</option>' +
                             '</select>' +
                             '</td>' +
-                            '<td class="text-center" style="line-height: 38px;">' +
-                            '<input type="checkbox" name="checkFieldUnique_' + counter + '">' +
-                            '</td>' +
+{#                            '<td class="text-center" style="line-height: 38px;">' +#}
+{#                            '<input type="checkbox" name="checkFieldUnique_' + counter + '">' +#}
+{#                            '</td>' +#}
                             '<td class="text-center" style="line-height: 38px;">' +
                             '<i class="fa fa-arrows fa-lg" style="cursor: move;"></i>' +
                             '</td>' +
@@ -259,6 +264,8 @@
                             '</td>' +
                             '</tr>');
                 $('table#tableFields').append(newRow);
+
+                sortable_edit_ff();
             });
 
             populateFields();

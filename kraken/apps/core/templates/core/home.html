@@ -72,10 +72,11 @@
                             {% for version in schema.versions %}
                                 if (node_id === versionIdPrefix + {{ version.id }}) {
                                     return callback(null, [
-                                        {% if user.is_staff %}{ id: editVersion, label: "Edit Version", type: "edit", url: "{% url 'schemas:edit_version' client.id schema.id version.id %}" },{% endif %}
+                                        {% if user.is_staff %}{ id: editVersion, label: "New/Edit Version", type: "edit", url: "{% url 'schemas:edit_version' client.id schema.id version.id %}" },{% endif %}
                                         { id: fileIdPrefix, label: "New File", type: "create", url: "{% url 'schemas:create_file' client.id schema.id version.id %}" },
                                         {% for file in version.files %}
-                                            { id: fileIdPrefix + {{ file.id }}, label: "{{ file.name }}", type: "file", url: "{% url 'schemas:download_file' client.id schema.id version.id file.id %}" },
+{#                                            { id: fileIdPrefix + {{ file.id }}, label: "{{ file.name }}", type: "file", url: "{% url 'schemas:download_file' client.id schema.id version.id file.id %}" },#}
+                                            { id: fileIdPrefix + {{ file.id }}, label: "{{ file.name }}", type: "file", url: "{% url 'schemas:edit_file' client.id schema.id version.id file.id %}" },
                                         {% endfor %}
                                     ]);
                                 }

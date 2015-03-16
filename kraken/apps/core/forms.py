@@ -64,7 +64,7 @@ class SchemaVersionForm(ModelForm):
             'invalid': 'Version is not a valid value'
         })
         self.fields['identifier'].widget = TextInput(attrs={
-            'placeholder': '1.0',
+            'placeholder': 'Example: Identifier',
             'class': 'form-control'
         })
         self.fields['delimiter'] = forms.ChoiceField(
