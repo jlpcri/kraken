@@ -241,6 +241,8 @@ def edit_file(request, client_id, schema_id, version_id, file_id):
             'text': settings.TEXT_PARAS,
             'number': settings.NUMBER_PARAS,
             'custom_list': settings.CUSTOM_LIST_PARAS,
+            'zipcode_text': settings.ZIPCODE_TEXT_PARAS,
+            'zipcode_number': settings.ZIPCODE_NUMBER_PARAS,
             'others': settings.OTHER_PARAS,
         }
 

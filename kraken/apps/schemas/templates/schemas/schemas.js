@@ -322,6 +322,7 @@ function parse_input(rows, delimiter) {
 
 function parse_schema(record_number, delimiter) {
     var schema_string = '',
+        undefined_error_found = false,
         field_length_error_found = false,
         field_type_error_found = false;
 
@@ -330,6 +331,13 @@ function parse_schema(record_number, delimiter) {
         for (var j = 0; j < field_number; j++) {
             var type = $('#field_type_' + j).val();
             var length = $('#field_length_' + j).val();
+
+            // check undefined
+            if ($('#record{0}{1}'.format(j, i)).val() == 'undefined') {
+                undefined_error_found = true;
+                showErrMsg('Number of generated records increased for Manual Input');
+                break;
+            }
 
             // check length
             if ($('#record{0}{1}'.format(j, i)).val().length > length) {
@@ -349,7 +357,7 @@ function parse_schema(record_number, delimiter) {
         }
     }
 
-    if (!field_length_error_found && !field_type_error_found) {
+    if (!undefined_error_found && !field_length_error_found && !field_type_error_found) {
         for (var i = 0; i < record_number; i++) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
@@ -654,7 +662,7 @@ function generateRecords(record_number) {
             } catch(e) {
                 alert('Invalid JSON');
             }
-        } else if (type == "Zip Code") {
+        } else if (type == "ZIP Code") {
             generate = generate.substr(8);
             var min, max, n, o = {}, textTemplate = {};
             var s = "result|{0}-{1}".format(record_number, record_number);
