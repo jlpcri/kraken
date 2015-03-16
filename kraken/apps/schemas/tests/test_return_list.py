@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 import json
 
 from kraken.apps.core.models import Client as KrakenClient, ClientSchema, SchemaVersion
-from kraken.apps.schemas.views import clients_list, client_schemas_list, schema_versions_list
+from kraken.apps.schemas.views import client_schemas_list, schema_versions_list
 
 
 class TestReturnList(TestCase):
@@ -46,16 +46,6 @@ class TestReturnList(TestCase):
             client_schema=self.client1_schema1,
             identifier='Client1 Schema1 Version4'
         )
-
-    def test_return_lists_of_clients_successful(self):
-        response = clients_list(None)
-        content = json.loads(response.content)
-
-        self.assertEqual(content.keys()[0], 'clients')
-        self.assertContains(response, self.client1.name)
-        self.assertContains(response, self.client2.name)
-        self.assertContains(response, self.client3.name)
-        self.assertContains(response, self.client4.name)
 
     def test_return_lists_of_schemas_of_client(self):
         response = client_schemas_list(None, self.client1.name)

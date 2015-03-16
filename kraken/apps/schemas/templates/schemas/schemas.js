@@ -72,6 +72,8 @@ $('#buttonGenerate').click(function () {
     if (!$.isNumeric(record_number)) {
         showErrMsg('Input \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
+    } else if ($.inArray('.', record_number) > -1) {
+        showErrMsg('Input \'' + record_number + '\' can not be decimals. ')
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
