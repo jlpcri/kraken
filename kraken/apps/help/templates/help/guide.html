@@ -5,12 +5,86 @@
 {% endblock %}
 {% block content %}
     <div class="container" >
-        <h4>Kraken is here for you!</h4>
-        <ul>
-            <li>Kraken is an application built to help outbound UAT testing by generating conforming data according to a user-defined schema.</li>
-            <li>A stable version is available for poking around at <a href="http://linux6436.wic.west.com/kraken">Here</a> </li>
-            <li>LDAP logins should work. </li>
-        </ul>
+        <body data-spy="scroll" data-target="#index">
+
+        <div class="row container" style="text-align: justify;">
+            <div class="col-xs-3">
+                <div id="index">
+                    <ul class="nav nav-pills nav-stacked affix" data-spy="affix" data-offset-top="60" data-offset-bottom="200">
+                        <li class="active"><a href="#contact">Contact Information</a></li>
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#client_navigator">Client Navigator</a></li>
+                        <li><a href="#schema_editor">Schema Editor</a></li>
+                        <li><a href="#file_editor">File Editor</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xs-9">
+                <div id="contact">
+                    <h4 style="padding-top: 75px; margin-top: -75px;">Contact Information&nbsp;&nbsp;<a href="#index"><i class="fa fa-arrow-circle-up"></i></a></h4>
+                    <ul>
+                        <li>Name: Gautham Pallapa</li>
+                        <li>Email: <a href="mailto:gpallapa@west.com">gpallapa@west.com</a></li>
+                        <li>Phone: 402-716-1393</li>
+                        <li>Department: Interactive Services</li>
+                        <li>Location: West 100 4th Floor East</li>
+                    </ul>
+                </div>
+                <div id="introduction">
+                    <h4 style="padding-top: 75px; margin-top: -75px;">Introduction&nbsp;&nbsp;<a href="#index"><i class="fa fa-arrow-circle-up"></i></a></h4>
+                    <ul>
+                        <div id="introduction_what">
+                            <li><strong>What is Kraken</strong></li>
+                            <p>Kraken is an application built to help outbound UAT testing by generating conforming data according to a user-defined schema.</p>
+                        </div>
+                        <div id="introduction_ack">
+                            <li><strong>Acknowledgements</strong></li>
+                            <p>Several people have contributed to Kraken. We would like to thank (in alphabetical order):
+                                <br>Christian A Heyden, Gautham Pallapa, Songqing Liu, and Eric Whitcomb
+                            </p>
+                        </div>
+                    </ul>
+                </div>
+                <div id="client_navigator">
+                    <h4 style="padding-top: 75px; margin-top: -75px;">Client Navigator&nbsp;&nbsp;<a href="#index"><i class="fa fa-arrow-circle-up"></i></a></h4>
+                    <ul>
+                        <li>Name: Gautham Pallapa</li>
+                        <li>Email: <a href="mailto:gpallapa@west.com">gpallapa@west.com</a></li>
+                        <li>Phone: 402-716-1393</li>
+                        <li>Department: Interactive Services</li>
+                        <li>Location: West 100 4th Floor East</li>
+                    </ul>
+                </div>
+                <div id="schema_editor">
+                    <h4 style="padding-top: 75px; margin-top: -75px;">Schema Editor&nbsp;&nbsp;<a href="#index"><i class="fa fa-arrow-circle-up"></i></a></h4>
+                    <ul>
+                        <li>Name: Gautham Pallapa</li>
+                        <li>Email: <a href="mailto:gpallapa@west.com">gpallapa@west.com</a></li>
+                        <li>Phone: 402-716-1393</li>
+                        <li>Department: Interactive Services</li>
+                        <li>Location: West 100 4th Floor East</li>
+                    </ul>
+                </div>
+                <div id="file_editor">
+                    <h4 style="padding-top: 75px; margin-top: -75px;">File Editor&nbsp;&nbsp;<a href="#index"><i class="fa fa-arrow-circle-up"></i> </a></h4>
+                    <ul>
+                        <li>Name: Gautham Pallapa</li>
+                        <li>Email: <a href="mailto:gpallapa@west.com">gpallapa@west.com</a></li>
+                        <li>Phone: 402-716-1393</li>
+                        <li>Department: Interactive Services</li>
+                        <li>Location: West 100 4th Floor East</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+{#        <h4>Kraken is here for you!</h4>#}
+{#        <ul>#}
+{#            <li>Kraken is an application built to help outbound UAT testing by generating conforming data according to a user-defined schema.</li>#}
+{#            <li>A stable version is available for poking around at <a href="http://linux6436.wic.west.com/kraken">Here</a> </li>#}
+{#            <li>LDAP logins should work. </li>#}
+{#        </ul>#}
+        </body>
     </div>
 {% endblock %}
 {% block endscript %}
