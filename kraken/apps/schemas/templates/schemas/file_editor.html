@@ -68,7 +68,7 @@
                 case 'text_manual':
                     $('#textErrMessage').html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'No records generated');
+                        showModalErrMsg('#textErrMessage', 'How many records to generate?');
                     }
                     $('#text-manual-modal').modal('show');
                     break;
@@ -87,7 +87,7 @@
                 case 'number_manual':
                     $('#numberErrMessage').html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'No records generated');
+                        showModalErrMsg('#numberErrMessage', 'How many records to generate?');
                     }
                     $('#number-manual-modal').modal('show');
                     break;
