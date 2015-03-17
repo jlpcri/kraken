@@ -190,10 +190,10 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} should be a number'.format(lines[i]));
+                                showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' should be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
@@ -210,7 +210,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
