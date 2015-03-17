@@ -252,6 +252,10 @@
                     showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
                     error_found = true;
                     return false;
+                } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
+                    showModalErrMsg('#textErrMessage', 'Input of Record {0} cannot include comma.'.format(index+1));
+                    error_found = true;
+                    return false;
                 } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
                     showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
                     error_found = true;
