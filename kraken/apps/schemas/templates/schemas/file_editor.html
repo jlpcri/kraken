@@ -242,26 +242,31 @@
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
-            $.each(manual_text, function (index, value) {
-                var input = $(value).val();
-                if (input == '') {
-                    showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (input.length > field_length) {
-                    showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
-                    showModalErrMsg('#textErrMessage', 'Input of Record {0} cannot include comma.'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
-                    showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
-                    error_found = true;
-                    return false;
-                }
-            });
+            if (manual_text.length == 0) {
+                showModalErrMsg('#textErrMessage', 'No Generator Options to save.');
+                error_found = true;
+            } else {
+                $.each(manual_text, function (index, value) {
+                    var input = $(value).val();
+                    if (input == '') {
+                        showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
+                        showModalErrMsg('#textErrMessage', 'Input of Record {0} cannot include comma.'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
+                        showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                        error_found = true;
+                        return false;
+                    }
+                });
+            }
             if (error_found) {
                 return false;
             }
@@ -284,22 +289,27 @@
 
             var manual_text = $("#number-manual-modal form input");
             var error_found = false;
-            $.each(manual_text, function (index, value) {
-                var input = $(value).val();
-                if (input == '' && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (input.length > field_length && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (!$.isNumeric(input) && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index+1));
-                    error_found = true;
-                    return false;
-                }
-            });
+            if (manual_text.length == 0) {
+                showModalErrMsg('#numberErrMessage', 'No Generator Options to save.');
+                error_found = true;
+            } else {
+                $.each(manual_text, function (index, value) {
+                    var input = $(value).val();
+                    if (input == '' && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    } else if (input.length > field_length && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    } else if (!$.isNumeric(input) && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    }
+                });
+            }
             if (error_found) {
                 return false;
             }
