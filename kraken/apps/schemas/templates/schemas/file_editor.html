@@ -68,7 +68,7 @@
                 case 'text_manual':
                     $('#textErrMessage').html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'No records generated');
+                        showModalErrMsg('#textErrMessage', 'How many records to generate?');
                     }
                     $('#text-manual-modal').modal('show');
                     break;
@@ -87,7 +87,7 @@
                 case 'number_manual':
                     $('#numberErrMessage').html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'No records generated');
+                        showModalErrMsg('#numberErrMessage', 'How many records to generate?');
                     }
                     $('#number-manual-modal').modal('show');
                     break;
@@ -190,10 +190,10 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customRandomErrMessage', 'Option {0} should be a number'.format(lines[i]));
+                                showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' should be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
@@ -210,7 +210,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Option {0} exceeds length constraint of {1}'.format(lines[i], field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
@@ -242,22 +242,31 @@
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
-            $.each(manual_text, function (index, value) {
-                var input = $(value).val();
-                if (input == '') {
-                    showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (input.length > field_length) {
-                    showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
-                    showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
-                    error_found = true;
-                    return false;
-                }
-            });
+            if (manual_text.length == 0) {
+                showModalErrMsg('#textErrMessage', 'No Generator Options to save.');
+                error_found = true;
+            } else {
+                $.each(manual_text, function (index, value) {
+                    var input = $(value).val();
+                    if (input == '') {
+                        showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
+                        showModalErrMsg('#textErrMessage', 'Input of Record {0} cannot include comma.'.format(index+1));
+                        error_found = true;
+                        return false;
+                    } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
+                        showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                        error_found = true;
+                        return false;
+                    }
+                });
+            }
             if (error_found) {
                 return false;
             }
@@ -280,22 +289,27 @@
 
             var manual_text = $("#number-manual-modal form input");
             var error_found = false;
-            $.each(manual_text, function (index, value) {
-                var input = $(value).val();
-                if (input == '' && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (input.length > field_length && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
-                    error_found = true;
-                    return false;
-                } else if (!$.isNumeric(input) && index < Number(record_number)) {
-                    showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index+1));
-                    error_found = true;
-                    return false;
-                }
-            });
+            if (manual_text.length == 0) {
+                showModalErrMsg('#numberErrMessage', 'No Generator Options to save.');
+                error_found = true;
+            } else {
+                $.each(manual_text, function (index, value) {
+                    var input = $(value).val();
+                    if (input == '' && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    } else if (input.length > field_length && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    } else if (!$.isNumeric(input) && index < Number(record_number)) {
+                        showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index + 1));
+                        error_found = true;
+                        return false;
+                    }
+                });
+            }
             if (error_found) {
                 return false;
             }
@@ -428,7 +442,7 @@
         <div class="row">
             <div class="col-xs-4">
                 <label for="inputRecordNumber" class="control-label">How many records to generate?&nbsp;</label>
-                <input id="inputRecordNumber" type="text" class="form-control input-sm" style="width: 50px; display: inline; text-align: center;">
+                <input id="inputRecordNumber" type="text" class="form-control input-sm" style="width: 100px; display: inline; text-align: center;">
             </div>
             <div class="col-xs-2">
                 <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;" title="Generate data to inputs">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
