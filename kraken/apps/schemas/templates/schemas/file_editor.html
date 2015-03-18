@@ -117,6 +117,7 @@
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
             console.log(field_type, field_length, file_column, column_config);
+
             if (file_column == 'Text') {
                 if (column_config == 'text_fill') {
                     var input = $(this).find("input[name='inputFill']").val();
@@ -235,10 +236,10 @@
             var record_number = $('#inputRecordNumber').val();
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
-            //var file_column = window.currentRow.find('.data-generator-select > select').val();
-            //var column_config = window.currentRow.find('.data-generator-params > select').val();
+            var file_column = window.currentRow.find('.data-generator-select > select').val();
+            var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            //console.log(field_type, field_length, file_column, column_config);
+            console.log(field_type, field_length, file_column, column_config);
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
@@ -286,6 +287,10 @@
             var record_number = $('#inputRecordNumber').val();
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
+            var file_column = window.currentRow.find('.data-generator-select > select').val();
+            var column_config = window.currentRow.find('.data-generator-params > select').val();
+
+            console.log(field_type, field_length, file_column, column_config);
 
             var manual_text = $("#number-manual-modal form input");
             var error_found = false;
