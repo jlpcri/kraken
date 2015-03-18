@@ -70,10 +70,10 @@ $('#buttonGenerate').click(function () {
     var record_number = $('#inputRecordNumber').val();
 
     if (!$.isNumeric(record_number)) {
-        showErrMsg('Input \'' + record_number + '\' is not a Number');
+        showErrMsg('Records to Generate \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    } else if ($.inArray('.', record_number) > -1) {
-        showErrMsg('Input \'' + record_number + '\' can not be decimals. ')
+    } else if ($.inArray('.', record_number) > -1 || record_number <= 0) {
+        showErrMsg('Records to Generate \'' + record_number + '\' should be positive integer. ');
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
