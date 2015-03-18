@@ -67,8 +67,8 @@
             switch (value) {
                 case 'text_manual':
                     $('#textErrMessage').html('');
-                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'How many records to generate?');
+                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
+                        showModalErrMsg('#textErrMessage', 'Records to generate should be positive integer.');
                     }
                     $('#text-manual-modal').modal('show');
                     break;
@@ -86,8 +86,8 @@
                     break;
                 case 'number_manual':
                     $('#numberErrMessage').html('');
-                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'How many records to generate?');
+                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {
+                        showModalErrMsg('#numberErrMessage', 'Records to generate should be positive integer.');
                     }
                     $('#number-manual-modal').modal('show');
                     break;
@@ -190,7 +190,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' should be a number'.format(lines[i]));
@@ -210,7 +210,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds length constraint of {1}'.format(i+1, field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds field length {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
@@ -331,8 +331,10 @@
 
             $('#text-manual-modal').on('show.bs.modal', function(event){
                 var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manully input
-                generate_empty_records_modal(record_number, '#text-manual-input');
+                // generate empty cell for user manually input
+                if (!($.inArray('.', record_number) > -1)) {
+                    generate_empty_records_modal(record_number, '#text-manual-input');
+                }
 
                 try {
                     var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
@@ -346,8 +348,10 @@
 
             $('#number-manual-modal').on('show.bs.modal', function(event){
                 var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manully input
-                generate_empty_records_modal(record_number, '#number-manual-input');
+                // generate empty cell for user manually input
+                if (!($.inArray('.', record_number) > -1)) {
+                    generate_empty_records_modal(record_number, '#number-manual-input');
+                }
 
                 try {
                     var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
