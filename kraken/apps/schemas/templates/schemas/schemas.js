@@ -16,7 +16,7 @@ String.prototype.format = function () {
 // get number of fields
 var field_number = Number('{{field_number}}');
 
-var file_names = '{{version_files_names | safe}}';
+var file_names = '{{version_files_names }}';
 
 $("button[name='save_file']").on('click', function () {
     if ( !$.trim($("#textareaViewer").val()) ) {   // check file contents empty
