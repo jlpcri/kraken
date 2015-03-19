@@ -63,50 +63,51 @@
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
                 case 'text_manual':
-                    $('#textErrMessage').html('');
+                    modal = $('#text-manual-modal');
+                    modal.find($('#textErrMessage')).html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
                         showModalErrMsg('#textErrMessage', 'How many records to generate?');
                     }
-                    modal = $('#text-manual-modal');
                     break;
                 case 'text_fill':
-                    $('#textFillMessage').html('');
                     modal = $('#text-fill-modal');
+                    modal.find($('#textFillMessage')).html('');
                     break;
                 case 'number_fill':
-                    $('#numberFillErrMessage').html('');
                     modal = $('#number-fill-modal');
+                    modal.find($('#numberFillErrMessage')).html('');
                     break;
                 case 'number_increment':
-                    $('#numberIncrementErrMessage').html('');
                     modal = $('#number-increment-modal');
+                    modal.find($('#numberIncrementErrMessage')).html('');
                     break;
                 case 'number_manual':
-                    $('#numberErrMessage').html('');
+                    modal = $('#number-manual-modal');
+                    modal.find($('#numberErrMessage')).html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
                         showModalErrMsg('#numberErrMessage', 'How many records to generate?');
                     }
-                    modal = $('#number-manual-modal');
                     break;
                 case 'number_random':
-                    $('#numberRandomErrMessage').html('');
                     modal = $('#number-random-modal');
+                    modal.find($('#numberRandomErrMessage')).html('');
                     break;
                 case 'custom_inorder':
-                    $('#customInorderErrMessage').html('');
                     modal = $('#custom-inorder-modal');
+                    modal.find($('#customInorderErrMessage')).html('');
                     break;
                 case 'custom_random':
-                    $('#customRandomErrMessage').html('');
                     modal = $('#custom-random-modal');
+                    modal.find($('#customRandomErrMessage')).html('');
                     break;
                 default:
                     break;
             }
 
-            $('#field_type').val(field_type);
-            $('#field_length').val(field_length);
-            $('#version_delimiter').val(version_delimiter);
+{#            console.log(modal.find($('#field_type')));#}
+            modal.find($('#field_type')).val(field_type);
+            modal.find($('#field_length')).val(field_length);
+            modal.find($('#version_delimiter')).val(version_delimiter);
             window.currentRow = $(element).closest('tr');
             modal.modal('show');
         }
