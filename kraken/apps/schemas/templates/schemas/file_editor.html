@@ -46,22 +46,19 @@
         function updateColumnParams(select, options, prefix){
             select.empty();
             if (prefix != 'others'){
-                select.append($("<option></option").
+                select.append($("<option></option>").
                         attr({
                             selected: "selected",
                             value: "specify"
                         }).text("- Select -"));
             }
             $.each(options, function(k, v){
-                select.append($("<option></option").attr("value", prefix+'_'+v).text(k));
+                select.append($("<option></option>").attr("value", prefix+'_'+v).text(k));
             });
         }
 
-        function openParamsModal(element, field_type, field_length) {
-            $('#field_type').val(field_type);
-            $('#field_length').val(field_length);
-            window.currentRow = $(element).closest('tr');
-
+        function openParamsModal(element, field_type, field_length, version_delimiter) {
+            var modal = null;
             var value = element.value;
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
@@ -70,42 +67,48 @@
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
                         showModalErrMsg('#textErrMessage', 'How many records to generate?');
                     }
-                    $('#text-manual-modal').modal('show');
+                    modal = $('#text-manual-modal');
                     break;
                 case 'text_fill':
                     $('#textFillMessage').html('');
-                    $('#text-fill-modal').modal('show');
+                    modal = $('#text-fill-modal');
                     break;
                 case 'number_fill':
                     $('#numberFillErrMessage').html('');
-                    $('#number-fill-modal').modal('show');
+                    modal = $('#number-fill-modal');
                     break;
                 case 'number_increment':
                     $('#numberIncrementErrMessage').html('');
-                    $('#number-increment-modal').modal('show');
+                    modal = $('#number-increment-modal');
                     break;
                 case 'number_manual':
                     $('#numberErrMessage').html('');
                     if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
                         showModalErrMsg('#numberErrMessage', 'How many records to generate?');
                     }
-                    $('#number-manual-modal').modal('show');
+                    modal = $('#number-manual-modal');
                     break;
                 case 'number_random':
                     $('#numberRandomErrMessage').html('');
-                    $('#number-random-modal').modal('show');
+                    modal = $('#number-random-modal');
                     break;
                 case 'custom_inorder':
                     $('#customInorderErrMessage').html('');
-                    $('#custom-inorder-modal').modal('show');
+                    modal = $('#custom-inorder-modal');
                     break;
                 case 'custom_random':
                     $('#customRandomErrMessage').html('');
-                    $('#custom-random-modal').modal('show');
+                    modal = $('#custom-random-modal');
                     break;
                 default:
                     break;
             }
+
+            $('#field_type').val(field_type);
+            $('#field_length').val(field_length);
+            $('#version_delimiter').val(version_delimiter);
+            window.currentRow = $(element).closest('tr');
+            modal.modal('show');
         }
 
         function saveDataPayload(event) {
@@ -116,7 +119,7 @@
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            console.log(field_type, field_length, file_column, column_config);
+{#            console.log(field_type, field_length, file_column, column_config);#}
 
             if (file_column == 'Text') {
                 if (column_config == 'text_fill') {
@@ -236,10 +239,11 @@
             var record_number = $('#inputRecordNumber').val();
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
+            var version_delimiter = $('#version_delimiter').val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            console.log(field_type, field_length, file_column, column_config);
+            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
@@ -287,10 +291,11 @@
             var record_number = $('#inputRecordNumber').val();
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
+            var version_delimiter = $('#version_delimiter').val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            console.log(field_type, field_length, file_column, column_config);
+            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             var manual_text = $("#number-manual-modal form input");
             var error_found = false;
@@ -329,7 +334,6 @@
         }
 
         $(function() {
-            //$(".fa-pencil-square-o").on('click', openModal);
             $(".data-generator-form").on('submit', saveDataPayload);
             $(".data-generator-form-text").on('submit', saveManualTextData);
             $(".data-generator-form-number").on('submit', saveManualNumberData);
@@ -496,7 +500,7 @@
 {#                                    <a href="#" data-toggle="modal" data-target="#text-modal"><i class="fa fa-pencil-square-o fa-lg"></i></a>#}
 {#                                </td>#}
                                 <td class="data-generator-params">
-                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}')">
+                                    <select class="form-control" onchange="openParamsModal(this, '{{ field.type }}', '{{ field.length }}', '{{ version.delimiter }}')">
                                         <option value="specify">- Select -</option>
                                         {% if field.type == 'Number' %}
                                             {% for key in column_parameters.number %}
