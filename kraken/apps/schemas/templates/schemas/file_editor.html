@@ -104,10 +104,9 @@
                     break;
             }
 
-{#            console.log(modal.find($('#field_type')));#}
-            modal.find($('#field_type')).val(field_type);
-            modal.find($('#field_length')).val(field_length);
-            modal.find($('#version_delimiter')).val(version_delimiter);
+            modal.find($('input[name="field_type"]')).val(field_type);
+            modal.find($('input[name="field_length"]')).val(field_length);
+            modal.find($('input[name="version_delimiter"]')).val(version_delimiter);
             window.currentRow = $(element).closest('tr');
             modal.modal('show');
         }
@@ -238,9 +237,9 @@
             event.preventDefault();
             var form = $(event.target);
             var record_number = $('#inputRecordNumber').val();
-            var field_type = $('#field_type').val();
-            var field_length = $('#field_length').val();
-            var version_delimiter = $('#version_delimiter').val();
+            var field_type = form.find($('input[name="field_type"]')).val();
+            var field_length = form.find($('input[name="field_length"]')).val();
+            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
@@ -290,9 +289,9 @@
             event.preventDefault();
             var form = $(event.target);
             var record_number = $('#inputRecordNumber').val();
-            var field_type = $('#field_type').val();
-            var field_length = $('#field_length').val();
-            var version_delimiter = $('#version_delimiter').val();
+            var field_type = form.find($('input[name="field_type"]')).val();
+            var field_length = form.find($('input[name="field_length"]')).val();
+            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
