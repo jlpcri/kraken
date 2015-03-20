@@ -16,7 +16,7 @@ String.prototype.format = function () {
 // get number of fields
 var field_number = Number('{{field_number}}');
 
-var file_names = '{{version_files_names | safe}}';
+var file_names = '{{version_files_names }}';
 
 $("button[name='save_file']").on('click', function () {
     if ( !$.trim($("#textareaViewer").val()) ) {   // check file contents empty
@@ -70,10 +70,12 @@ $('#buttonGenerate').click(function () {
     var record_number = $('#inputRecordNumber').val();
 
     if (!$.isNumeric(record_number)) {
-        showErrMsg('Input \'' + record_number + '\' is not a Number');
+        showErrMsg('Records to Generate \'' + record_number + '\' is not a Number');
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    } else if ($.inArray('.', record_number) > -1) {
-        showErrMsg('Input \'' + record_number + '\' can not be decimals. ')
+    } else if ($.inArray('.', record_number) > -1 || record_number <= 0) {
+        showErrMsg('Records to Generate \'' + record_number + '\' should be positive integer. ');
+    } else if (Number(record_number) > 1000) {
+        showErrMsg('Records to Generate should be less than 1000.');
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
@@ -98,7 +100,7 @@ $('#buttonGenerate').click(function () {
         // calculate record number which has value
         var found = true, record_number = 0;
         while (found) {
-            if (!$('#record0{0}'.format(record_number)).val()) {
+            if (!$('#record_0_{0}'.format(record_number)).val()) {
                 found = false;
             } else {
                 record_number++;
@@ -155,7 +157,7 @@ $('#validation_input_to_schema').click(function () {
                 // clear all fields of records
                 for (var i = 0; i < record_number; i++) {
                     for (var j = 0; j < field_number; j++) {
-                        $('#record{0}{1}'.format(j, i)).val('');
+                        $('#record_{0}_{1}'.format(j, i)).val('');
                     }
                 }
             }
@@ -178,8 +180,8 @@ $('#validation_schema_to_input').click(function () {
     // initialize errMsg
     $('#errMsg').html('');
 
-    if ($('#record00').length > 0) {
-        if (!$('#record00').val()) {
+    if ($('#record_0_0').length > 0) {
+        if (!$('#record_0_0').val()) {
             showErrMsg('No input from Schema');
         } else {
             //var field_number = 5;
@@ -188,7 +190,7 @@ $('#validation_schema_to_input').click(function () {
             // calculate record number which has value
             var found = true, record_number = 0;
             while (found) {
-                if (!$('#record0{0}'.format(record_number)).val()) {
+                if (!$('#record_0_{0}'.format(record_number)).val()) {
                     found = false;
                 } else {
                     record_number++;
@@ -251,7 +253,7 @@ function parse_input_fixed(rows) {
                 // check type
                 field = rows[i].substr(position, length);
                 if (field) {
-                    $('#record{0}{1}'.format(j, i)).val(field);
+                    $('#record_{0}_{1}'.format(j, i)).val(field);
                 }
                 position += Number(length);
             }
@@ -315,7 +317,7 @@ function parse_input(rows, delimiter) {
         for (var i = 0; i < rows.length; i++) {
             var columns = rows[i].split(delimiter);
             for (var j = 0; j < field_number; j++) {
-                $('#record{0}{1}'.format(j, i)).val(columns[j]);
+                $('#record_{0}_{1}'.format(j, i)).val(columns[j]);
             }
         }
         showSuccessMsg('No errors found');
@@ -326,7 +328,8 @@ function parse_schema(record_number, delimiter) {
     var schema_string = '',
         undefined_error_found = false,
         field_length_error_found = false,
-        field_type_error_found = false;
+        field_type_error_found = false,
+        inner_loop_error_found = false;
 
     // Check length and type of per field
     for (var i = 0; i < record_number; i++) {
@@ -335,41 +338,50 @@ function parse_schema(record_number, delimiter) {
             var length = $('#field_length_' + j).val();
 
             // check undefined
-            if ($('#record{0}{1}'.format(j, i)).val() == 'undefined') {
+            if ($('#record_{0}_{1}'.format(j, i)).val() == 'undefined') {
                 undefined_error_found = true;
+                inner_loop_error_found = true;
                 showErrMsg('Number of generated records increased for Manual Input');
                 break;
             }
 
             // check length
-            if ($('#record{0}{1}'.format(j, i)).val().length > length) {
+            if ($('#record_{0}_{1}'.format(j, i)).val().length > length) {
                 field_length_error_found = true;
+                inner_loop_error_found = true;
                 //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
-                showErrMsg('Generated data length error');
+                var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Generated data length error of field: {0}'.format(current_field_name));
                 break;
             }
 
             // check type
-            if (type == 'Number' && isNaN($('#record{0}{1}'.format(j, i)).val())) {
+            if (type == 'Number' && isNaN($('#record_{0}_{1}'.format(j, i)).val())) {
                 field_type_error_found = true;
+                inner_loop_error_found = true;
                 //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
                 showErrMsg('Generated data type  error');
                 break;
             }
         }
+
+        if (inner_loop_error_found) {
+            break;
+        }
+
     }
 
     if (!undefined_error_found && !field_length_error_found && !field_type_error_found) {
         for (var i = 0; i < record_number; i++) {
             for (var j = 0; j < field_number; j++) {
                 var length = $('#field_length_' + j).val(),
-                    content = $('#record{0}{1}'.format(j, i)).val();
+                    content = $('#record_{0}_{1}'.format(j, i)).val();
 
                 while (delimiter == '' && content.length < length) {
                     content += ' ';
                 }
                 schema_string += content;
-                if ($('#record{0}{1}'.format(j, i)).val() && j < field_number - 1) {
+                if ($('#record_{0}_{1}'.format(j, i)).val() && j < field_number - 1) {
                     schema_string += delimiter;
                 }
             }
@@ -713,7 +725,7 @@ function generateRecords(record_number) {
         for (i = 0; i < field_number; i++) {
             var contents_body_row = '<tr>';
             for (var j = 0; j < Number(record_number); j++) {
-                contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record' + i + j, data[i][j]);
+                contents_body_row += "<td><input id={0} name='' type='text' class='form-control' value='{1}'></td>".format('record_' + i + '_' + j, data[i][j]);
             }
             contents_body_row += '</tr>';
 
