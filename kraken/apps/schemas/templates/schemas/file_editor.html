@@ -17,6 +17,9 @@
     </style>
     <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
     <script type="text/javascript">
+
+        // this is called when the user selects from the data generator
+        // it calls the updateColumnsParams() based on the option selected
         function specifyModal(element) {
             var value = element.value;
             var columns_params = {{ column_parameters | safe }};
@@ -43,20 +46,25 @@
                     updateColumnParams(select, columns_params['others'], 'others');
             }
         }
+
+        // this is called when a data generator has been selected
+        // it sets the new select options in generator options
         function updateColumnParams(select, options, prefix){
             select.empty();
             if (prefix != 'others'){
-                select.append($("<option></option>").
+                select.append($('<option  data-payload="{}"></option>').
                         attr({
                             selected: "selected",
                             value: "specify"
                         }).text("- Select -"));
             }
             $.each(options, function(k, v){
-                select.append($("<option></option>").attr("value", prefix+'_'+v).text(k));
+                select.append($('<option  data-payload="{}"></option>').attr("value", prefix+'_'+v).text(k));
             });
         }
 
+        // this is called when the user selects from generator options
+        // it calls the correct modal based on the option selected
         function openParamsModal(element, field_type, field_length, version_delimiter) {
             var modal = null;
             var value = element.value;
@@ -114,8 +122,9 @@
         function saveDataPayload(event) {
             event.preventDefault();
             var form = $(event.target);
-            var field_type = $('#field_type').val();
-            var field_length = $('#field_length').val();
+            var field_type = form.find($('input[name="field_type"]')).val();
+            var field_length = form.find($('input[name="field_length"]')).val();
+            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
@@ -227,7 +236,7 @@
                     }
                 }
             }
-
+            console.log(form.serializeArray());
             window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
                 JSON.stringify(form.serializeArray()));
             form.closest(".modal").modal('hide');
@@ -439,11 +448,6 @@
                 <label class="control-label">Delimiter</label><br>
                 <div style="line-height: 38px;">{{ version.delimiter }}</div>
             </div>
-{#            <div class="col-xs-2">#}
-{#                <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;Validation</label><br>#}
-{#                <button type="button" name="validation_schema_to_input" id="validation_input_to_schema" class="btn btn-success btn-sm" style="width: 40%;" title="Generate Schema based on Input">Input</button>#}
-{#                <button type="button" name="validation_input_to_schema" id="validation_schema_to_input" class="btn btn-success btn-sm" style="width: 40%" title="Generate Input based on Schema">Schema</button>#}
-{#            </div>#}
         </div>
 
         <hr>
@@ -487,11 +491,11 @@
                                     <select class="form-control" onchange="specifyModal(this)">
                                         {% if field.type == 'Number' %}
                                             {% for column in number_columns %}
-                                                <option data-payload="{}">{{ column }}</option>
+                                                <option>{{ column }}</option>
                                             {% endfor %}
                                         {% else %}
                                             {% for column in file_columns %}
-                                                <option data-payload="{}">{{ column }}</option>
+                                                <option>{{ column }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>
@@ -504,11 +508,11 @@
                                         <option value="specify">- Select -</option>
                                         {% if field.type == 'Number' %}
                                             {% for key in column_parameters.number %}
-                                                <option value="number_{{ key|lower }}">{{ key }}</option>
+                                                <option value="number_{{ key|lower }}" data-payload="{}">{{ key }}</option>
                                             {% endfor %}
                                         {% else %}
                                             {% for key in column_parameters.text %}
-                                                <option value="text_{{ key|lower }}">{{ key }}</option>
+                                                <option value="text_{{ key|lower }}" data-payload="{}">{{ key }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>
