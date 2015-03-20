@@ -190,7 +190,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length {1} characters.'.format(i+1, field_length));
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' should be a number'.format(lines[i]));
@@ -210,7 +210,7 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds field length {1} characters.'.format(i+1, field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
                                 showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
