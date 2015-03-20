@@ -350,7 +350,8 @@ function parse_schema(record_number, delimiter) {
                 field_length_error_found = true;
                 inner_loop_error_found = true;
                 //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
-                showErrMsg('Generated data length error: Line {0}, Field {1}'.format(i+1, j+1));
+                var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Generated data length error of field: {0}'.format(current_field_name));
                 break;
             }
 
