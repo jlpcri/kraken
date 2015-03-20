@@ -52,22 +52,25 @@
         function updateColumnParams(select, options, prefix){
             select.empty();
             if (prefix != 'others'){
-                select.append($('<option  data-payload="{}"></option>').
+                select.append($('<option  data-payload="[]"></option>').
                         attr({
                             selected: "selected",
                             value: "specify"
                         }).text("- Select -"));
             }
             $.each(options, function(k, v){
-                select.append($('<option  data-payload="{}"></option>').attr("value", prefix+'_'+v).text(k));
+                select.append($('<option data-payload="[]"></option>').attr("value", prefix+'_'+v).text(k));
             });
         }
 
         // this is called when the user selects from generator options
         // it calls the correct modal based on the option selected
         function openParamsModal(element, field_type, field_length, version_delimiter) {
+            window.currentRow = $(element).closest('tr');
             var modal = null;
             var value = element.value;
+            var payload = $.parseJSON(window.currentRow.find(".data-generator-params > select > option:selected").attr('data-payload'));
+            console.log(payload);
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
                 case 'text_manual':
@@ -79,14 +82,17 @@
                     break;
                 case 'text_fill':
                     modal = $('#text-fill-modal');
+                    modal.find($('input[name="inputFill"]')).val("");
                     modal.find($('#textFillMessage')).html('');
                     break;
                 case 'number_fill':
                     modal = $('#number-fill-modal');
+                    modal.find($('input[name="inputFill"]')).val("");
                     modal.find($('#numberFillErrMessage')).html('');
                     break;
                 case 'number_increment':
                     modal = $('#number-increment-modal');
+                    modal.find($('input[name="inputIncrement"]')).val("");
                     modal.find($('#numberIncrementErrMessage')).html('');
                     break;
                 case 'number_manual':
@@ -98,24 +104,38 @@
                     break;
                 case 'number_random':
                     modal = $('#number-random-modal');
+                    modal.find($('input[name="min"]')).val("");
+                    modal.find($('input[name="max"]')).val("");
                     modal.find($('#numberRandomErrMessage')).html('');
                     break;
                 case 'custom_inorder':
                     modal = $('#custom-inorder-modal');
+                    modal.find($('textarea[name="list"]')).val("");
                     modal.find($('#customInorderErrMessage')).html('');
                     break;
                 case 'custom_random':
                     modal = $('#custom-random-modal');
+                    modal.find($('textarea[name="list"]')).val("");
                     modal.find($('#customRandomErrMessage')).html('');
                     break;
                 default:
                     break;
             }
-
-            modal.find($('input[name="field_type"]')).val(field_type);
-            modal.find($('input[name="field_length"]')).val(field_length);
-            modal.find($('input[name="version_delimiter"]')).val(version_delimiter);
-            window.currentRow = $(element).closest('tr');
+            console.log(payload.length);
+            if (payload.length > 0) {
+                for (var i = 0; i < payload.length; i++) {
+                    if (payload[i].name == 'list') {
+                        modal.find($("textarea[name='" + payload[i].name + "']")).val(payload[i].value);
+                    } else {
+                        modal.find($("input[name='" + payload[i].name + "']")).val(payload[i].value);
+                    }
+                }
+            } else {
+                modal.find($('input[name="field_type"]')).val(field_type);
+                modal.find($('input[name="field_length"]')).val(field_length);
+                modal.find($('input[name="version_delimiter"]')).val(version_delimiter);
+                modal.find($('input[name="option_value"]')).val(value);
+            }
             modal.modal('show');
         }
 
@@ -128,7 +148,7 @@
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-{#            console.log(field_type, field_length, file_column, column_config);#}
+            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             if (file_column == 'Text') {
                 if (column_config == 'text_fill') {
@@ -237,7 +257,7 @@
                 }
             }
             console.log(form.serializeArray());
-            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
+            window.currentRow.find(".data-generator-params > select > option:selected")[0].setAttribute('data-payload',
                 JSON.stringify(form.serializeArray()));
             form.closest(".modal").modal('hide');
         }
@@ -508,11 +528,11 @@
                                         <option value="specify">- Select -</option>
                                         {% if field.type == 'Number' %}
                                             {% for key in column_parameters.number %}
-                                                <option value="number_{{ key|lower }}" data-payload="{}">{{ key }}</option>
+                                                <option value="number_{{ key|lower }}" data-payload="[]">{{ key }}</option>
                                             {% endfor %}
                                         {% else %}
                                             {% for key in column_parameters.text %}
-                                                <option value="text_{{ key|lower }}" data-payload="{}">{{ key }}</option>
+                                                <option value="text_{{ key|lower }}" data-payload="[]">{{ key }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>
