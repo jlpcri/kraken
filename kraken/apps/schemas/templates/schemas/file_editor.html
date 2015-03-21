@@ -74,24 +74,19 @@
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
                 case 'text_manual':
-                    $('#textErrMessage').html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Records to generate should be positive integer.');
                     modal = $('#text-manual-modal');
                     modal.find($('#textErrMessage')).html('');
-                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'How many records to generate?');
+                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
+                        showModalErrMsg('#textErrMessage', 'Must enter a positive number to generate records.');
                     }
                     break;
                 case 'text_fill':
                     modal = $('#text-fill-modal');
                     modal.find($('input[name="inputFill"]')).val("");
-                    modal.find($('#textFillMessage')).html('');
                     break;
                 case 'number_fill':
                     modal = $('#number-fill-modal');
                     modal.find($('input[name="inputFill"]')).val("");
-                    modal.find($('#numberFillErrMessage')).html('');
                     break;
                 case 'number_increment':
                     modal = $('#number-increment-modal');
@@ -101,11 +96,8 @@
                 case 'number_manual':
                     modal = $('#number-manual-modal');
                     modal.find($('#numberErrMessage')).html('');
-                    if (Number(record_number) == 0 || !$.isNumeric(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'How many records to generate?');
-                    $('#numberErrMessage').html('');
                     if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {
-                        showModalErrMsg('#numberErrMessage', 'Records to generate should be positive integer.');
+                        showModalErrMsg('#numberErrMessage', 'Must enter a positive number to generate records.');
                     }
                     break;
                 case 'number_random':
@@ -164,13 +156,13 @@
                         showModalErrMsg('#textFillErrMessage', 'No inputs');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#textFillErrMessage', input + ' exceeds length limit of ' + field_length.toString());
+                        showModalErrMsg('#textFillErrMessage', input + ' exceeds the length constraint of ' + field_length.toString());
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number') {
-                        showModalErrMsg('#textFillErrMessage', input + 'violates numeric constraint');
+                        showModalErrMsg('#textFillErrMessage', input + ' violates numeric constraint');
                         return false;
                     } else if (version_delimiter == 'Comma' && ($.inArray(',', input) > -1 )) {
-                        showModalErrMsg('#textFillErrMessage', 'Input cannot include comma \',\'');
+                        showModalErrMsg('#textFillErrMessage', 'Input cannot include commas \',\'');
                         return false;
                     }
                 }
@@ -181,16 +173,16 @@
                     var min = $(this).find("input[name='min']").val();
                     var max = $(this).find("input[name='max']").val();
                     if (!min || !max) {
-                        showModalErrMsg('#numberRandomErrMessage', 'Both minimum and maximum are required fields.');
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum and maximum values are required.');
                         return false;
                     } else if (!$.isNumeric(min) || !$.isNumeric(max)) {
-                        showModalErrMsg('#numberRandomErrMessage', 'Minimum and maximum must both be numbers');
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum and maximum values must be numbers');
                         return false;
                     } else if (min.length > field_length || max.length > field_length){
-                        showModalErrMsg('#numberRandomErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
+                        showModalErrMsg('#numberRandomErrMessage', 'Data generated will be longer than the length constraint of ' + field_length.toString());
                         return false;
                     } else if (Number(min) > Number(max)) {
-                        showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than maximum');
+                        showModalErrMsg('#numberRandomErrMessage', 'Minimum value is less than maximum value');
                         return false;
                     }
                 } else if (column_config == 'number_increment') {
@@ -200,10 +192,10 @@
                         showModalErrMsg('#numberIncrementErrMessage', 'Please enter an initial value.');
                         return false;
                     } else if (!$.isNumeric(input)) {
-                        showModalErrMsg('#numberIncrementErrMessage', 'Initial value is not a number.');
+                        showModalErrMsg('#numberIncrementErrMessage', 'Initial value must be a number.');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#numberIncrementErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
+                        showModalErrMsg('#numberIncrementErrMessage', 'Data generated will be longer than the length constraint of ' + field_length.toString());
                         return false;
                     }
                 } else if (column_config == 'number_fill') {
@@ -213,7 +205,7 @@
                         showModalErrMsg('#numberFillErrMessage', 'Input must be numeric.');
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#numberFillErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
+                        showModalErrMsg('#numberFillErrMessage', 'Data generated will be longer than the length constraint of ' + field_length.toString());
                         return false;
                     }
                 }
@@ -223,7 +215,7 @@
                 if (column_config == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customRandomErrMessage', 'List cannot be blank');
+                        showModalErrMsg('#customRandomErrMessage', 'List must contain at least one value.');
                         return false;
                     } else {
                         var lines = input.split('\n');
@@ -232,10 +224,10 @@
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' should be a number'.format(lines[i]));
+                                showModalErrMsg('#customRandomErrMessage', 'Line \'{0}\' must be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
-                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
+                                showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} cannot include commas \',\''.format(i+1));
                                 return false;
                             }
                         }
@@ -249,13 +241,13 @@
                         var lines = input.split('\n');
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
-                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
+                                showModalErrMsg('#customInorderErrMessage', 'Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
                                 return false;
                             } else if (!$.isNumeric(lines[i]) && field_type == 'Number') {
-                                showModalErrMsg('#customInorderErrMessage', 'Option {0} should be a number'.format(lines[i]));
+                                showModalErrMsg('#customInorderErrMessage', 'Option {0} must be a number'.format(lines[i]));
                                 return false;
                             } else if (version_delimiter == 'Comma' && ($.inArray(',', lines[i]) > -1 )) {
-                                showModalErrMsg('#customInorderErrMessage', 'Input of Line {0} cannot include comma \',\''.format(i+1));
+                                showModalErrMsg('#customInorderErrMessage', 'Line {0} cannot include commas \',\''.format(i+1));
                                 return false;
                             }
                         }
@@ -289,19 +281,19 @@
                 $.each(manual_text, function (index, value) {
                     var input = $(value).val();
                     if (input == '') {
-                        showModalErrMsg('#textErrMessage', 'No input of Record{0}'.format(index+1));
+                        showModalErrMsg('#textErrMessage', 'No input for Record{0}'.format(index+1));
                         error_found = true;
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#textErrMessage', 'Length of Record{0} exceed limitation'.format(index+1));
+                        showModalErrMsg('#textErrMessage', 'Record{0} exceeds length constraint'.format(index+1));
                         error_found = true;
                         return false;
                     } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Input of Record {0} cannot include comma.'.format(index+1));
+                        showModalErrMsg('#textErrMessage', 'Record {0} cannot include commas.'.format(index+1));
                         error_found = true;
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'Input of Record{0} should be number'.format(index+1));
+                        showModalErrMsg('#textErrMessage', 'Record{0} must be a number'.format(index+1));
                         error_found = true;
                         return false;
                     }
@@ -341,15 +333,15 @@
                 $.each(manual_text, function (index, value) {
                     var input = $(value).val();
                     if (input == '' && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'No input of Record{0}'.format(index + 1));
+                        showModalErrMsg('#numberErrMessage', 'Record{0} must contain a value'.format(index + 1));
                         error_found = true;
                         return false;
                     } else if (input.length > field_length && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'Length of Record{0} exceed limitation'.format(index + 1));
+                        showModalErrMsg('#numberErrMessage', 'Record{0} exceeds length constraint'.format(index + 1));
                         error_found = true;
                         return false;
                     } else if (!$.isNumeric(input) && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'Input of Record{0} should be number'.format(index + 1));
+                        showModalErrMsg('#numberErrMessage', 'Record{0} must be a number'.format(index + 1));
                         error_found = true;
                         return false;
                     }
