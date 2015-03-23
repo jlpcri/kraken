@@ -219,7 +219,7 @@ function parse_input_fixed(rows) {
     for (var i = 0; i < rows.length; i++) {
         if (rows[i].length > total_length) {
             field_length_error_found = true;
-            showErrMsg('Row ' + Number(i + 1) + ' exceeds total length of fields.');
+            showErrMsg('Row ' + Number(i + 1) + ' exceeds total length of schema.');
             break;
         }
     }
@@ -235,7 +235,8 @@ function parse_input_fixed(rows) {
                 field = rows[i].substr(position, length);
                 if (field && type == 'Number' && isNaN(field)) {
                     field_type_error_found = true;
-                    showErrMsg('Row ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
+                    var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Row \'{0}\' Field \'{1}\' is not Number.'.format(rows[i].substring(0, 25), current_field_name));
                     break;
                 }
                 position += Number(length);
@@ -296,13 +297,15 @@ function parse_input(rows, delimiter) {
                 // check length
                 if (columns[j] && columns[j].length > length) {
                     field_length_error_found = true;
-                    showErrMsg('\'' + rows[i].substring(0, 25) +'\'' + ' Field ' + Number(j + 1) + ' exceeds limitation.');
+                    var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Row \'{0}\' Field \'{1}\' exceeds length limitation.'.format(rows[i].substring(0, 25), current_field_name));
                     break;
                 }
                 // check type
                 if (columns[j] && type == 'Number' && isNaN(columns[j])) {
                     field_type_error_found = true;
-                    showErrMsg('\'' + rows[i].substring(0, 25) +'\''+ ' Field ' + Number(j + 1) + ' is not Number.');
+                    var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('\'{0}\' Field \'{1}\' is not Number.'.format(rows[i].substring(0, 25), current_field_name));
                     break;
                 }
             }
