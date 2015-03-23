@@ -70,7 +70,6 @@
             var modal = null;
             var value = element.value;
             var payload = $.parseJSON(window.currentRow.find(".data-generator-params > select > option:selected").attr('data-payload'));
-            console.log(payload);
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
                 case 'text_manual':
@@ -119,7 +118,7 @@
                 default:
                     break;
             }
-            console.log(payload.length);
+
             if (payload.length > 0) {
                 for (var i = 0; i < payload.length; i++) {
                     if (payload[i].name == 'list') {
@@ -145,8 +144,6 @@
             var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
-
-            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             if (file_column == 'Text') {
                 if (column_config == 'text_fill') {
@@ -254,7 +251,7 @@
                     }
                 }
             }
-            console.log(form.serializeArray());
+
             window.currentRow.find(".data-generator-params > select > option:selected")[0].setAttribute('data-payload',
                 JSON.stringify(form.serializeArray()));
             form.closest(".modal").modal('hide');
@@ -269,8 +266,6 @@
             var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
-
-            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
@@ -321,8 +316,6 @@
             var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
             var file_column = window.currentRow.find('.data-generator-select > select').val();
             var column_config = window.currentRow.find('.data-generator-params > select').val();
-
-            console.log(field_type, field_length, version_delimiter, file_column, column_config);
 
             var manual_text = $("#number-manual-modal form input");
             var error_found = false;
