@@ -81,10 +81,11 @@ $('#buttonGenerate').click(function () {
     } else {
         // check column configuration error
         var error_found = false;
-        $("#tableDefinitions tbody tr").each(function() {
-            var column_config = $(this).find(".data-generator-params > select").val();
-            if (column_config == 'specify') {
-                showErrMsg('Please select column configuration');
+        $("#tableDefinitions tbody tr").each(function(index) {
+            var generator_options = $(this).find(".data-generator-params > select").val();
+            if (generator_options == 'specify') {
+                var current_field_name = $('#field_type_{0}'.format(index)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Please select field \'{0}\' Generator Options'.format(current_field_name));
                 error_found = true;
                 return false;
             }
@@ -341,12 +342,12 @@ function parse_schema(record_number, delimiter) {
             var length = $('#field_length_' + j).val();
 
             // check undefined
-            if ($('#record_{0}_{1}'.format(j, i)).val() == 'undefined') {
-                undefined_error_found = true;
-                inner_loop_error_found = true;
-                showErrMsg('Number of generated records increased for Manual Input');
-                break;
-            }
+//            if ($('#record_{0}_{1}'.format(j, i)).val() == 'undefined') {
+//                undefined_error_found = true;
+//                inner_loop_error_found = true;
+//                showErrMsg('Number of generated records increased for Manual Input');
+//                break;
+//            }
 
             // check length
             if ($('#record_{0}_{1}'.format(j, i)).val().length > length) {
@@ -454,19 +455,21 @@ function generateRecords(record_number) {
                     }
                 }
             } catch (e) {
-                if (generate != 'random') {
-                    var rowindex = $(this).closest('tr').index() + 1;
-                    showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                if (!($.inArray(generate, ['random', 'manual']) > -1)) {
+                    var rowindex = $(this).closest('tr').index();
+                    var current_field_name = $('#field_type_{0}'.format(rowindex)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Field \'{0}\' Generator Options invalid'.format(current_field_name));
                     return false;
                 }
             }
 
-            if (generate == "manual") {
-                // generate empty fields
-                for (var i = 0; i < record_number; i++) {
-                    d.push(p[i]);
-                }
-            } else if (generate == "fill") {
+//            if (generate == "manual") {
+//                // generate empty fields
+//                for (var i = 0; i < record_number; i++) {
+//                    d.push(p[i]);
+//                }
+//            }
+            if (generate == "fill") {
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);
@@ -513,17 +516,21 @@ function generateRecords(record_number) {
                     }
                 }
             } catch (e) {
-                var rowindex = $(this).closest('tr').index() + 1;
-                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
-                return false;
+                if (!($.inArray(generate, ['manual']) > -1)) {
+                    var rowindex = $(this).closest('tr').index();
+                    var current_field_name = $('#field_type_{0}'.format(rowindex)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Field \'{0}\' Generator Options invalid'.format(current_field_name));
+                    return false;
+                }
             }
 
-            if (generate == "manual") {
-                // generate empty fields
-                for (var i = 0; i < record_number; i++) {
-                    d.push(p[i]);
-                }
-            } else if (generate == "fill") {
+//            if (generate == "manual") {
+//                // generate empty fields
+//                for (var i = 0; i < record_number; i++) {
+//                    d.push(p[i]);
+//                }
+//            }
+            if (generate == "fill") {
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);

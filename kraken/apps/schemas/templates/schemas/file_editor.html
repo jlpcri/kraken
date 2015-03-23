@@ -65,13 +65,13 @@
             var value = element.value;
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
-                case 'text_manual':
-                    $('#textErrMessage').html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Records to generate should be positive integer.');
-                    }
-                    $('#text-manual-modal').modal('show');
-                    break;
+{#                case 'text_manual':#}
+{#                    $('#textErrMessage').html('');#}
+{#                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {#}
+{#                        showModalErrMsg('#textErrMessage', 'Records to generate should be positive integer.');#}
+{#                    }#}
+{#                    $('#text-manual-modal').modal('show');#}
+{#                    break;#}
                 case 'text_fill':
                     $('#textFillMessage').html('');
                     $('#text-fill-modal').modal('show');
@@ -84,13 +84,13 @@
                     $('#numberIncrementErrMessage').html('');
                     $('#number-increment-modal').modal('show');
                     break;
-                case 'number_manual':
-                    $('#numberErrMessage').html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {
-                        showModalErrMsg('#numberErrMessage', 'Records to generate should be positive integer.');
-                    }
-                    $('#number-manual-modal').modal('show');
-                    break;
+{#                case 'number_manual':#}
+{#                    $('#numberErrMessage').html('');#}
+{#                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {#}
+{#                        showModalErrMsg('#numberErrMessage', 'Records to generate should be positive integer.');#}
+{#                    }#}
+{#                    $('#number-manual-modal').modal('show');#}
+{#                    break;#}
                 case 'number_random':
                     $('#numberRandomErrMessage').html('');
                     $('#number-random-modal').modal('show');
@@ -113,12 +113,12 @@
             var form = $(event.target);
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
-            var file_column = window.currentRow.find('.data-generator-select > select').val();
-            var column_config = window.currentRow.find('.data-generator-params > select').val();
+            var data_generator = window.currentRow.find('.data-generator-select > select').val();
+            var generator_options = window.currentRow.find('.data-generator-params > select').val();
 
-            //console.log(field_type, field_length, file_column, column_config);
-            if (file_column == 'Text') {
-                if (column_config == 'text_fill') {
+            //console.log(field_type, field_length, data_generator, generator_options);
+            if (data_generator == 'Text') {
+                if (generator_options == 'text_fill') {
                     var input = $(this).find("input[name='inputFill']").val();
 
                     if (!input) {
@@ -136,8 +136,8 @@
                     }
                 }
 
-            } else if (file_column == 'Number') {
-                if (column_config == 'number_random') {
+            } else if (data_generator == 'Number') {
+                if (generator_options == 'number_random') {
                     $("#numberRandomErrMessage").html('');
                     var min = $(this).find("input[name='min']").val();
                     var max = $(this).find("input[name='max']").val();
@@ -154,7 +154,7 @@
                         showModalErrMsg('#numberRandomErrMessage', 'Minimum is less than maximum');
                         return false;
                     }
-                } else if (column_config == 'number_increment') {
+                } else if (generator_options == 'number_increment') {
                     $('#numberIncrementErrMessage').html('');
                     var input = $(this).find("input[name='inputIncrement']").val();
                     if (!input) {
@@ -167,7 +167,7 @@
                         showModalErrMsg('#numberIncrementErrMessage', 'Data generated will be longer than the schema length constraint of ' + field_length.toString());
                         return false;
                     }
-                } else if (column_config == 'number_fill') {
+                } else if (generator_options == 'number_fill') {
                     $('#numberFillErrMessage').html('');
                     var input = $(this).find("input[name='inputFill']").val();
                     if (!input || !$.isNumeric(input)) {
@@ -179,9 +179,9 @@
                     }
                 }
 
-            } else if (file_column == 'Custom List') {
+            } else if (data_generator == 'Custom List') {
                 var input = $(this).find("textarea[name='list']").val();
-                if (column_config == 'custom_random') {
+                if (generator_options == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
                         showModalErrMsg('#customRandomErrMessage', 'List cannot be blank');
@@ -201,7 +201,7 @@
                             }
                         }
                     }
-                } else if (column_config == 'custom_inorder'){
+                } else if (generator_options == 'custom_inorder'){
                     $('#customInorderErrMessage').html('');
                     if (!input) {
                         showModalErrMsg('#customInorderErrMessage', 'List cannot be blank');
@@ -235,10 +235,10 @@
             var record_number = $('#inputRecordNumber').val();
             var field_type = $('#field_type').val();
             var field_length = $('#field_length').val();
-            //var file_column = window.currentRow.find('.data-generator-select > select').val();
-            //var column_config = window.currentRow.find('.data-generator-params > select').val();
+            //var data_generator = window.currentRow.find('.data-generator-select > select').val();
+            //var generator_options = window.currentRow.find('.data-generator-params > select').val();
 
-            //console.log(field_type, field_length, file_column, column_config);
+            //console.log(field_type, field_length, data_generator, generator_options);
 
             var error_found = false;
             var manual_text = $("#text-manual-modal form input");
@@ -517,7 +517,7 @@
                 <p> No fields have been added to this schema version.</p>
             {% endif %}
             </div>
-            <div class="col-md-6" hidden>
+            <div class="col-md-6" >
                 <div class="table-responsive" id="add_records" style="overflow: auto;">
 
                 </div>
