@@ -437,7 +437,7 @@ function generateRecords(record_number) {
         // Generator Options
         var generate = $(this).find(".data-generator-params option:selected").val();
         // Generator Option Parameters
-        var payload = $(this).find(".data-generator-params > select").attr('data-payload');
+        var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
         var d = [];
         if (type == "Text") {
             generate = generate.substring(5);
