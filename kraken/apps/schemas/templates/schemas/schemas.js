@@ -814,7 +814,7 @@ function generateRecords(record_number) {
 }
 
 function generate_empty_records_modal(record_number, params, location) {
-    console.log(params);
+    //console.log(params);
     var cell_id = '';
     if (location == '#text-manual-input') {
         cell_id = 'text';
