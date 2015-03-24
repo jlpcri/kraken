@@ -119,21 +119,23 @@
                     break;
             }
 
-            if (payload.length > 0) {
-                for (var i = 0; i < payload.length; i++) {
-                    if (payload[i].name == 'list') {
-                        modal.find($("textarea[name='" + payload[i].name + "']")).val(payload[i].value);
-                    } else {
-                        modal.find($("input[name='" + payload[i].name + "']")).val(payload[i].value);
+            if (modal) {
+                if (payload.length > 0) {
+                    for (var i = 0; i < payload.length; i++) {
+                        if (payload[i].name == 'list') {
+                            modal.find($("textarea[name='" + payload[i].name + "']")).val(payload[i].value);
+                        } else {
+                            modal.find($("input[name='" + payload[i].name + "']")).val(payload[i].value);
+                        }
                     }
+                } else {
+                    modal.find($('input[name="field_type"]')).val(field_type);
+                    modal.find($('input[name="field_length"]')).val(field_length);
+                    modal.find($('input[name="version_delimiter"]')).val(version_delimiter);
+                    modal.find($('input[name="option_value"]')).val(value);
                 }
-            } else {
-                modal.find($('input[name="field_type"]')).val(field_type);
-                modal.find($('input[name="field_length"]')).val(field_length);
-                modal.find($('input[name="version_delimiter"]')).val(version_delimiter);
-                modal.find($('input[name="option_value"]')).val(value);
+                modal.modal('show');
             }
-            modal.modal('show');
         }
 
         function saveDataPayload(event) {
