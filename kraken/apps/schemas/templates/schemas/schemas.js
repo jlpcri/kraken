@@ -79,10 +79,12 @@ $('#buttonGenerate').click(function () {
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
-        // check column configuration error
-        var error_found = false;
+        // check Generator Options not selected error
+        var data_generator,
+            generator_options,
+            error_found = false;
         $("#tableDefinitions tbody tr").each(function(index) {
-            var generator_options = $(this).find(".data-generator-params > select").val();
+            generator_options = $(this).find(".data-generator-params > select").val();
             if (generator_options == 'specify') {
                 var current_field_name = $('#field_type_{0}'.format(index)).closest('tr').find('td:first').text().trim();
                 showErrMsg('Please select field \'{0}\' Generator Options'.format(current_field_name));
@@ -94,6 +96,61 @@ $('#buttonGenerate').click(function () {
             return false;
         }
 
+        // check Generator Options is manual and open modal, with Custom List inOrder
+        var field_name,
+            field_type,
+            field_length,
+            payload,
+            custom_inorder_list,
+            tmp_input_params,
+            manual_input = [],
+            custom_list = [],
+            manual_input_params = [];
+        $('#tableDefinitions tbody tr').each(function(index) {
+            field_name = $(this).find('td:first').text().trim();
+            field_length = $(this).find('td:nth-child(2)').text();
+            field_type = $(this).find('td:nth-child(3)').text();
+            //data_generator = $(this).find('.data-generator-select > select').val();
+            generator_options = $(this).find('.data-generator-params > select').val();
+            if (generator_options.slice(-6) == 'manual' ) {
+                tmp_input_params = {};
+                tmp_input_params['field_name'] = field_name;
+                tmp_input_params['field_type'] = field_type;
+                tmp_input_params['field_length'] = field_length;
+                tmp_input_params['index'] = index;
+                manual_input.push(tmp_input_params);
+            } else if (generator_options.slice(-7) == 'inorder') {
+                tmp_input_params = {};
+                custom_inorder_list = [];
+                field_name = $(this).find('td:first').text().trim();
+                var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
+                try {
+                    var p = $.parseJSON(payload);
+                    for (var i = 0; i< p.length; i++) {
+                        if (p[i]['name'] == 'list') {
+                            custom_inorder_list = p[i]['value'].split('\n');
+                        }
+                    }
+                    tmp_input_params['index'] = index;
+                    tmp_input_params['field_name'] = field_name;
+                    tmp_input_params['payload'] = custom_inorder_list;
+                    custom_list.push(tmp_input_params);
+                } catch (e) {
+                    ;
+                }
+            }
+        });
+        manual_input_params.push(manual_input);
+        manual_input_params.push(custom_list);
+
+        // Open manual input modal
+        if (manual_input_params[0].length > 0) {
+            var manual_input_modal = $('#manual-input-modal');
+            generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
+            manual_input_modal.modal('show');
+        }
+
+        // Generate records based on payload of each field
         generateRecords(record_number);
 
         var delimiter = '{{version.delimiter}}';
@@ -756,7 +813,8 @@ function generateRecords(record_number) {
     }
 }
 
-function generate_empty_records_modal(record_number, location) {
+function generate_empty_records_modal(record_number, params, location) {
+    console.log(params);
     var cell_id = '';
     if (location == '#text-manual-input') {
         cell_id = 'text';
@@ -765,16 +823,36 @@ function generate_empty_records_modal(record_number, location) {
     }
 
 
-    var contents_head = '<tr>';
+    var contents_head = '<tr><th>Name</th><th>Type</th><th>Length</th>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
     }
     contents_head += '</tr>';
 
-    var contents_body = '';
-    for (var i = 0; i < Number(record_number); i++) {
-        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
+    var contents_body_row,
+        contents_body = '';
+    for (var i = 0; i < params[0].length; i++) {
+        contents_body_row = '<tr><td>{0}</td><td>{1}</td><td>{2}</td>'.format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length']);
+        for (var j = 0; j < Number(record_number); j++) {
+            contents_body_row += "<td><input id='' name='' type='text' class='form-control' ></td>";
+        }
+        contents_body_row += '</tr>';
+        contents_body += contents_body_row;
     }
+    for (var i = 0; i < params[1].length; i++){
+        var inc = 0;
+        contents_body_row = '<tr><td>{0}</td><td></td><td></td>'.format(params[1][i]['field_name']);
+        for (var j = 0; j< Number(record_number); j++) {
+            if (inc >= params[1][i]['payload'].length) {
+                inc = 0;
+            }
+            contents_body_row += '<td>{0}</td>'.format(params[1][i]['payload'][inc]);
+            inc++;
+        }
+        contents_body_row += '</tr>';
+        contents_body += contents_body_row;
+    }
+
     var contents = "<table id='tableData' class='table'>" +
         " <thead>" +
         contents_head +

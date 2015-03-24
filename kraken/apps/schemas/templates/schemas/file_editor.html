@@ -360,39 +360,39 @@
             $(".data-generator-form-text").on('submit', saveManualTextData);
             $(".data-generator-form-number").on('submit', saveManualNumberData);
 
-            $('#text-manual-modal').on('show.bs.modal', function(event){
-                var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manually input
-                if (!($.inArray('.', record_number) > -1)) {
-                    generate_empty_records_modal(record_number, '#text-manual-input');
-                }
+{#            $('#manual-input-modal').on('show.bs.modal', function(event){#}
+{#                var record_number = $('#inputRecordNumber').val();#}
+{#                // generate empty cell for user manually input#}
+{#                if (!($.inArray('.', record_number) > -1)) {#}
+{#                    generate_empty_records_modal(record_number, '#manual-input');#}
+{#                }#}
+{##}
+{#                try {#}
+{#                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));#}
+{#                    for (var i = 0; i < p.length; i++) {#}
+{#                        $('#text' + i).val(p[i]);#}
+{#                    }#}
+{#                } catch (e) {#}
+{#                    ;#}
+{#                }#}
+{#            });#}
 
-                try {
-                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
-                    for (var i = 0; i < p.length; i++) {
-                        $('#text' + i).val(p[i]);
-                    }
-                } catch (e) {
-                    ;
-                }
-            });
-
-            $('#number-manual-modal').on('show.bs.modal', function(event){
-                var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manually input
-                if (!($.inArray('.', record_number) > -1)) {
-                    generate_empty_records_modal(record_number, '#number-manual-input');
-                }
-
-                try {
-                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
-                    for (var i = 0; i < p.length; i++) {
-                        $('#number' + i).val(p[i]);
-                    }
-                } catch (e) {
-                    ;
-                }
-            });
+{#            $('#number-manual-modal').on('show.bs.modal', function(event){#}
+{#                var record_number = $('#inputRecordNumber').val();#}
+{#                // generate empty cell for user manually input#}
+{#                if (!($.inArray('.', record_number) > -1)) {#}
+{#                    generate_empty_records_modal(record_number, '#number-manual-input');#}
+{#                }#}
+{##}
+{#                try {#}
+{#                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));#}
+{#                    for (var i = 0; i < p.length; i++) {#}
+{#                        $('#number' + i).val(p[i]);#}
+{#                    }#}
+{#                } catch (e) {#}
+{#                    ;#}
+{#                }#}
+{#            });#}
 
             try {
                 var payloads = $.parseJSON('{{ payloads|safe }}');

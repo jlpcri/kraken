@@ -1,26 +1,27 @@
-<!-- Text Manual Input Modal -->
-<div class="modal fade" id="text-manual-modal">
+
+<!-- Manual Input Modal include Custom List InOrder -->
+<div class="modal fade" id="manual-input-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <form class="data-generator-form-text">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Text Manual Inputs</h4>
+                    <h4 class="modal-title">Manual Inputs</h4>
                 </div>
                 <div class="modal-body">
 
-                    <div class="table-responsive" id="text-manual-input" style="overflow: auto;">
+                    <div class="table-responsive" id="manual-input" style="overflow: auto;">
                     </div>
 
                     <div class="row">
                         <div class="col-xs-1">
-                            <input type="hidden" id="field_type" name="field_type" value="">
-                            <input type="hidden" id="field_length" name="field_length" value="">
-                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">
-                            <input type="hidden" id="option_value" name="option_value" value="">
+{#                            <input type="hidden" id="field_type" name="field_type" value="">#}
+{#                            <input type="hidden" id="field_length" name="field_length" value="">#}
+{#                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">#}
+{#                            <input type="hidden" id="option_value" name="option_value" value="">#}
                         </div>
                         <div class="col-xs-7">
-                            <div id="textErrMessage"></div>
+                            <div id="manualInputErrMessage"></div>
                         </div>
                     </div>
 
@@ -163,39 +164,6 @@
                         </div>
                         <div class="col-xs-10">
                             <div id="numberIncrementErrMessage"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary param-save">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Number Manual Input Modal -->
-<div class="modal fade" id="number-manual-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form class="data-generator-form-number">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Number Manual Inputs</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive" id="number-manual-input" style="overflow: auto;">
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-1">
-                            <input type="hidden" id="field_type" name="field_type" value="">
-                            <input type="hidden" id="field_length" name="field_length" value="">
-                            <input type="hidden" id="version_delimiter" name="version_delimiter" value="">
-                            <input type="hidden" id="option_value" name="option_value" value="">
-                        </div>
-                        <div class="col-xs-10">
-                            <div id="numberErrMessage"></div>
                         </div>
                     </div>
                 </div>
