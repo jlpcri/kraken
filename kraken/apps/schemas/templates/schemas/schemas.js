@@ -355,7 +355,7 @@ function parse_schema(record_number, delimiter) {
                 inner_loop_error_found = true;
                 //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                 var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
-                showErrMsg('Generated data length error of field: {0}'.format(current_field_name));
+                showErrMsg('Field \'{0}\' generated data exceeds length of field.'.format(current_field_name));
                 break;
             }
 
@@ -364,7 +364,9 @@ function parse_schema(record_number, delimiter) {
                 field_type_error_found = true;
                 inner_loop_error_found = true;
                 //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
-                showErrMsg('Generated data type  error');
+                var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Field \'{0}\' generated data is not a Number.'.format(current_field_name));
+                //showErrMsg('Generated data type  error');
                 break;
             }
         }

@@ -72,13 +72,13 @@
             var payload = $.parseJSON(window.currentRow.find(".data-generator-params > select > option:selected").attr('data-payload'));
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
-                case 'text_manual':
-                    modal = $('#text-manual-modal');
-                    modal.find($('#textErrMessage')).html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Must enter a positive number to generate records.');
-                    }
-                    break;
+{#                case 'text_manual':#}
+{#                    modal = $('#text-manual-modal');#}
+{#                    modal.find($('#textErrMessage')).html('');#}
+{#                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {#}
+{#                        showModalErrMsg('#textErrMessage', 'Must enter a positive number to generate records.');#}
+{#                    }#}
+{#                    break;#}
                 case 'text_fill':
                     modal = $('#text-fill-modal');
                     modal.find($('input[name="inputFill"]')).val("");
@@ -92,13 +92,13 @@
                     modal.find($('input[name="inputIncrement"]')).val("");
                     modal.find($('#numberIncrementErrMessage')).html('');
                     break;
-                case 'number_manual':
-                    modal = $('#number-manual-modal');
-                    modal.find($('#numberErrMessage')).html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {
-                        showModalErrMsg('#numberErrMessage', 'Must enter a positive number to generate records.');
-                    }
-                    break;
+{#                case 'number_manual':#}
+{#                    modal = $('#number-manual-modal');#}
+{#                    modal.find($('#numberErrMessage')).html('');#}
+{#                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {#}
+{#                        showModalErrMsg('#numberErrMessage', 'Must enter a positive number to generate records.');#}
+{#                    }#}
+{#                    break;#}
                 case 'number_random':
                     modal = $('#number-random-modal');
                     modal.find($('input[name="min"]')).val("");
