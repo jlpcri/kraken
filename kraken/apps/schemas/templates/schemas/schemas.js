@@ -56,6 +56,40 @@ $("button[name='download_file']").on('click', function() {
     }
 });
 
+$('#buttonManualInput').click(function () {
+    // initialize errMsg
+    $('#errMsg').html('');
+    var record_number = $('#inputRecordNumber').val();
+
+    if (!$.isNumeric(record_number)) {
+        showErrMsg('Records to Generate \'' + record_number + '\' is not a Number');
+        //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
+    } else if ($.inArray('.', record_number) > -1 || record_number <= 0) {
+        showErrMsg('Records to Generate \'' + record_number + '\' should be positive integer. ');
+    } else if (Number(record_number) > 1000) {
+        showErrMsg('Records to Generate should be less than 1000.');
+    } else if (field_number == 0) {
+        showErrMsg('No schema field is added, Cannot generate records');
+    } else {
+        var generator_options,
+            error_found = false;
+        $("#tableDefinitions tbody tr").each(function(index) {
+            generator_options = $(this).find(".data-generator-params > select").val();
+            if (generator_options == 'specify') {
+                var current_field_name = $('#field_type_{0}'.format(index)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Please select field \'{0}\' Generator Options'.format(current_field_name));
+                error_found = true;
+                return false;
+            }
+        });
+        if (error_found) {
+            return false;
+        }
+
+        manualDataInput();
+    }
+});
+
 // Total fail generate data no more than X times
 var fail_generate = 0;
 
@@ -884,6 +918,8 @@ function manualDataInput() {
         var manual_input_modal = $('#manual-input-modal');
         generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
         manual_input_modal.modal('show');
+    } else {
+        showErrMsg('No need to input manual data.');
     }
 
 }
