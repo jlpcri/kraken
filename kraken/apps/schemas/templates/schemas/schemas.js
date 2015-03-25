@@ -80,8 +80,7 @@ $('#buttonGenerate').click(function () {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
         // check Generator Options not selected error
-        var data_generator,
-            generator_options,
+        var generator_options,
             error_found = false;
         $("#tableDefinitions tbody tr").each(function(index) {
             generator_options = $(this).find(".data-generator-params > select").val();
@@ -96,65 +95,8 @@ $('#buttonGenerate').click(function () {
             return false;
         }
 
-        // check Generator Options is manual and open modal, with Custom List inOrder
-        var field_name,
-            field_type,
-            field_length,
-            field_payload,
-            custom_inorder_list,
-            tmp_input_params,
-            manual_input = [],
-            custom_list = [],
-            manual_input_params = [];
-        $('#tableDefinitions tbody tr').each(function(index) {
-            field_name = $(this).find('td:first').text().trim();
-            field_length = $(this).find('td:nth-child(2)').text();
-            field_type = $(this).find('td:nth-child(3)').text();
-            try {
-                field_payload = $.parseJSON($(this).find('.data-generator-params > select option:selected').attr('data-payload'));
-            } catch (e) {
-                field_payload = null;
-            }
-            //data_generator = $(this).find('.data-generator-select > select').val();
-            generator_options = $(this).find('.data-generator-params > select').val();
-            if (generator_options.slice(-6) == 'manual' ) {
-                tmp_input_params = {};
-                tmp_input_params['field_name'] = field_name;
-                tmp_input_params['field_type'] = field_type;
-                tmp_input_params['field_length'] = field_length;
-                tmp_input_params['field_payload'] = field_payload;
-                tmp_input_params['field_index'] = index;
-                manual_input.push(tmp_input_params);
-            } else if (generator_options.slice(-7) == 'inorder') {
-                tmp_input_params = {};
-                custom_inorder_list = [];
-                field_name = $(this).find('td:first').text().trim();
-                var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
-                try {
-                    var p = $.parseJSON(payload);
-                    for (var i = 0; i< p.length; i++) {
-                        if (p[i]['name'] == 'list') {
-                            custom_inorder_list = p[i]['value'].split('\n');
-                        }
-                    }
-                    tmp_input_params['field_index'] = index;
-                    tmp_input_params['field_name'] = field_name;
-                    tmp_input_params['payload'] = custom_inorder_list;
-                    custom_list.push(tmp_input_params);
-                } catch (e) {
-                    ;
-                }
-            }
-        });
-        manual_input_params.push(manual_input);
-        manual_input_params.push(custom_list);
-
-        // Open manual input modal
-        if (manual_input_params[0].length > 0) {
-            var manual_input_modal = $('#manual-input-modal');
-            generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
-            manual_input_modal.modal('show');
-        }
+        // open manual data input modal
+        manualDataInput();
 
         // Generate records based on payload of each field
         generateRecords(record_number);
@@ -880,4 +822,68 @@ function showModalErrMsg(location, message) {
         'color': 'blue'
     });
     $(location).html('Error: ' + message);
+}
+
+function manualDataInput() {
+    // check Generator Options is manual and open modal, with Custom List inOrder
+    var field_name,
+        field_type,
+        field_length,
+        field_payload,
+        generator_options,
+        custom_inorder_list,
+        tmp_input_params,
+        manual_input = [],
+        custom_list = [],
+        manual_input_params = [],
+        record_number = $('#inputRecordNumber').val();
+    $('#tableDefinitions tbody tr').each(function(index) {
+        field_name = $(this).find('td:first').text().trim();
+        field_length = $(this).find('td:nth-child(2)').text();
+        field_type = $(this).find('td:nth-child(3)').text();
+        try {
+            field_payload = $.parseJSON($(this).find('.data-generator-params > select option:selected').attr('data-payload'));
+        } catch (e) {
+            field_payload = null;
+        }
+        generator_options = $(this).find('.data-generator-params > select').val();
+        if (generator_options.slice(-6) == 'manual' ) {
+            tmp_input_params = {};
+            tmp_input_params['field_name'] = field_name;
+            tmp_input_params['field_type'] = field_type;
+            tmp_input_params['field_length'] = field_length;
+            tmp_input_params['field_payload'] = field_payload;
+            tmp_input_params['field_index'] = index;
+            manual_input.push(tmp_input_params);
+        } else if (generator_options.slice(-7) == 'inorder') {
+            tmp_input_params = {};
+            custom_inorder_list = [];
+            field_name = $(this).find('td:first').text().trim();
+            var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i< p.length; i++) {
+                    if (p[i]['name'] == 'list') {
+                        custom_inorder_list = p[i]['value'].split('\n');
+                    }
+                }
+                tmp_input_params['field_index'] = index;
+                tmp_input_params['field_name'] = field_name;
+                tmp_input_params['payload'] = custom_inorder_list;
+                custom_list.push(tmp_input_params);
+            } catch (e) {
+                ;
+            }
+        }
+    });
+    manual_input_params.push(manual_input);
+    manual_input_params.push(custom_list);
+
+    // Open manual input modal
+    if (manual_input_params[0].length > 0) {
+        var manual_input_modal = $('#manual-input-modal');
+        generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
+        manual_input_modal.modal('show');
+    }
+
 }
