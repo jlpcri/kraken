@@ -248,123 +248,40 @@
             form.closest(".modal").modal('hide');
         }
 
-{#        function saveManualTextData(event) {#}
-{#            event.preventDefault();#}
-{#            var form = $(event.target);#}
-{#            var record_number = $('#inputRecordNumber').val();#}
-{#            var field_type = form.find($('input[name="field_type"]')).val();#}
-{#            var field_length = form.find($('input[name="field_length"]')).val();#}
-{#            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();#}
-{#            var file_column = window.currentRow.find('.data-generator-select > select').val();#}
-{#            var column_config = window.currentRow.find('.data-generator-params > select').val();#}
-{##}
-{#            var error_found = false;#}
-{#            var manual_text = $("#text-manual-modal form input");#}
-{#            if (manual_text.length == 0) {#}
-{#                showModalErrMsg('#textErrMessage', 'No Generator Options to save.');#}
-{#                error_found = true;#}
-{#            } else {#}
-{#                $.each(manual_text, function (index, value) {#}
-{#                    var input = $(value).val();#}
-{#                    if (input == '') {#}
-{#                        showModalErrMsg('#textErrMessage', 'No input for Record{0}'.format(index+1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    } else if (input.length > field_length) {#}
-{#                        showModalErrMsg('#textErrMessage', 'Record{0} exceeds length constraint'.format(index+1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {#}
-{#                        showModalErrMsg('#textErrMessage', 'Record {0} cannot include commas.'.format(index+1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {#}
-{#                        showModalErrMsg('#textErrMessage', 'Record{0} must be a number'.format(index+1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    }#}
-{#                });#}
-{#            }#}
-{#            if (error_found) {#}
-{#                return false;#}
-{#            }#}
-{##}
-{#            var data = [];#}
-{#            $.each(manual_text, function(index, value) {#}
-{#                data.push($(value).val());#}
-{#            });#}
-{#            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',#}
-{#                JSON.stringify(data));#}
-{#            form.closest(".modal").modal('hide');#}
-{#        }#}
-{##}
-{#        function saveManualNumberData(event) {#}
-{#            event.preventDefault();#}
-{#            var form = $(event.target);#}
-{#            var record_number = $('#inputRecordNumber').val();#}
-{#            var field_type = form.find($('input[name="field_type"]')).val();#}
-{#            var field_length = form.find($('input[name="field_length"]')).val();#}
-{#            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();#}
-{#            var file_column = window.currentRow.find('.data-generator-select > select').val();#}
-{#            var column_config = window.currentRow.find('.data-generator-params > select').val();#}
-{##}
-{#            var manual_text = $("#number-manual-modal form input");#}
-{#            var error_found = false;#}
-{#            if (manual_text.length == 0) {#}
-{#                showModalErrMsg('#numberErrMessage', 'No Generator Options to save.');#}
-{#                error_found = true;#}
-{#            } else {#}
-{#                $.each(manual_text, function (index, value) {#}
-{#                    var input = $(value).val();#}
-{#                    if (input == '' && index < Number(record_number)) {#}
-{#                        showModalErrMsg('#numberErrMessage', 'Record{0} must contain a value'.format(index + 1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    } else if (input.length > field_length && index < Number(record_number)) {#}
-{#                        showModalErrMsg('#numberErrMessage', 'Record{0} exceeds length constraint'.format(index + 1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    } else if (!$.isNumeric(input) && index < Number(record_number)) {#}
-{#                        showModalErrMsg('#numberErrMessage', 'Record{0} must be a number'.format(index + 1));#}
-{#                        error_found = true;#}
-{#                        return false;#}
-{#                    }#}
-{#                });#}
-{#            }#}
-{#            if (error_found) {#}
-{#                return false;#}
-{#            }#}
-{##}
-{#            var data = [];#}
-{#            $.each(manual_text, function(index, value) {#}
-{#                data.push($(value).val());#}
-{#            });#}
-{#            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',#}
-{#                JSON.stringify(data));#}
-{#            form.closest(".modal").modal('hide');#}
-{#        }#}
-
-        function saveManualData(event){
+        function saveManualDataPayload(event){
             event.preventDefault();
             var form = $(event.target);
 
-            // Valication of manual inputs
             var field_name,
+                field_index,
                 field_length,
                 field_type,
                 row_error_found,
-                body_error_found;
+                body_error_found,
+                row_data;
             $('#manual-input-modal form table tbody tr').each(function(){
                 body_error_found = false;
                 field_name = $(this).find('td:first').text().trim();
+                field_index = $(this).find('td:first input').val();
                 field_type = $(this).find('td:nth-child(2)').text();
                 field_length = $(this).find('td:nth-child(3)').text();
+
+                // If current row is Custom List, skip
                 if (!field_type){
                     return true;
                 }
+
+                row_data = []
                 $(this).find('input').each(function(index,value) {
+                    // first input is hidden field_index, skip
+                    if (index == 0) {
+                        return true;
+                    }
+
                     row_error_found = false;
                     var input = $(value).val();
+
+                    // Valication of manual inputs
                     if (input == ''){
                         showModalErrMsg('#manualInputErrMessage', 'No input for Field \'{0}\' Record{1}'.format(field_name, index + 1));
                         row_error_found = true;
@@ -382,21 +299,24 @@
                         row_error_found = true;
                         return false;
                     }
+
+                    // Save manual inputs to temp row_data
+                    row_data.push(input);
+
                 });
                 if (row_error_found) {
                     body_error_found = true;
                     return false;
                 }
+                //console.log(row_data);
+                var parent_row = $('#tableDefinitions tbody tr').eq(field_index);
+                parent_row.find('.data-generator-params > select > option:selected')[0].setAttribute('data-payload', JSON.stringify(row_data));
             });
 
             if(body_error_found) {
                 return false;
             }
 
-{#            var manual_text = $('#manual-input-modal form input');#}
-{#            $.each(manual_text, function(index, value){#}
-{#                console.log($(value).val());#}
-{#            });#}
             form.closest('.modal').modal('hide');
         }
 
@@ -404,7 +324,7 @@
             $(".data-generator-form").on('submit', saveDataPayload);
             //$(".data-generator-form-text").on('submit', saveManualTextData);
             //$(".data-generator-form-number").on('submit', saveManualNumberData);
-            $(".data-generator-form-manual").on('submit', saveManualData);
+            $(".data-generator-form-manual").on('submit', saveManualDataPayload);
 
             try {
                 var payloads = $.parseJSON('{{ payloads|safe }}');

@@ -117,7 +117,7 @@ $('#buttonGenerate').click(function () {
                 tmp_input_params['field_name'] = field_name;
                 tmp_input_params['field_type'] = field_type;
                 tmp_input_params['field_length'] = field_length;
-                tmp_input_params['index'] = index;
+                tmp_input_params['field_index'] = index;
                 manual_input.push(tmp_input_params);
             } else if (generator_options.slice(-7) == 'inorder') {
                 tmp_input_params = {};
@@ -131,7 +131,7 @@ $('#buttonGenerate').click(function () {
                             custom_inorder_list = p[i]['value'].split('\n');
                         }
                     }
-                    tmp_input_params['index'] = index;
+                    tmp_input_params['field_index'] = index;
                     tmp_input_params['field_name'] = field_name;
                     tmp_input_params['payload'] = custom_inorder_list;
                     custom_list.push(tmp_input_params);
@@ -501,7 +501,8 @@ function generateRecords(record_number) {
         var generate = $(this).find(".data-generator-params option:selected").val();
         // Generator Option Parameters
         var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
-        var d = [];
+        var d = [],
+            manual_data;
         if (type == "Text") {
             generate = generate.substring(5);
             //var generate = "manual";
@@ -522,13 +523,12 @@ function generateRecords(record_number) {
                 }
             }
 
-//            if (generate == "manual") {
-//                // generate empty fields
-//                for (var i = 0; i < record_number; i++) {
-//                    d.push(p[i]);
-//                }
-//            }
-            if (generate == "fill") {
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(p[i]);
+                }
+            } else if (generate == "fill") {
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);
@@ -583,12 +583,12 @@ function generateRecords(record_number) {
                 }
             }
 
-//            if (generate == "manual") {
-//                // generate empty fields
-//                for (var i = 0; i < record_number; i++) {
-//                    d.push(p[i]);
-//                }
-//            }
+            if (generate == "manual") {
+                // generate empty fields
+                for (var i = 0; i < record_number; i++) {
+                    d.push(p[i]);
+                }
+            }
             if (generate == "fill") {
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
@@ -832,7 +832,7 @@ function generate_empty_records_modal(record_number, params, location) {
     var contents_body_row,
         contents_body = '';
     for (var i = 0; i < params[0].length; i++) {
-        contents_body_row = '<tr><td>{0}</td><td>{1}</td><td>{2}</td>'.format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length']);
+        contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
         for (var j = 0; j < Number(record_number); j++) {
             contents_body_row += "<td><input id='' name='' type='text' class='form-control' ></td>";
         }
