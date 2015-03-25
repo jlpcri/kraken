@@ -347,11 +347,56 @@
         function saveManualData(event){
             event.preventDefault();
             var form = $(event.target);
-            var manual_text = $('#manual-input-modal form input');
-            $.each(manual_text, function(index, value){
-                console.log($(value).val());
+
+            // Valication of manual inputs
+            var field_name,
+                field_length,
+                field_type,
+                row_error_found,
+                body_error_found;
+            $('#manual-input-modal form table tbody tr').each(function(){
+                body_error_found = false;
+                field_name = $(this).find('td:first').text().trim();
+                field_type = $(this).find('td:nth-child(2)').text();
+                field_length = $(this).find('td:nth-child(3)').text();
+                if (!field_type){
+                    return true;
+                }
+                $(this).find('input').each(function(index,value) {
+                    row_error_found = false;
+                    var input = $(value).val();
+                    if (input == ''){
+                        showModalErrMsg('#manualInputErrMessage', 'No input for Field \'{0}\' Record{1}'.format(field_name, index + 1));
+                        row_error_found = true;
+                        return false;
+                    } else if (input.length > field_length) {
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} exceeds field length.'.format(field_name, index + 1));
+                        row_error_found = true;
+                        return false;
+                    } else if (!$.isNumeric(input) && field_type == 'Number') {
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} is not A Number.'.format(field_name, index + 1));
+                        row_error_found = true;
+                        return false;
+                    } else if(version_delimiter == 'Comma' && $.inArray(',', input) > -1) {
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} cannot include comma.'.format(field_name, index + 1));
+                        row_error_found = true;
+                        return false;
+                    }
+                });
+                if (row_error_found) {
+                    body_error_found = true;
+                    return false;
+                }
             });
 
+            if(body_error_found) {
+                return false;
+            }
+
+{#            var manual_text = $('#manual-input-modal form input');#}
+{#            $.each(manual_text, function(index, value){#}
+{#                console.log($(value).val());#}
+{#            });#}
             form.closest('.modal').modal('hide');
         }
 

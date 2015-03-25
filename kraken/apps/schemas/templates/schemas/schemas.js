@@ -815,12 +815,12 @@ function generateRecords(record_number) {
 
 function generate_empty_records_modal(record_number, params, location) {
     //console.log(params);
-    var cell_id = '';
-    if (location == '#text-manual-input') {
-        cell_id = 'text';
-    } else if (location == '#number-manual-input') {
-        cell_id = 'number';
-    }
+//    var cell_id = '';
+//    if (location == '#text-manual-input') {
+//        cell_id = 'text';
+//    } else if (location == '#number-manual-input') {
+//        cell_id = 'number';
+//    }
 
 
     var contents_head = '<tr><th>Name</th><th>Type</th><th>Length</th>';
