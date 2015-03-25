@@ -283,19 +283,19 @@
 
                     // Valication of manual inputs
                     if (input == ''){
-                        showModalErrMsg('#manualInputErrMessage', 'No input for Field \'{0}\' Record{1}'.format(field_name, index + 1));
+                        showModalErrMsg('#manualInputErrMessage', 'No input for Field \'{0}\' Record{1}'.format(field_name, index));
                         row_error_found = true;
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} exceeds field length.'.format(field_name, index + 1));
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} exceeds field length.'.format(field_name, index));
                         row_error_found = true;
                         return false;
                     } else if (!$.isNumeric(input) && field_type == 'Number') {
-                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} is not A Number.'.format(field_name, index + 1));
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} is not A Number.'.format(field_name, index));
                         row_error_found = true;
                         return false;
                     } else if(version_delimiter == 'Comma' && $.inArray(',', input) > -1) {
-                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} cannot include comma.'.format(field_name, index + 1));
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} cannot include comma.'.format(field_name, index));
                         row_error_found = true;
                         return false;
                     }
