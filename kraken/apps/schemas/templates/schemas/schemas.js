@@ -100,7 +100,7 @@ $('#buttonGenerate').click(function () {
         var field_name,
             field_type,
             field_length,
-            payload,
+            field_payload,
             custom_inorder_list,
             tmp_input_params,
             manual_input = [],
@@ -110,6 +110,11 @@ $('#buttonGenerate').click(function () {
             field_name = $(this).find('td:first').text().trim();
             field_length = $(this).find('td:nth-child(2)').text();
             field_type = $(this).find('td:nth-child(3)').text();
+            try {
+                field_payload = $.parseJSON($(this).find('.data-generator-params > select option:selected').attr('data-payload'));
+            } catch (e) {
+                field_payload = null;
+            }
             //data_generator = $(this).find('.data-generator-select > select').val();
             generator_options = $(this).find('.data-generator-params > select').val();
             if (generator_options.slice(-6) == 'manual' ) {
@@ -117,6 +122,7 @@ $('#buttonGenerate').click(function () {
                 tmp_input_params['field_name'] = field_name;
                 tmp_input_params['field_type'] = field_type;
                 tmp_input_params['field_length'] = field_length;
+                tmp_input_params['field_payload'] = field_payload;
                 tmp_input_params['field_index'] = index;
                 manual_input.push(tmp_input_params);
             } else if (generator_options.slice(-7) == 'inorder') {
@@ -815,13 +821,6 @@ function generateRecords(record_number) {
 
 function generate_empty_records_modal(record_number, params, location) {
     //console.log(params);
-//    var cell_id = '';
-//    if (location == '#text-manual-input') {
-//        cell_id = 'text';
-//    } else if (location == '#number-manual-input') {
-//        cell_id = 'number';
-//    }
-
 
     var contents_head = '<tr><th>Name</th><th>Type</th><th>Length</th>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
@@ -831,13 +830,24 @@ function generate_empty_records_modal(record_number, params, location) {
 
     var contents_body_row,
         contents_body = '';
-    for (var i = 0; i < params[0].length; i++) {
-        contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
-        for (var j = 0; j < Number(record_number); j++) {
-            contents_body_row += "<td><input id='' name='' type='text' class='form-control' ></td>";
+    if (params[0][0]['field_payload'].length == 0){
+        for (var i = 0; i < params[0].length; i++) {
+            contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id='' name='' type='text' class='form-control' ></td>";
+            }
+            contents_body_row += '</tr>';
+            contents_body += contents_body_row;
         }
-        contents_body_row += '</tr>';
-        contents_body += contents_body_row;
+    } else {
+        for (var i = 0; i < params[0].length; i++) {
+            contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id='' name='' type='text' value={0} class='form-control' ></td>".format(params[0][i]['field_payload'][j]);
+            }
+            contents_body_row += '</tr>';
+            contents_body += contents_body_row;
+        }
     }
     for (var i = 0; i < params[1].length; i++){
         var inc = 0;
