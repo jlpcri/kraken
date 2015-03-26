@@ -200,6 +200,7 @@
 
             } else if (file_column == 'Custom List') {
                 var input = $(this).find("textarea[name='list']").val();
+
                 if (column_config == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
@@ -207,6 +208,12 @@
                         return false;
                     } else {
                         var lines = input.split('\n');
+
+                        // remove empty line at end
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
@@ -227,6 +234,12 @@
                         return false;
                     } else {
                         var lines = input.split('\n');
+
+                        // remove empty line at end
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
                                 showModalErrMsg('#customInorderErrMessage', 'Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
