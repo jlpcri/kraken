@@ -203,7 +203,7 @@
                 if (column_config == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customRandomErrMessage', 'List must contain at least one value.');
+                        showModalErrMsg('#customRandomErrMessage', 'List cannot be blank.');
                         return false;
                     } else {
                         var lines = input.split('\n');
@@ -223,7 +223,7 @@
                 } else if (column_config == 'custom_inorder'){
                     $('#customInorderErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customInorderErrMessage', 'List cannot be blank');
+                        showModalErrMsg('#customInorderErrMessage', 'List cannot be blank.');
                         return false;
                     } else {
                         var lines = input.split('\n');
