@@ -184,6 +184,7 @@
     <div class="push"></div>
 </div>
 {% include 'core/footer.html' %}
+{% include 'core/modal_client.html' %}
 
 
 
@@ -212,7 +213,10 @@
         // Check for session warning
         session_now = new Date().getTime();
         if (session_now > session_lastActivity + session_expired) {
-            window.location.href = '/kraken/signout/';
+            $('#idle_time_out').modal({
+                backdrop: 'static'
+            });
+            $('#idle_time_out').modal('show');
         } else {
             down = setTimeout('CheckSessionStatus();', session_check_interval);
         }
