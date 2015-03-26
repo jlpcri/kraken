@@ -917,6 +917,7 @@ function manualDataInput() {
     if (manual_input_params[0].length > 0) {
         var manual_input_modal = $('#manual-input-modal');
         generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
+        $('#manualInputErrMessage').html('');
         manual_input_modal.modal('show');
     } else {
         showErrMsg('No need to input manual data.');
