@@ -56,40 +56,6 @@ $("button[name='download_file']").on('click', function() {
     }
 });
 
-$('#buttonManualInput').click(function () {
-    // initialize errMsg
-    $('#errMsg').html('');
-    var record_number = $('#inputRecordNumber').val();
-
-    if (!$.isNumeric(record_number)) {
-        showErrMsg('Records to Generate \'' + record_number + '\' is not a Number');
-        //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
-    } else if ($.inArray('.', record_number) > -1 || record_number <= 0) {
-        showErrMsg('Records to Generate \'' + record_number + '\' should be positive integer. ');
-    } else if (Number(record_number) > 1000) {
-        showErrMsg('Records to Generate should be less than 1000.');
-    } else if (field_number == 0) {
-        showErrMsg('No schema field is added, Cannot generate records');
-    } else {
-        var generator_options,
-            error_found = false;
-        $("#tableDefinitions tbody tr").each(function(index) {
-            generator_options = $(this).find(".data-generator-params > select").val();
-            if (generator_options == 'specify') {
-                var current_field_name = $('#field_type_{0}'.format(index)).closest('tr').find('td:first').text().trim();
-                showErrMsg('Please select field \'{0}\' Generator Options'.format(current_field_name));
-                error_found = true;
-                return false;
-            }
-        });
-        if (error_found) {
-            return false;
-        }
-
-        manualDataInput();
-    }
-});
-
 // Total fail generate data no more than X times
 var fail_generate = 0;
 
@@ -132,29 +98,7 @@ $('#buttonGenerate').click(function () {
         // open manual data input modal
         manualDataInput();
 
-        // Generate records based on payload of each field
-        generateRecords(record_number);
 
-        var delimiter = '{{version.delimiter}}';
-
-        // calculate record number which has value
-        var found = true, record_number = 0;
-        while (found) {
-            if (!$('#record_0_{0}'.format(record_number)).val()) {
-                found = false;
-            } else {
-                record_number++;
-            }
-        }
-
-        if (delimiter == 'Fixed') {
-            parse_schema(record_number, '');
-        } else if (delimiter == 'Pipe') {
-            parse_schema(record_number, '|');
-
-        } else if (delimiter == 'Comma') {
-            parse_schema(record_number, ',');
-        }
     }
 });
 

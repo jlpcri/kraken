@@ -338,6 +338,32 @@
             //$(".data-generator-form-text").on('submit', saveManualTextData);
             //$(".data-generator-form-number").on('submit', saveManualNumberData);
             $(".data-generator-form-manual").on('submit', saveManualDataPayload);
+            $('#manual-input-modal').on('submit', function(){
+                var record_number = $('#inputRecordNumber').val();
+                // Generate records based on payload of each field
+                generateRecords(record_number);
+
+                var delimiter = '{{version.delimiter}}';
+
+                // calculate record number which has value
+                var found = true, record_number = 0;
+                while (found) {
+                    if (!$('#record_0_{0}'.format(record_number)).val()) {
+                        found = false;
+                    } else {
+                        record_number++;
+                    }
+                }
+
+                if (delimiter == 'Fixed') {
+                    parse_schema(record_number, '');
+                } else if (delimiter == 'Pipe') {
+                    parse_schema(record_number, '|');
+
+                } else if (delimiter == 'Comma') {
+                    parse_schema(record_number, ',');
+                }
+            });
 
             try {
                 var payloads = $.parseJSON('{{ payloads|safe }}');
@@ -422,10 +448,7 @@
             <div class="col-xs-2">
                 <button type="button" id="buttonGenerate" class="btn btn-success btn-sm" style="width: 100%;" title="Generate data to inputs">Generate&nbsp;<i class="fa fa-arrow-circle-o-right fa-fw"></i></button>
             </div>
-            <div class="col-xs-2">
-{#                <button type="button" id="buttonManualInput" class="btn btn-success btn-sm" style="width: 100%" title="Set Manual Data Input">Manual Data Input</button>#}
-            </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6">
             </div>
         </div>
 
