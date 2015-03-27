@@ -98,7 +98,6 @@ $('#buttonGenerate').click(function () {
         // open manual data input modal
         manualDataInput();
 
-
     }
 });
 

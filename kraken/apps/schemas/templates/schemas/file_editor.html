@@ -345,16 +345,6 @@
 
                 var delimiter = '{{version.delimiter}}';
 
-                // calculate record number which has value
-                var found = true, record_number = 0;
-                while (found) {
-                    if (!$('#record_0_{0}'.format(record_number)).val()) {
-                        found = false;
-                    } else {
-                        record_number++;
-                    }
-                }
-
                 if (delimiter == 'Fixed') {
                     parse_schema(record_number, '');
                 } else if (delimiter == 'Pipe') {
