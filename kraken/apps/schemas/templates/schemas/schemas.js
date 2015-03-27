@@ -79,12 +79,14 @@ $('#buttonGenerate').click(function () {
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
-        // check column configuration error
-        var error_found = false;
-        $("#tableDefinitions tbody tr").each(function() {
-            var column_config = $(this).find(".data-generator-params > select").val();
-            if (column_config == 'specify') {
-                showErrMsg('Please select column configuration');
+        // check Generator Options not selected error
+        var generator_options,
+            error_found = false;
+        $("#tableDefinitions tbody tr").each(function(index) {
+            generator_options = $(this).find(".data-generator-params > select").val();
+            if (generator_options == 'specify') {
+                var current_field_name = $('#field_type_{0}'.format(index)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Please select field \'{0}\' Generator Options'.format(current_field_name));
                 error_found = true;
                 return false;
             }
@@ -93,28 +95,9 @@ $('#buttonGenerate').click(function () {
             return false;
         }
 
-        generateRecords(record_number);
+        // open manual data input modal
+        manualDataInput();
 
-        var delimiter = '{{version.delimiter}}';
-
-        // calculate record number which has value
-        var found = true, record_number = 0;
-        while (found) {
-            if (!$('#record_0_{0}'.format(record_number)).val()) {
-                found = false;
-            } else {
-                record_number++;
-            }
-        }
-
-        if (delimiter == 'Fixed') {
-            parse_schema(record_number, '');
-        } else if (delimiter == 'Pipe') {
-            parse_schema(record_number, '|');
-
-        } else if (delimiter == 'Comma') {
-            parse_schema(record_number, ',');
-        }
     }
 });
 
@@ -341,12 +324,12 @@ function parse_schema(record_number, delimiter) {
             var length = $('#field_length_' + j).val();
 
             // check undefined
-            if ($('#record_{0}_{1}'.format(j, i)).val() == 'undefined') {
-                undefined_error_found = true;
-                inner_loop_error_found = true;
-                showErrMsg('Number of generated records increased for Manual Input');
-                break;
-            }
+//            if ($('#record_{0}_{1}'.format(j, i)).val() == 'undefined') {
+//                undefined_error_found = true;
+//                inner_loop_error_found = true;
+//                showErrMsg('Number of generated records increased for Manual Input');
+//                break;
+//            }
 
             // check length
             if ($('#record_{0}_{1}'.format(j, i)).val().length > length) {
@@ -354,7 +337,7 @@ function parse_schema(record_number, delimiter) {
                 inner_loop_error_found = true;
                 //showErrMsg('Length of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' exceeds limitation.');
                 var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
-                showErrMsg('Generated data length error of field: {0}'.format(current_field_name));
+                showErrMsg('Field \'{0}\' generated data exceeds length of field.'.format(current_field_name));
                 break;
             }
 
@@ -363,7 +346,9 @@ function parse_schema(record_number, delimiter) {
                 field_type_error_found = true;
                 inner_loop_error_found = true;
                 //showErrMsg('Contents of Record ' + Number(i + 1) + ' Field ' + Number(j + 1) + ' is not Number.');
-                showErrMsg('Generated data type  error');
+                var current_field_name = $('#field_type_{0}'.format(j)).closest('tr').find('td:first').text().trim();
+                showErrMsg('Field \'{0}\' generated data is not a Number.'.format(current_field_name));
+                //showErrMsg('Generated data type  error');
                 break;
             }
         }
@@ -441,7 +426,8 @@ function generateRecords(record_number) {
         var generate = $(this).find(".data-generator-params option:selected").val();
         // Generator Option Parameters
         var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
-        var d = [];
+        var d = [],
+            manual_data;
         if (type == "Text") {
             generate = generate.substring(5);
             //var generate = "manual";
@@ -454,9 +440,10 @@ function generateRecords(record_number) {
                     }
                 }
             } catch (e) {
-                if (generate != 'random') {
-                    var rowindex = $(this).closest('tr').index() + 1;
-                    showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
+                if (!($.inArray(generate, ['random', 'manual']) > -1)) {
+                    var rowindex = $(this).closest('tr').index();
+                    var current_field_name = $('#field_type_{0}'.format(rowindex)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Field \'{0}\' Generator Options invalid'.format(current_field_name));
                     return false;
                 }
             }
@@ -513,9 +500,12 @@ function generateRecords(record_number) {
                     }
                 }
             } catch (e) {
-                var rowindex = $(this).closest('tr').index() + 1;
-                showErrMsg('Row {0} Column Configuration invalid'.format(rowindex));
-                return false;
+                if (!($.inArray(generate, ['manual']) > -1)) {
+                    var rowindex = $(this).closest('tr').index();
+                    var current_field_name = $('#field_type_{0}'.format(rowindex)).closest('tr').find('td:first').text().trim();
+                    showErrMsg('Field \'{0}\' Generator Options invalid'.format(current_field_name));
+                    return false;
+                }
             }
 
             if (generate == "manual") {
@@ -523,7 +513,8 @@ function generateRecords(record_number) {
                 for (var i = 0; i < record_number; i++) {
                     d.push(p[i]);
                 }
-            } else if (generate == "fill") {
+            }
+            if (generate == "fill") {
                 // use value from fill to generate fields
                 for (var i = 0; i < record_number; i++) {
                     d.push(fill);
@@ -747,25 +738,50 @@ function generateRecords(record_number) {
     }
 }
 
-function generate_empty_records_modal(record_number, location) {
-    var cell_id = '';
-    if (location == '#text-manual-input') {
-        cell_id = 'text';
-    } else if (location == '#number-manual-input') {
-        cell_id = 'number';
-    }
+function generate_empty_records_modal(record_number, params, location) {
+    //console.log(params);
 
-
-    var contents_head = '<tr>';
+    var contents_head = '<tr><th>Name</th><th>Type</th><th>Length</th>';
     for (var i = 1; i < Number(record_number) + 1; i++) {
         contents_head += '<th>Record ' + i + '</th>';
     }
     contents_head += '</tr>';
 
-    var contents_body = '';
-    for (var i = 0; i < Number(record_number); i++) {
-        contents_body += "<td><input id={0} name='' type='text' class='form-control' ></td>".format(cell_id + i );
+    var contents_body_row,
+        contents_body = '';
+    if (params[0][0]['field_payload'].length == 0){
+        for (var i = 0; i < params[0].length; i++) {
+            contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id='' name='' type='text' class='form-control' ></td>";
+            }
+            contents_body_row += '</tr>';
+            contents_body += contents_body_row;
+        }
+    } else {
+        for (var i = 0; i < params[0].length; i++) {
+            contents_body_row = "<tr><td>{0}<input type='hidden' value={3}></td><td>{1}</td><td>{2}</td>".format(params[0][i]['field_name'],params[0][i]['field_type'],params[0][i]['field_length'], params[0][i]['field_index']);
+            for (var j = 0; j < Number(record_number); j++) {
+                contents_body_row += "<td><input id='' name='' type='text' value={0} class='form-control' ></td>".format(params[0][i]['field_payload'][j]);
+            }
+            contents_body_row += '</tr>';
+            contents_body += contents_body_row;
+        }
     }
+    for (var i = 0; i < params[1].length; i++){
+        var inc = 0;
+        contents_body_row = '<tr><td>{0}</td><td></td><td></td>'.format(params[1][i]['field_name']);
+        for (var j = 0; j< Number(record_number); j++) {
+            if (inc >= params[1][i]['payload'].length) {
+                inc = 0;
+            }
+            contents_body_row += '<td>{0}</td>'.format(params[1][i]['payload'][inc]);
+            inc++;
+        }
+        contents_body_row += '</tr>';
+        contents_body += contents_body_row;
+    }
+
     var contents = "<table id='tableData' class='table'>" +
         " <thead>" +
         contents_head +
@@ -783,4 +799,71 @@ function showModalErrMsg(location, message) {
         'color': 'blue'
     });
     $(location).html('Error: ' + message);
+}
+
+function manualDataInput() {
+    // check Generator Options is manual and open modal, with Custom List inOrder
+    var field_name,
+        field_type,
+        field_length,
+        field_payload,
+        generator_options,
+        custom_inorder_list,
+        tmp_input_params,
+        manual_input = [],
+        custom_list = [],
+        manual_input_params = [],
+        record_number = $('#inputRecordNumber').val();
+    $('#tableDefinitions tbody tr').each(function(index) {
+        field_name = $(this).find('td:first').text().trim();
+        field_length = $(this).find('td:nth-child(2)').text();
+        field_type = $(this).find('td:nth-child(3)').text();
+        try {
+            field_payload = $.parseJSON($(this).find('.data-generator-params > select option:selected').attr('data-payload'));
+        } catch (e) {
+            field_payload = null;
+        }
+        generator_options = $(this).find('.data-generator-params > select').val();
+        if (generator_options.slice(-6) == 'manual' ) {
+            tmp_input_params = {};
+            tmp_input_params['field_name'] = field_name;
+            tmp_input_params['field_type'] = field_type;
+            tmp_input_params['field_length'] = field_length;
+            tmp_input_params['field_payload'] = field_payload;
+            tmp_input_params['field_index'] = index;
+            manual_input.push(tmp_input_params);
+        } else if (generator_options.slice(-7) == 'inorder') {
+            tmp_input_params = {};
+            custom_inorder_list = [];
+            field_name = $(this).find('td:first').text().trim();
+            var payload = $(this).find(".data-generator-params > select option:selected").attr('data-payload');
+            try {
+                var p = $.parseJSON(payload);
+                for (var i = 0; i< p.length; i++) {
+                    if (p[i]['name'] == 'list') {
+                        custom_inorder_list = p[i]['value'].split('\n');
+                    }
+                }
+                tmp_input_params['field_index'] = index;
+                tmp_input_params['field_name'] = field_name;
+                tmp_input_params['payload'] = custom_inorder_list;
+                custom_list.push(tmp_input_params);
+            } catch (e) {
+                ;
+            }
+        }
+    });
+    manual_input_params.push(manual_input);
+    manual_input_params.push(custom_list);
+
+    // Open manual input modal
+    if (manual_input_params[0].length > 0) {
+        var manual_input_modal = $('#manual-input-modal');
+        generate_empty_records_modal(record_number, manual_input_params, '#manual-input');
+        $('#manualInputErrMessage').html('');
+        manual_input_modal.modal('show');
+    } else {
+        showErrMsg('No need to input manual data.');
+    }
+
 }
