@@ -14,6 +14,9 @@
         #tableData td {
             min-width: 180px;
         }
+        #manual-input-modal .modal-dialog {
+            width: 80%;
+        }
     </style>
     <script type="text/javascript" src="{% static 'common/mockjson/js/jquery.mockjson.js' %}"></script>
     <script type="text/javascript">
@@ -72,13 +75,6 @@
             var payload = $.parseJSON(window.currentRow.find(".data-generator-params > select > option:selected").attr('data-payload'));
             var record_number = $('#inputRecordNumber').val();
             switch (value) {
-                case 'text_manual':
-                    modal = $('#text-manual-modal');
-                    modal.find($('#textErrMessage')).html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number) || $.inArray('.', record_number) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Must enter a positive number to generate records.');
-                    }
-                    break;
                 case 'text_fill':
                     modal = $('#text-fill-modal');
                     modal.find($('input[name="inputFill"]')).val("");
@@ -91,13 +87,6 @@
                     modal = $('#number-increment-modal');
                     modal.find($('input[name="inputIncrement"]')).val("");
                     modal.find($('#numberIncrementErrMessage')).html('');
-                    break;
-                case 'number_manual':
-                    modal = $('#number-manual-modal');
-                    modal.find($('#numberErrMessage')).html('');
-                    if (Number(record_number) <= 0 || !$.isNumeric(record_number)  || $.inArray('.', record_number) > -1) {
-                        showModalErrMsg('#numberErrMessage', 'Must enter a positive number to generate records.');
-                    }
                     break;
                 case 'number_random':
                     modal = $('#number-random-modal');
@@ -211,13 +200,20 @@
 
             } else if (file_column == 'Custom List') {
                 var input = $(this).find("textarea[name='list']").val();
+
                 if (column_config == 'custom_random') {
                     $('#customeRandomErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customRandomErrMessage', 'List must contain at least one value.');
+                        showModalErrMsg('#customRandomErrMessage', 'List cannot be blank.');
                         return false;
                     } else {
                         var lines = input.split('\n');
+
+                        // remove empty line at end
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
                                 showModalErrMsg('#customRandomErrMessage', 'Input of Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
@@ -234,10 +230,16 @@
                 } else if (column_config == 'custom_inorder'){
                     $('#customInorderErrMessage').html('');
                     if (!input) {
-                        showModalErrMsg('#customInorderErrMessage', 'List cannot be blank');
+                        showModalErrMsg('#customInorderErrMessage', 'List cannot be blank.');
                         return false;
                     } else {
                         var lines = input.split('\n');
+
+                        // remove empty line at end
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+
                         for (var i = 0; i < lines.length; i++) {
                             if (lines[i].length > field_length) {
                                 showModalErrMsg('#customInorderErrMessage', 'Line {0} exceeds field length of {1} characters.'.format(i+1, field_length));
@@ -254,143 +256,124 @@
                 }
             }
 
+            var form_json_data = form.serializeArray();
+            // remove empty line from custom list
+            var tmp_list;
+            if (file_column == 'Custom List') {
+                for (var i = 0; i< form_json_data.length; i++){
+                    if (form_json_data[i]['name'] == 'list') {
+                        var lines = form_json_data[i]['value'].trim().split('\n');
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+                        tmp_list = [];
+                        for (var j = 0; j < lines.length; j++) {
+                            tmp_list += lines[j];
+                            if (j < lines.length - 1) {
+                                tmp_list += '\n';
+                            }
+                        }
+                        form_json_data[i]['value'] = tmp_list;
+                    }
+                }
+            }
+
             window.currentRow.find(".data-generator-params > select > option:selected")[0].setAttribute('data-payload',
-                JSON.stringify(form.serializeArray()));
+                JSON.stringify(form_json_data));
             form.closest(".modal").modal('hide');
         }
 
-        function saveManualTextData(event) {
+        function saveManualDataPayload(event){
             event.preventDefault();
             var form = $(event.target);
-            var record_number = $('#inputRecordNumber').val();
-            var field_type = form.find($('input[name="field_type"]')).val();
-            var field_length = form.find($('input[name="field_length"]')).val();
-            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
-            var file_column = window.currentRow.find('.data-generator-select > select').val();
-            var column_config = window.currentRow.find('.data-generator-params > select').val();
 
-            var error_found = false;
-            var manual_text = $("#text-manual-modal form input");
-            if (manual_text.length == 0) {
-                showModalErrMsg('#textErrMessage', 'No Generator Options to save.');
-                error_found = true;
-            } else {
-                $.each(manual_text, function (index, value) {
+            var field_name,
+                field_index,
+                field_length,
+                field_type,
+                row_error_found,
+                body_error_found,
+                row_data;
+            $('#manual-input-modal form table tbody tr').each(function(){
+                body_error_found = false;
+                field_name = $(this).find('td:first').text().trim();
+                field_index = $(this).find('td:first input').val();
+                field_type = $(this).find('td:nth-child(2)').text();
+                field_length = $(this).find('td:nth-child(3)').text();
+
+                // If current row is Custom List, skip
+                if (!field_type){
+                    return true;
+                }
+
+                row_data = []
+                $(this).find('input').each(function(index,value) {
+                    // first input is hidden field_index, skip
+                    if (index == 0) {
+                        return true;
+                    }
+
+                    row_error_found = false;
                     var input = $(value).val();
-                    if (input == '') {
-                        showModalErrMsg('#textErrMessage', 'No input for Record{0}'.format(index+1));
-                        error_found = true;
+
+                    // Valication of manual inputs
+                    if (input == ''){
+                        showModalErrMsg('#manualInputErrMessage', 'No input for Field \'{0}\' Record{1}'.format(field_name, index));
+                        row_error_found = true;
                         return false;
                     } else if (input.length > field_length) {
-                        showModalErrMsg('#textErrMessage', 'Record{0} exceeds length constraint'.format(index+1));
-                        error_found = true;
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} exceeds field length.'.format(field_name, index));
+                        row_error_found = true;
                         return false;
-                    } else if (version_delimiter == 'Comma' && $.inArray(',', input) > -1 ) {
-                        showModalErrMsg('#textErrMessage', 'Record {0} cannot include commas.'.format(index+1));
-                        error_found = true;
+                    } else if (!$.isNumeric(input) && field_type == 'Number') {
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} is not A Number.'.format(field_name, index));
+                        row_error_found = true;
                         return false;
-                    } else if (!$.isNumeric(input) && field_type == 'Number' && index < Number(record_number)) {
-                        showModalErrMsg('#textErrMessage', 'Record{0} must be a number'.format(index+1));
-                        error_found = true;
+                    } else if(version_delimiter == 'Comma' && $.inArray(',', input) > -1) {
+                        showModalErrMsg('#manualInputErrMessage', 'Field \'{0}\' Record {1} cannot include comma.'.format(field_name, index));
+                        row_error_found = true;
                         return false;
                     }
+
+                    // Save manual inputs to temp row_data
+                    row_data.push(input);
+
                 });
-            }
-            if (error_found) {
+                if (row_error_found) {
+                    body_error_found = true;
+                    return false;
+                }
+                //console.log(row_data);
+                var parent_row = $('#tableDefinitions tbody tr').eq(field_index);
+                parent_row.find('.data-generator-params > select > option:selected')[0].setAttribute('data-payload', JSON.stringify(row_data));
+            });
+
+            if(body_error_found) {
                 return false;
             }
 
-            var data = [];
-            $.each(manual_text, function(index, value) {
-                data.push($(value).val());
-            });
-            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
-                JSON.stringify(data));
-            form.closest(".modal").modal('hide');
-        }
-
-        function saveManualNumberData(event) {
-            event.preventDefault();
-            var form = $(event.target);
-            var record_number = $('#inputRecordNumber').val();
-            var field_type = form.find($('input[name="field_type"]')).val();
-            var field_length = form.find($('input[name="field_length"]')).val();
-            var version_delimiter = form.find($('input[name="version_delimiter"]')).val();
-            var file_column = window.currentRow.find('.data-generator-select > select').val();
-            var column_config = window.currentRow.find('.data-generator-params > select').val();
-
-            var manual_text = $("#number-manual-modal form input");
-            var error_found = false;
-            if (manual_text.length == 0) {
-                showModalErrMsg('#numberErrMessage', 'No Generator Options to save.');
-                error_found = true;
-            } else {
-                $.each(manual_text, function (index, value) {
-                    var input = $(value).val();
-                    if (input == '' && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'Record{0} must contain a value'.format(index + 1));
-                        error_found = true;
-                        return false;
-                    } else if (input.length > field_length && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'Record{0} exceeds length constraint'.format(index + 1));
-                        error_found = true;
-                        return false;
-                    } else if (!$.isNumeric(input) && index < Number(record_number)) {
-                        showModalErrMsg('#numberErrMessage', 'Record{0} must be a number'.format(index + 1));
-                        error_found = true;
-                        return false;
-                    }
-                });
-            }
-            if (error_found) {
-                return false;
-            }
-
-            var data = [];
-            $.each(manual_text, function(index, value) {
-                data.push($(value).val());
-            });
-            window.currentRow.find(".data-generator-params > select ")[0].setAttribute('data-payload',
-                JSON.stringify(data));
-            form.closest(".modal").modal('hide');
+            form.closest('.modal').modal('hide');
         }
 
         $(function() {
             $(".data-generator-form").on('submit', saveDataPayload);
-            $(".data-generator-form-text").on('submit', saveManualTextData);
-            $(".data-generator-form-number").on('submit', saveManualNumberData);
-
-            $('#text-manual-modal').on('show.bs.modal', function(event){
+            //$(".data-generator-form-text").on('submit', saveManualTextData);
+            //$(".data-generator-form-number").on('submit', saveManualNumberData);
+            $(".data-generator-form-manual").on('submit', saveManualDataPayload);
+            $('#manual-input-modal').on('submit', function(){
                 var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manually input
-                if (!($.inArray('.', record_number) > -1)) {
-                    generate_empty_records_modal(record_number, '#text-manual-input');
-                }
+                // Generate records based on payload of each field
+                generateRecords(record_number);
 
-                try {
-                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
-                    for (var i = 0; i < p.length; i++) {
-                        $('#text' + i).val(p[i]);
-                    }
-                } catch (e) {
-                    ;
-                }
-            });
+                var delimiter = '{{version.delimiter}}';
 
-            $('#number-manual-modal').on('show.bs.modal', function(event){
-                var record_number = $('#inputRecordNumber').val();
-                // generate empty cell for user manually input
-                if (!($.inArray('.', record_number) > -1)) {
-                    generate_empty_records_modal(record_number, '#number-manual-input');
-                }
+                if (delimiter == 'Fixed') {
+                    parse_schema(record_number, '');
+                } else if (delimiter == 'Pipe') {
+                    parse_schema(record_number, '|');
 
-                try {
-                    var p = $.parseJSON(window.currentRow.find(".data-generator-params > select ")[0].getAttribute("data-payload"));
-                    for (var i = 0; i < p.length; i++) {
-                        $('#number' + i).val(p[i]);
-                    }
-                } catch (e) {
-                    ;
+                } else if (delimiter == 'Comma') {
+                    parse_schema(record_number, ',');
                 }
             });
 
