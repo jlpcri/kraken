@@ -256,8 +256,30 @@
                 }
             }
 
+            var form_json_data = form.serializeArray();
+            // remove empty line from custom list
+            var tmp_list;
+            if (file_column == 'Custom List') {
+                for (var i = 0; i< form_json_data.length; i++){
+                    if (form_json_data[i]['name'] == 'list') {
+                        var lines = form_json_data[i]['value'].trim().split('\n');
+                        while (!lines[Number(lines.length) - 1]) {
+                            lines.splice(-1, 1);
+                        }
+                        tmp_list = [];
+                        for (var j = 0; j < lines.length; j++) {
+                            tmp_list += lines[j];
+                            if (j < lines.length - 1) {
+                                tmp_list += '\n';
+                            }
+                        }
+                        form_json_data[i]['value'] = tmp_list;
+                    }
+                }
+            }
+
             window.currentRow.find(".data-generator-params > select > option:selected")[0].setAttribute('data-payload',
-                JSON.stringify(form.serializeArray()));
+                JSON.stringify(form_json_data));
             form.closest(".modal").modal('hide');
         }
 
