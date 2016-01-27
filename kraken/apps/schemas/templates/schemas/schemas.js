@@ -864,6 +864,20 @@ function manualDataInput() {
         manual_input_modal.modal('show');
     } else {
         showErrMsg('No need to input manual data.');
+        var record_number = $('#inputRecordNumber').val();
+        // Generate records based on payload of each field
+        generateRecords(record_number);
+
+        var delimiter = '{{version.delimiter}}';
+
+        if (delimiter == 'Fixed') {
+            parse_schema(record_number, '');
+        } else if (delimiter == 'Pipe') {
+            parse_schema(record_number, '|');
+
+        } else if (delimiter == 'Comma') {
+            parse_schema(record_number, ',');
+        }
     }
 
 }
