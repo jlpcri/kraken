@@ -74,8 +74,8 @@ $('#buttonGenerate').click(function () {
         //$('#errMsg').html('Input \'' + record_number + '\' is not a Number');
     } else if ($.inArray('.', record_number) > -1 || record_number <= 0) {
         showErrMsg('Records to Generate \'' + record_number + '\' should be positive integer. ');
-    } else if (Number(record_number) > 1000) {
-        showErrMsg('Records to Generate should be less than 1000.');
+    } else if (Number(record_number) > 100000) {
+        showErrMsg('Records to Generate should be less than 100000.');
     } else if (field_number == 0) {
         showErrMsg('No schema field is added, Cannot generate records');
     } else {
