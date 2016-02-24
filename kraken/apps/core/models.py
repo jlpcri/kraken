@@ -33,7 +33,7 @@ class ClientSchema(models.Model):
         return SchemaVersion.objects.filter(client_schema=self).order_by('identifier')
 
     def __unicode__(self):
-        return self.client.name + " " + self.name
+        return '{0}: {1}'.format(self.client.name, self.name)
 
 
 class SchemaVersion(models.Model):
@@ -59,7 +59,7 @@ class SchemaVersion(models.Model):
     delimiter = models.TextField(choices=DELIMITER_TYPE_CHOICES, default=FIXED)
 
     def __unicode__(self):
-        return unicode(self.client_schema) + u", " + self.identifier
+        return '{0}: {1}'.format(self.client_schema, self.identifier)
 
     class Meta:
         unique_together = (("identifier", "client_schema"), )
@@ -159,6 +159,9 @@ class VersionFile(models.Model):
     class Meta:
         unique_together = (("name", "schema_version"), )
 
+    def __unicode__(self):
+        return '{0}: {1}'.format(self.schema_version, self.name)
+
     @property
     def file_contents(self):
         f = self.contents
@@ -202,6 +205,9 @@ class FileColumn(models.Model):
 
     class Meta:
         unique_together = (("version_file", "schema_column"), )
+
+    def __unicode__(self):
+        return '{0}: {1}'.format(self.schema_column, self.version_file.name)
 
 
 class SchemaColumn(models.Model):
