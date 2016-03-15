@@ -8,5 +8,5 @@ urlpatterns = patterns('',
     url(r'^kraken/', include('kraken.apps.help.urls', namespace="help")),
     url(r'^kraken/', include('kraken.apps.schemas.urls', namespace="schemas")),
     url(r'^kraken/', include('kraken.apps.users.urls', namespace="users")),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^kraken/admin/', include(admin.site.urls)),
 )
