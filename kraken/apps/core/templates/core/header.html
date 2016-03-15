@@ -22,7 +22,7 @@
                         <ul class="dropdown-menu navbar-dropdown-menu">
                             {% if user.is_superuser %}
                                 <li><a href="{% url 'users:user_management' %}"><i class="fa fa-wrench fa-fw"></i>&nbsp;User Management</a></li>
-                                <li><a href="{% url 'admin:index' %}"><i class="fa fa-cogs fa-fw"></i>&nbsp;Django Admin</a></li>
+                                <li><a href="{% url 'admin:index' %}" target="_blank"><i class="fa fa-cogs fa-fw"></i>&nbsp;Django Admin</a></li>
                             {% endif %}
                             <li><a href="{% url 'core:sign_out' %}"><i class="fa fa-sign-out fa-fw"></i>&nbsp;Sign Out</a></li>
                         </ul>
